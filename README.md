@@ -1,5 +1,9 @@
 # SwagKart 🛍️
 
+[![Flutter](https://img.shields.io/badge/Flutter-3.47-02569B?logo=flutter&logoColor=white)](https://flutter.dev)
+[![Dart](https://img.shields.io/badge/Dart-3-0175C2?logo=dart&logoColor=white)](https://dart.dev)
+[![License](https://img.shields.io/badge/license-MIT-green)](#license)
+
 A **playful, premium Indian e-commerce storefront** built in Flutter — inspired by
 high-end monochrome commerce UIs, but warmer, candy-colored and full of motion.
 India-first: ₹ pricing with lakh/crore grouping, GST notes, UPI/COD messaging,
@@ -87,3 +91,7 @@ test/app_smoke_test.dart       # full boot: splash → shell → tabs → scroll
 - All demo state lives in memory — refreshing the app resets cart/wishlist
   (persistence is Phase 2).
 - Promo codes: `SWAG15` (15% off), `SWAG10` (10% off).
+
+## License
+
+MIT — do whatever you like, attribution appreciated. 🧡
