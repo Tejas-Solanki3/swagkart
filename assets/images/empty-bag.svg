@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <defs>
+    <linearGradient id="bag" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FFF3D6"/>
+      <stop offset="1" stop-color="#FFE8DE"/>
+    </linearGradient>
+  </defs>
+  <!-- ground shadow -->
+  <ellipse cx="100" cy="172" rx="52" ry="9" fill="#EDE3D2"/>
+  <!-- bag body -->
+  <path d="M52 74 L60 160 Q61 168 69 168 L131 168 Q139 168 140 160 L148 74 Z" fill="url(#bag)" stroke="#221A13" stroke-width="4" stroke-linejoin="round"/>
+  <!-- bag rim fold -->
+  <path d="M50 74 L150 74" stroke="#221A13" stroke-width="4" stroke-linecap="round"/>
+  <path d="M56 88 L144 88" stroke="#221A13" stroke-width="3" stroke-linecap="round" opacity="0.25"/>
+  <!-- handles (slumped, empty) -->
+  <path d="M74 74 Q78 44 100 44 Q122 44 126 74" fill="none" stroke="#221A13" stroke-width="4" stroke-linecap="round"/>
+  <!-- face: soft sad-cute -->
+  <circle cx="84" cy="112" r="4.5" fill="#221A13"/>
+  <circle cx="116" cy="112" r="4.5" fill="#221A13"/>
+  <path d="M88 134 Q100 126 112 134" fill="none" stroke="#221A13" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="74" cy="126" r="5" fill="#FF9E9E" opacity="0.55"/>
+  <circle cx="126" cy="126" r="5" fill="#FF9E9E" opacity="0.55"/>
+  <!-- sparkles -->
+  <path d="M150 40 l3.5 8.5 8.5 3.5 -8.5 3.5 -3.5 8.5 -3.5 -8.5 -8.5 -3.5 8.5 -3.5 Z" fill="#FFD166"/>
+  <path d="M40 34 l2.6 6.4 6.4 2.6 -6.4 2.6 -2.6 6.4 -2.6 -6.4 -6.4 -2.6 6.4 -2.6 Z" fill="#FF6B35"/>
+  <path d="M162 120 l2.2 5.4 5.4 2.2 -5.4 2.2 -2.2 5.4 -2.2 -5.4 -5.4 -2.2 5.4 -2.2 Z" fill="#8FCF9B"/>
+  <circle cx="34" cy="96" r="4" fill="#79C4E0"/>
+  <circle cx="168" cy="84" r="3" fill="#C4B0F0"/>
+  <!-- tiny heart -->
+  <path d="M100 178 c-3-3-8-3.4-8 1 c0 3.4 5 6.4 8 8 c3-1.6 8-4.6 8-8 c0-4.4-5-4-8-1 Z" fill="#FF6B35"/>
+</svg>

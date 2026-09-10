@@ -1,0 +1,5 @@
+package com.swagkart.swag_kart
+
+import io.flutter.embedding.android.FlutterActivity
+
+class MainActivity : FlutterActivity()
