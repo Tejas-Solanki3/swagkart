@@ -37,7 +37,13 @@ flutter test         # 11 tests: cart math, promos, shipping rules, discovery + 
 flutter analyze      # 0 issues
 ```
 
-Android only by design (`android/` is the only platform directory, `minSdk = 24`).
+Shipping target is **Android** (`minSdk = 24`). `macos/` and `web/` targets are
+included for **local preview only** — the app is pure cross-platform Flutter, so:
+
+```bash
+flutter run -d macos    # desktop window (needs Xcode command-line tools)
+flutter run -d chrome   # browser preview
+```
 
 ## Project structure
 
