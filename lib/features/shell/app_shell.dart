@@ -74,11 +74,11 @@ class _SwagBottomNav extends StatelessWidget {
   final ValueChanged<int> onSelected;
 
   static const _tabs = <_TabSpec>[
-    _TabSpec('home', 'home-filled', 'Home'),
-    _TabSpec('grid', 'grid-filled', 'Catalog'),
-    _TabSpec('heart', 'heart-filled', 'Wishlist'),
-    _TabSpec('bag', 'bag-filled', 'Bag'),
-    _TabSpec('user', 'user-filled', 'Account'),
+    _TabSpec('home', 'Home'),
+    _TabSpec('grid', 'Catalog'),
+    _TabSpec('heart', 'Wishlist'),
+    _TabSpec('bag', 'Bag'),
+    _TabSpec('user', 'Account'),
   ];
 
   @override
@@ -92,20 +92,19 @@ class _SwagBottomNav extends StatelessWidget {
           return Container(
             height: 64,
             decoration: BoxDecoration(
-              color: SwagColors.surface,
+              color: SwagColors.ink,
               borderRadius: BorderRadius.circular(999),
-              border: Border.all(color: SwagColors.line, width: 1.2),
               boxShadow: [
                 BoxShadow(
-                  color: SwagColors.ink.withValues(alpha: 0.10),
-                  blurRadius: 22,
-                  offset: const Offset(0, 10),
+                  color: SwagColors.ink.withValues(alpha: 0.38),
+                  blurRadius: 26,
+                  offset: const Offset(0, 12),
                 ),
               ],
             ),
             child: Stack(
               children: [
-                // Sliding ink pill indicator
+                // Sliding white pill indicator
                 AnimatedPositioned(
                   duration: const Duration(milliseconds: 380),
                   curve: Curves.easeOutBack,
@@ -115,7 +114,7 @@ class _SwagBottomNav extends StatelessWidget {
                   height: 48,
                   child: Container(
                     decoration: BoxDecoration(
-                      color: SwagColors.ink,
+                      color: SwagColors.surface,
                       borderRadius: BorderRadius.circular(999),
                     ),
                   ),
@@ -149,9 +148,8 @@ class _SwagBottomNav extends StatelessWidget {
 }
 
 class _TabSpec {
-  const _TabSpec(this.icon, this.iconFilled, this.label);
+  const _TabSpec(this.icon, this.label);
   final String icon;
-  final String iconFilled;
   final String label;
 }
 
@@ -168,26 +166,18 @@ class _NavItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dim = SwagColors.ink.withValues(alpha: active ? 1 : 0.42);
-    final iconColor = active ? SwagColors.canvas : dim;
+    // Same icon in both states — only the tone changes.
+    final iconColor = Colors.white.withValues(alpha: active ? 1 : 0.45);
     return Pressable(
       onTap: onTap,
       scale: 0.94,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          AnimatedSwitcher(
-            duration: const Duration(milliseconds: 220),
-            transitionBuilder: (child, animation) => ScaleTransition(
-              scale: Tween<double>(begin: 0.6, end: 1).animate(animation),
-              child: FadeTransition(opacity: animation, child: child),
-            ),
-            child: SwagIcon(
-              active ? spec.iconFilled : spec.icon,
-              key: ValueKey('${spec.icon}-$active'),
-              size: 21,
-              color: iconColor,
-            ),
+          SwagIcon(
+            spec.icon,
+            size: 21,
+            color: iconColor,
           ),
           const SizedBox(height: 2),
           Text(
@@ -195,7 +185,7 @@ class _NavItem extends StatelessWidget {
             style: SwagTheme.body(
               size: 10,
               weight: active ? FontWeight.w700 : FontWeight.w500,
-              color: active ? SwagColors.ink : dim,
+              color: Colors.white.withValues(alpha: active ? 1 : 0.55),
             ),
           ),
         ],
