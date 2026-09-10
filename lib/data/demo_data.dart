@@ -124,7 +124,7 @@ const List<Product> demoProducts = [
     tags: ['trending'],
     stock: 18,
     gallery: [
-      'assets/images/products/runner_mustard.png',
+      'assets/images/products/runner_yellow.png',
     ]  ),
   Product(
     id: 'p-bomber',
@@ -540,4 +540,24 @@ const List<Product> demoProducts = [
     tags: ['trending'],
     stock: 24,
   ),
+  Product(
+    id: 'p-nb574',
+    name: 'NB 574 Heritage Yellow',
+    brand: 'New Balance',
+    category: 'footwear',
+    blurb:
+        'The heritage 574 in heritage yellow. Suede overlays on breathable '
+        'mesh, ENCAP-style midsole cushioning, and that classic boxy toe. '
+        'Sits higher than most — worth it.',
+    image: 'assets/images/products/nb_yellow.png',
+    price: 9999,
+    mrp: 12999,
+    rating: 4.7,
+    reviews: 76,
+    colors: ['#FFD166', '#1C1B24'],
+    sizes: ['UK 6', 'UK 7', 'UK 8', 'UK 9', 'UK 10'],
+    tags: ['new'],
+    stock: 14,
+  ),
+
 ];

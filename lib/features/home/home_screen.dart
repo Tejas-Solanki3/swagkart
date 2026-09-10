@@ -97,7 +97,7 @@ class _HomeScreenState extends State<HomeScreen> {
               onSeeAll: () => store.requestTab(1),
             ),
             SizedBox(
-              height: 268,
+              height: 284,
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
                 itemCount: trending.length,

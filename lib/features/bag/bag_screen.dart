@@ -108,6 +108,7 @@ class _BagScreenState extends State<BagScreen> {
                     store.clearCart();
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
+                        duration: const Duration(seconds: 3),
                         content: const Text('Bag cleared'),
                         action: SnackBarAction(
                           label: 'Undo',
