@@ -222,7 +222,14 @@ class _AccountScreenState extends State<AccountScreen> {
   void _toast(BuildContext context, String msg) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(msg, style: SwagTheme.body(size: 13, weight: FontWeight.w600)),
+        content: Text(
+          msg,
+          style: SwagTheme.body(
+            size: 13,
+            weight: FontWeight.w600,
+            color: SwagColors.canvas,
+          ),
+        ),
       ),
     );
   }

@@ -1,16 +1,17 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-/// A playful celebration splash — a party face pops up in the center
-/// with an elastic scale-in, a little wobble, then zooms away.
+/// A celebration splash: a white screen fades in, the art pops up
+/// center-stage with a soft elastic + wobble, holds for about a
+/// second, then everything fades away. ~1.6s total.
 ///
 /// Uses vector art (not emoji text) so it renders instantly on web,
 /// where emoji fonts load a second late.
 void fireCelebration(BuildContext context, {String? asset}) {
-  final path =
-      asset ?? 'assets/icons/celebrate-party.svg';
+  final path = asset ?? 'assets/icons/celebrate-party.svg';
   final overlayState = Overlay.of(context, rootOverlay: true);
   late OverlayEntry entry;
   entry = OverlayEntry(
@@ -40,7 +41,7 @@ class _CelebrationPopState extends State<_CelebrationPop>
     with SingleTickerProviderStateMixin {
   late final AnimationController _c = AnimationController(
     vsync: this,
-    duration: const Duration(milliseconds: 1150),
+    duration: const Duration(milliseconds: 1600),
   );
 
   @override
@@ -65,43 +66,59 @@ class _CelebrationPopState extends State<_CelebrationPop>
       animation: _c,
       builder: (context, _) {
         final t = _c.value;
+        // White backdrop: quick fade-in, held for ~1s, smooth fade-out.
+        final double backdrop;
+        if (t < 0.15) {
+          backdrop = Curves.easeOutCubic.transform(t / 0.15);
+        } else if (t < 0.78) {
+          backdrop = 1.0;
+        } else {
+          backdrop = 1.0 - Curves.easeInCubic.transform((t - 0.78) / 0.22);
+        }
+        // Art: gentle pop-in, soft wobble, smooth exit.
         double scale;
         double opacity;
         double rotation;
-        if (t <= 0.45) {
-          // Pop in with a back-overshoot.
-          final k = Curves.easeOutBack.transform(t / 0.45);
-          final ok = Curves.easeOutCubic.transform(t / 0.45);
-          scale = 0.2 + 0.9 * k;
+        if (t <= 0.4) {
+          final k = Curves.easeOutBack.transform(t / 0.4);
+          final ok = Curves.easeOutCubic.transform(t / 0.4);
+          scale = 0.35 + 0.65 * k;
           opacity = ok;
-          rotation = -0.22 * (1 - ok);
-        } else if (t <= 0.75) {
-          // Hold with a tiny wobble.
-          scale = 1.1;
-          opacity = 1;
-          rotation = 0.07 * ((t - 0.45) / 0.3);
+          rotation = -0.16 * (1 - ok);
+        } else if (t <= 0.8) {
+          final k = (t - 0.4) / 0.4;
+          scale = 1.0 + 0.045 * math.sin(k * math.pi);
+          opacity = 1.0;
+          rotation = 0.045 * math.sin(k * 2 * math.pi);
         } else {
-          // Zoom out and fade.
-          final k = Curves.easeIn.transform((t - 0.75) / 0.25);
-          scale = 1.1 + 0.35 * k;
-          opacity = 1 - k;
-          rotation = 0.07 - 0.2 * k;
+          final k = Curves.easeInCubic.transform((t - 0.8) / 0.2);
+          scale = 1.0 + 0.28 * k;
+          opacity = 1.0 - k;
+          rotation = 0.0;
         }
-        return Center(
-          child: Transform.rotate(
-            angle: rotation,
-            child: Transform.scale(
-              scale: scale,
-              child: Opacity(
-                opacity: opacity,
-                child: SvgPicture.asset(
-                  widget.asset,
-                  width: 150,
-                  height: 150,
+        return Stack(
+          fit: StackFit.expand,
+          children: [
+            ColoredBox(
+              color: Colors.white.withValues(alpha: backdrop),
+            ),
+            Center(
+              child: Transform.rotate(
+                angle: rotation,
+                child: Transform.scale(
+                  scale: scale,
+                  child: Opacity(
+                    opacity: opacity,
+                    child: SvgPicture.asset(
+                      widget.asset,
+                      width: 170,
+                      height: 170,
+                    ),
+                  ),
                 ),
               ),
             ),
-          ),
+          ],
         );
       },
     );

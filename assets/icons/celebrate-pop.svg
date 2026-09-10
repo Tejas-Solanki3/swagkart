@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- burst: streamers -->
+  <g fill="none" stroke-linecap="round">
+    <path d="M116 94 Q138 62 170 50" stroke="#4A78AC" stroke-width="6"/>
+    <path d="M116 94 Q152 76 184 84" stroke="#417A58" stroke-width="6"/>
+    <path d="M116 94 Q150 96 178 118" stroke="#E9B44C" stroke-width="6"/>
+    <path d="M116 94 Q132 58 122 26" stroke="#CE6547" stroke-width="6"/>
+  </g>
+  <!-- burst: confetti -->
+  <rect x="146" y="38" width="14" height="8" rx="2" fill="#E5876C" transform="rotate(28 153 42)"/>
+  <rect x="170" y="118" width="14" height="8" rx="2" fill="#4A78AC" transform="rotate(-20 177 122)"/>
+  <rect x="126" y="138" width="12" height="7" rx="2" fill="#417A58" transform="rotate(40 132 141)"/>
+  <circle cx="162" cy="142" r="5" fill="#E9B44C"/>
+  <circle cx="188" cy="60" r="5" fill="#417A58"/>
+  <circle cx="140" cy="120" r="4" fill="#CE6547"/>
+  <circle cx="124" cy="76" r="4" fill="#E9B44C"/>
+  <circle cx="130" cy="106" r="4" fill="#4A78AC"/>
+  <!-- sparkle -->
+  <path d="M184 28 L187 36 L195 39 L187 42 L184 50 L181 42 L173 39 L181 36 Z" fill="#E9B44C"/>
+  <!-- striped cone -->
+  <g transform="rotate(-35 82 118)">
+    <rect x="40" y="100" width="84" height="36" rx="10" fill="#E5876C"/>
+    <rect x="40" y="100" width="13" height="36" rx="6" fill="#F5F1E8"/>
+    <rect x="64" y="100" width="13" height="36" fill="#F5F1E8"/>
+    <rect x="88" y="100" width="13" height="36" fill="#F5F1E8"/>
+    <rect x="112" y="100" width="12" height="36" rx="6" fill="#F5F1E8"/>
+  </g>
+  <!-- cone tip -->
+  <circle cx="48" cy="142" r="9" fill="#E5876C"/>
+</svg>

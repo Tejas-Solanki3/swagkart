@@ -97,7 +97,11 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
         SnackBar(
           content: Text(
             '${widget.product.name} added to your bag',
-            style: SwagTheme.body(size: 13, weight: FontWeight.w700),
+            style: SwagTheme.body(
+              size: 13,
+              weight: FontWeight.w700,
+              color: SwagColors.canvas,
+            ),
           ),
           action: SnackBarAction(
             label: 'View bag',

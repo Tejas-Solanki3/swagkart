@@ -51,14 +51,18 @@ class _BagScreenState extends State<BagScreen> {
     });
     if (ok) {
       final pct = store.appliedPromo!.pct.round();
-      fireCelebration(context);
+      fireCelebration(context, asset: 'assets/icons/celebrate-pop.svg');
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..showSnackBar(
           SnackBar(
             content: Text(
               '${store.appliedPromo!.code} applied — flat $pct% off!',
-              style: SwagTheme.body(size: 13, weight: FontWeight.w700),
+              style: SwagTheme.body(
+                size: 13,
+                weight: FontWeight.w700,
+                color: SwagColors.canvas,
+              ),
             ),
           ),
         );
