@@ -54,10 +54,7 @@ class ProductCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(18),
                     child: AspectRatio(
                       aspectRatio: 1,
-                      child: Padding(
-                        padding: const EdgeInsets.all(14),
-                        child: Image.asset(product.image, fit: BoxFit.contain),
-                      ),
+                      child: Image.asset(product.image, fit: BoxFit.cover),
                     ),
                   ),
                 ),

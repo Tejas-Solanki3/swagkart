@@ -425,8 +425,7 @@ class _OfferCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(color: SwagColors.surface),
                 ),
-                padding: const EdgeInsets.all(10),
-                child: Image.asset(image, fit: BoxFit.contain),
+                child: Image.asset(image, fit: BoxFit.cover),
               ),
             ),
           ),
@@ -503,10 +502,7 @@ class _DealsStrip extends StatelessWidget {
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(16),
-                    child: Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: Image.asset(p.image, fit: BoxFit.contain),
-                    ),
+                    child: Image.asset(p.image, fit: BoxFit.cover),
                   ),
                 ),
                 Expanded(

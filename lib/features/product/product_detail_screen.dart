@@ -474,8 +474,7 @@ class _Gallery extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.sizeOf(context).width;
-    return Container(
-      height: width < 640 ? 360 : 460,
+    final gallery = Container(
       margin: const EdgeInsets.symmetric(horizontal: 4),
       decoration: BoxDecoration(
         color: SwagColors.photoMat,
@@ -488,10 +487,8 @@ class _Gallery extends StatelessWidget {
             controller: controller,
             onPageChanged: onPageChanged,
             itemCount: images.length,
-            itemBuilder: (context, i) => Padding(
-              padding: const EdgeInsets.all(20),
-              child: Image.asset(images[i], fit: BoxFit.contain),
-            ),
+            itemBuilder: (context, i) =>
+                Image.asset(images[i], fit: BoxFit.cover),
           ),
           if (images.length > 1)
             Positioned(
@@ -518,6 +515,9 @@ class _Gallery extends StatelessWidget {
         ],
       ),
     );
+    return width < 640
+        ? AspectRatio(aspectRatio: 1, child: gallery)
+        : Center(child: SizedBox(width: 460, height: 460, child: gallery));
   }
 }
 

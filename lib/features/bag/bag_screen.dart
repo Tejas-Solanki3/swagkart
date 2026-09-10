@@ -326,10 +326,7 @@ class _CartItemCard extends StatelessWidget {
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(18),
-                child: Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: Image.asset(item.product.image, fit: BoxFit.contain),
-                ),
+                child: Image.asset(item.product.image, fit: BoxFit.cover),
               ),
             ),
             const SizedBox(width: 12),
