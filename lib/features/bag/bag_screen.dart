@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
@@ -28,10 +30,13 @@ class _BagScreenState extends State<BagScreen> {
   final TextEditingController _promoController = TextEditingController();
   String? _promoError;
   bool _promoStamp = false;
+  List<CartItem> _lastCleared = const [];
+  Timer? _undoTimer;
 
   @override
   void dispose() {
     _promoController.dispose();
+    _undoTimer?.cancel();
     super.dispose();
   }
 
@@ -52,7 +57,7 @@ class _BagScreenState extends State<BagScreen> {
         ..showSnackBar(
           SnackBar(
             content: Text(
-              '🎉 ${store.appliedPromo!.code} applied — flat $pct% off!',
+              '${store.appliedPromo!.code} applied — flat $pct% off!',
               style: SwagTheme.body(size: 13, weight: FontWeight.w700),
             ),
           ),
@@ -72,8 +77,16 @@ class _BagScreenState extends State<BagScreen> {
             image: 'assets/images/empty-bag.svg',
             title: 'Your bag is feeling light',
             subtitle: 'Nothing in here yet. Go find something worth bragging about.',
-            actionLabel: 'Start shopping',
-            onAction: () => store.requestTab(0),
+            actionLabel: _lastCleared.isNotEmpty ? 'Undo clear' : 'Start shopping',
+            onAction: () {
+              if (_lastCleared.isNotEmpty) {
+                store.restoreCart(_lastCleared);
+                _undoTimer?.cancel();
+                setState(() => _lastCleared = const []);
+              } else {
+                store.requestTab(0);
+              }
+            },
           );
         }
         return ListView(
@@ -106,19 +119,14 @@ class _BagScreenState extends State<BagScreen> {
               if (store.cart.isNotEmpty)
                 Pressable(
                   onTap: () {
-                    final backup = List.of(store.cart);
+                    _undoTimer?.cancel();
+                    setState(() => _lastCleared = List.of(store.cart));
                     store.clearCart();
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        duration: const Duration(seconds: 3),
-                        content: const Text('Bag cleared'),
-                        action: SnackBarAction(
-                          label: 'Undo',
-                          textColor: SwagColors.accent,
-                          onPressed: () => store.restoreCart(backup),
-                        ),
-                      ),
-                    );
+                    fireCelebration(context);
+                    // Undo lives on the empty state for 8s, then expires.
+                    _undoTimer = Timer(const Duration(seconds: 8), () {
+                      if (mounted) setState(() => _lastCleared = const []);
+                    });
                   },
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
