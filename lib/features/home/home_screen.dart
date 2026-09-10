@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/theme/app_colors.dart';
@@ -169,8 +170,12 @@ class _HomeHeader extends StatelessWidget {
               ),
             ],
           ),
-          child: const Center(
-            child: SwagIcon('bag-filled', size: 20, color: SwagColors.ink),
+          child: Center(
+            child: SvgPicture.asset(
+              'assets/icons/logo-mark.svg',
+              width: 26,
+              height: 26,
+            ),
           ),
         ),
         const SizedBox(width: 12),

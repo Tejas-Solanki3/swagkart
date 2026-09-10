@@ -219,7 +219,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                       const Spacer(),
                       Text('Payment', style: SwagTheme.display(size: 18)),
                       const Spacer(),
-                      const _RoundButton(icon: 'lock', onTap: null),
+                      const _RoundButton(icon: 'dots', onTap: null),
                     ],
                   ),
                   const SizedBox(height: 24),

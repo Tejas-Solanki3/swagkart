@@ -3,11 +3,11 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../core/nav.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
-import '../../core/widgets/swag_icon.dart';
 import '../shell/app_shell.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -78,23 +78,10 @@ class _SplashScreenState extends State<SplashScreen>
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Container(
-                      width: 96,
-                      height: 96,
-                      decoration: BoxDecoration(
-                        color: SwagColors.ink,
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: SwagColors.ink.withValues(alpha: 0.25),
-                            blurRadius: 24,
-                            offset: const Offset(0, 12),
-                          ),
-                        ],
-                      ),
-                      child: const Center(
-                        child: SwagIcon('bag', size: 44, color: Colors.white),
-                      ),
+                    SvgPicture.asset(
+                      'assets/icons/logo.svg',
+                      width: 116,
+                      height: 116,
                     )
                         .animate()
                         .scale(

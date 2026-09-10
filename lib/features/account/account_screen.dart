@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/nav.dart';
@@ -374,16 +375,10 @@ class _AccountScreenState extends State<AccountScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Container(
-                width: 64,
-                height: 64,
-                decoration: const BoxDecoration(
-                  color: SwagColors.ink,
-                  shape: BoxShape.circle,
-                ),
-                child: const Center(
-                  child: SwagIcon('bag', size: 30, color: Colors.white),
-                ),
+              SvgPicture.asset(
+                'assets/icons/logo.svg',
+                width: 76,
+                height: 76,
               ),
               const SizedBox(height: 14),
               Text(
