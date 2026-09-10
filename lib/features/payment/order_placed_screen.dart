@@ -27,7 +27,7 @@ class _OrderPlacedScreenState extends State<OrderPlacedScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) fireCelebration(context, emoji: '🎉');
+      if (mounted) fireCelebration(context, asset: 'assets/icons/celebrate-check.svg');
     });
   }
 

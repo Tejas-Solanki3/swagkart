@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- confetti field -->
+  <g>
+    <rect x="24" y="40" width="16" height="9" rx="2" fill="#E5876C" transform="rotate(24 32 44)"/>
+    <rect x="154" y="32" width="16" height="9" rx="2" fill="#4A78AC" transform="rotate(-18 162 36)"/>
+    <rect x="164" y="96" width="14" height="8" rx="2" fill="#E9B44C" transform="rotate(38 171 100)"/>
+    <rect x="22" y="96" width="14" height="8" rx="2" fill="#417A58" transform="rotate(-30 29 100)"/>
+    <circle cx="54" cy="28" r="5" fill="#E5876C"/>
+    <circle cx="148" cy="60" r="5" fill="#4A78AC"/>
+    <circle cx="66" cy="170" r="6" fill="#E9B44C"/>
+    <circle cx="140" cy="164" r="6" fill="#417A58"/>
+  </g>
+  <!-- burst rays -->
+  <g stroke="#E9B44C" stroke-width="6" stroke-linecap="round">
+    <line x1="100" y1="14" x2="100" y2="28"/>
+    <line x1="46" y1="38" x2="56" y2="48"/>
+    <line x1="154" y1="38" x2="144" y2="48"/>
+  </g>
+  <!-- badge -->
+  <circle cx="100" cy="106" r="62" fill="#E1F0E6"/>
+  <circle cx="100" cy="106" r="62" fill="none" stroke="#417A58" stroke-width="5"/>
+  <!-- check -->
+  <path d="M72 108 L92 128 L132 84" fill="none" stroke="#417A58" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- sparkles -->
+  <path d="M40 140 L44 150 L54 154 L44 158 L40 168 L36 158 L26 154 L36 150 Z" fill="#E5876C"/>
+  <path d="M164 136 L167 144 L175 147 L167 150 L164 158 L161 150 L153 147 L161 144 Z" fill="#4A78AC"/>
+</svg>

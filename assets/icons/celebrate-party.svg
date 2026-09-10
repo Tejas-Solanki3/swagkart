@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- confetti field -->
+  <g>
+    <rect x="22" y="38" width="16" height="9" rx="2" fill="#E5876C" transform="rotate(24 30 42)"/>
+    <rect x="152" y="30" width="16" height="9" rx="2" fill="#417A58" transform="rotate(-18 160 34)"/>
+    <rect x="162" y="92" width="14" height="8" rx="2" fill="#4A78AC" transform="rotate(38 169 96)"/>
+    <rect x="24" y="92" width="14" height="8" rx="2" fill="#CE6547" transform="rotate(-30 31 96)"/>
+    <circle cx="52" cy="26" r="5" fill="#4A78AC"/>
+    <circle cx="146" cy="58" r="5" fill="#E9B44C"/>
+    <circle cx="66" cy="168" r="6" fill="#4A78AC"/>
+    <circle cx="142" cy="162" r="6" fill="#E5876C"/>
+    <circle cx="18" cy="66" r="4" fill="#417A58"/>
+    <circle cx="182" cy="66" r="4" fill="#E9B44C"/>
+  </g>
+  <!-- party hat -->
+  <path d="M100 8 L74 62 L126 62 Z" fill="#E5876C"/>
+  <path d="M83 38 L117 38 L124 54 L76 54 Z" fill="#417A58"/>
+  <circle cx="100" cy="10" r="9" fill="#4A78AC"/>
+  <!-- face -->
+  <circle cx="100" cy="112" r="56" fill="#FFD166"/>
+  <!-- hat brim -->
+  <rect x="70" y="56" width="60" height="12" rx="6" fill="#1C1B24"/>
+  <!-- happy closed eyes -->
+  <path d="M72 106 Q80 96 88 106" fill="none" stroke="#1C1B24" stroke-width="6" stroke-linecap="round"/>
+  <path d="M112 106 Q120 96 128 106" fill="none" stroke="#1C1B24" stroke-width="6" stroke-linecap="round"/>
+  <!-- open smile -->
+  <path d="M76 124 A24 24 0 0 0 124 124 Z" fill="#5B3A2E"/>
+  <path d="M86 133 A14 10 0 0 0 114 133 Z" fill="#E5876C"/>
+  <!-- blush -->
+  <circle cx="64" cy="122" r="7" fill="#F2A488" opacity="0.7"/>
+  <circle cx="136" cy="122" r="7" fill="#F2A488" opacity="0.7"/>
+  <!-- sparkle accents -->
+  <path d="M40 138 L44 148 L54 152 L44 156 L40 166 L36 156 L26 152 L36 148 Z" fill="#E9B44C"/>
+  <path d="M162 132 L165 140 L173 143 L165 146 L162 154 L159 146 L151 143 L159 140 Z" fill="#4A78AC"/>
+</svg>

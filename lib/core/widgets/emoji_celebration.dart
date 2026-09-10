@@ -1,18 +1,22 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
-/// A playful emoji "splash" celebration — a big 🎉 pops up in the center
+/// A playful celebration splash — a party face pops up in the center
 /// with an elastic scale-in, a little wobble, then zooms away.
 ///
-/// Replaces the old confetti burst for add-to-bag / order moments.
-void fireCelebration(BuildContext context, {String emoji = '🥳'}) {
+/// Uses vector art (not emoji text) so it renders instantly on web,
+/// where emoji fonts load a second late.
+void fireCelebration(BuildContext context, {String? asset}) {
+  final path =
+      asset ?? 'assets/icons/celebrate-party.svg';
   final overlayState = Overlay.of(context, rootOverlay: true);
   late OverlayEntry entry;
   entry = OverlayEntry(
     builder: (_) => IgnorePointer(
       child: _CelebrationPop(
-        emoji: emoji,
+        asset: path,
         onDone: () {
           if (entry.mounted) entry.remove();
         },
@@ -23,9 +27,9 @@ void fireCelebration(BuildContext context, {String emoji = '🥳'}) {
 }
 
 class _CelebrationPop extends StatefulWidget {
-  const _CelebrationPop({required this.emoji, required this.onDone});
+  const _CelebrationPop({required this.asset, required this.onDone});
 
-  final String emoji;
+  final String asset;
   final VoidCallback onDone;
 
   @override
@@ -90,9 +94,10 @@ class _CelebrationPopState extends State<_CelebrationPop>
               scale: scale,
               child: Opacity(
                 opacity: opacity,
-                child: Text(
-                  widget.emoji,
-                  style: const TextStyle(fontSize: 112),
+                child: SvgPicture.asset(
+                  widget.asset,
+                  width: 150,
+                  height: 150,
                 ),
               ),
             ),

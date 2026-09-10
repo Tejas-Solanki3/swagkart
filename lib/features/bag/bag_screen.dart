@@ -7,6 +7,7 @@ import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/utils/format.dart';
 import '../../core/utils/responsive.dart';
+import '../../core/widgets/emoji_celebration.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/pressable.dart';
 import '../../core/widgets/swag_button.dart';
@@ -45,6 +46,7 @@ class _BagScreenState extends State<BagScreen> {
     });
     if (ok) {
       final pct = store.appliedPromo!.pct.round();
+      fireCelebration(context);
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..showSnackBar(
