@@ -548,9 +548,6 @@ class _PromoCard extends StatelessWidget {
                         style: BorderStyle.solid,
                       ),
                     ),
-                    transform: Matrix4.identity()
-                      ..setEntry(3, 4, 0)
-                      ..rotateZ(-0.02),
                     child: Row(
                       children: [
                         const SwagIcon('check', size: 18, color: SwagColors.success),

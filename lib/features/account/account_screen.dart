@@ -149,12 +149,9 @@ class _AccountScreenState extends State<AccountScreen> {
         const SizedBox(height: 14),
         Container(
           decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              colors: [SwagColors.ink, Color(0xFF3A2E22)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
+            color: SwagColors.surface,
             borderRadius: BorderRadius.circular(24),
+            border: Border.all(color: SwagColors.line),
           ),
           child: Pressable(
             onTap: () => SwagNav.push(context, (_) => const AdminGate()),
@@ -165,12 +162,12 @@ class _AccountScreenState extends State<AccountScreen> {
                   Container(
                     width: 40,
                     height: 40,
-                    decoration: BoxDecoration(
-                      color: SwagColors.canvas.withValues(alpha: 0.12),
+                    decoration: const BoxDecoration(
+                      color: SwagColors.butterSoft,
                       shape: BoxShape.circle,
                     ),
                     child: const Center(
-                      child: SwagIcon('lock', size: 19, color: SwagColors.butter),
+                      child: SwagIcon('lock', size: 19, color: SwagColors.butterDeep),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -184,17 +181,17 @@ class _AccountScreenState extends State<AccountScreen> {
                             fontFamily: 'Baloo2',
                             fontSize: 16,
                             fontWeight: FontWeight.w800,
-                            color: SwagColors.canvas,
+                            color: SwagColors.ink,
                           ),
                         ),
                         Text(
                           'Merchant dashboard · Phase 3',
-                          style: TextStyle(fontSize: 11.5, color: Color(0xFFBFB4A6)),
+                          style: TextStyle(fontSize: 11.5, color: SwagColors.inkSoft),
                         ),
                       ],
                     ),
                   ),
-                  const SwagIcon('arrow-right', size: 17, color: SwagColors.canvas),
+                  const SwagIcon('arrow-right', size: 17, color: SwagColors.inkFaint),
                 ],
               ),
             ),
@@ -274,7 +271,7 @@ class _AccountScreenState extends State<AccountScreen> {
   }
 }
 
-/// Dark ink "member card" — avatar, identity, VIP chip and live stats.
+/// White "member card" — avatar, identity, VIP chip and live stats.
 class _ProfileCard extends StatelessWidget {
   const _ProfileCard({required this.savedCount, required this.bagCount});
 
@@ -286,17 +283,14 @@ class _ProfileCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [SwagColors.ink, Color(0xFF3A2E22)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        color: SwagColors.surface,
         borderRadius: BorderRadius.circular(30),
+        border: Border.all(color: SwagColors.line),
         boxShadow: [
           BoxShadow(
-            color: SwagColors.ink.withValues(alpha: 0.28),
-            blurRadius: 24,
-            offset: const Offset(0, 12),
+            color: SwagColors.ink.withValues(alpha: 0.05),
+            blurRadius: 18,
+            offset: const Offset(0, 8),
           ),
         ],
       ),
@@ -308,15 +302,15 @@ class _ProfileCard extends StatelessWidget {
                 width: 56,
                 height: 56,
                 decoration: BoxDecoration(
-                  color: SwagColors.canvas.withValues(alpha: 0.14),
+                  color: SwagColors.accentSoft,
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: SwagColors.canvas.withValues(alpha: 0.25),
+                    color: SwagColors.accent.withValues(alpha: 0.3),
                     width: 1.2,
                   ),
                 ),
                 child: const Center(
-                  child: SwagIcon('user', size: 26, color: SwagColors.canvas),
+                  child: SwagIcon('user', size: 26, color: SwagColors.accentDeep),
                 ),
               ),
               const SizedBox(width: 14),
@@ -326,20 +320,12 @@ class _ProfileCard extends StatelessWidget {
                   children: [
                     Text(
                       'Aarav Sharma',
-                      style: const TextStyle(
-                        fontFamily: 'Baloo2',
-                        fontSize: 20,
-                        fontWeight: FontWeight.w800,
-                        color: SwagColors.canvas,
-                      ),
+                      style: SwagTheme.display(size: 20),
                     ),
                     const SizedBox(height: 2),
-                    const Text(
+                    Text(
                       'aarav.swag@example.in',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Color(0xFFB9B0C4),
-                      ),
+                      style: SwagTheme.body(size: 12, color: SwagColors.inkSoft),
                     ),
                   ],
                 ),
@@ -357,32 +343,32 @@ class _ProfileCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 decoration: BoxDecoration(
-                  color: SwagColors.butter,
+                  color: SwagColors.butterSoft,
                   borderRadius: BorderRadius.circular(999),
                 ),
                 child: const Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    SwagIcon('fire', size: 12, color: SwagColors.ink),
+                    SwagIcon('fire', size: 12, color: SwagColors.butterDeep),
                     SizedBox(width: 5),
                     Text(
                       'VIP Swag Club',
                       style: TextStyle(
                         fontSize: 10.5,
                         fontWeight: FontWeight.w800,
-                        color: SwagColors.ink,
+                        color: SwagColors.butterDeep,
                       ),
                     ),
                   ],
                 ),
               ),
               const Spacer(),
-              const Text(
+              Text(
                 'ID · SK-000214',
-                style: TextStyle(
-                  fontSize: 10.5,
-                  fontWeight: FontWeight.w700,
-                  color: Color(0xFF9C93A8),
+                style: SwagTheme.body(
+                  size: 10.5,
+                  weight: FontWeight.w700,
+                  color: SwagColors.inkFaint,
                   letterSpacing: 0.6,
                 ),
               ),
@@ -391,7 +377,7 @@ class _ProfileCard extends StatelessWidget {
           const SizedBox(height: 18),
           Container(
             height: 1,
-            color: SwagColors.canvas.withValues(alpha: 0.14),
+            color: SwagColors.line,
           ),
           const SizedBox(height: 16),
           Row(
@@ -422,20 +408,15 @@ class _StatTile extends StatelessWidget {
         children: [
           Text(
             value,
-            style: const TextStyle(
-              fontFamily: 'Baloo2',
-              fontSize: 19,
-              fontWeight: FontWeight.w800,
-              color: SwagColors.canvas,
-            ),
+            style: SwagTheme.display(size: 19, weight: FontWeight.w800),
           ),
           const SizedBox(height: 2),
           Text(
             label,
-            style: const TextStyle(
-              fontSize: 10,
-              fontWeight: FontWeight.w600,
-              color: Color(0xFF9C93A8),
+            style: SwagTheme.body(
+              size: 10,
+              weight: FontWeight.w600,
+              color: SwagColors.inkFaint,
               letterSpacing: 0.6,
             ),
           ),
@@ -455,7 +436,7 @@ class _StatDivider extends StatelessWidget {
       child: Container(
         width: 1,
         height: 26,
-        color: SwagColors.canvas.withValues(alpha: 0.16),
+        color: SwagColors.line,
       ),
     );
   }

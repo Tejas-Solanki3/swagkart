@@ -92,19 +92,20 @@ class _SwagBottomNav extends StatelessWidget {
           return Container(
             height: 64,
             decoration: BoxDecoration(
-              color: SwagColors.ink,
+              color: SwagColors.surface,
               borderRadius: BorderRadius.circular(999),
+              border: Border.all(color: SwagColors.line, width: 1.2),
               boxShadow: [
                 BoxShadow(
-                  color: SwagColors.ink.withValues(alpha: 0.38),
-                  blurRadius: 26,
-                  offset: const Offset(0, 12),
+                  color: SwagColors.ink.withValues(alpha: 0.10),
+                  blurRadius: 22,
+                  offset: const Offset(0, 10),
                 ),
               ],
             ),
             child: Stack(
               children: [
-                // Sliding white pill indicator
+                // Sliding ink pill indicator
                 AnimatedPositioned(
                   duration: const Duration(milliseconds: 380),
                   curve: Curves.easeOutBack,
@@ -114,7 +115,7 @@ class _SwagBottomNav extends StatelessWidget {
                   height: 48,
                   child: Container(
                     decoration: BoxDecoration(
-                      color: SwagColors.surface,
+                      color: SwagColors.ink,
                       borderRadius: BorderRadius.circular(999),
                     ),
                   ),
@@ -167,8 +168,8 @@ class _NavItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dim = Colors.white.withValues(alpha: active ? 1 : 0.5);
-    final iconColor = active ? SwagColors.ink : dim;
+    final dim = SwagColors.ink.withValues(alpha: active ? 1 : 0.42);
+    final iconColor = active ? SwagColors.canvas : dim;
     return Pressable(
       onTap: onTap,
       scale: 0.94,

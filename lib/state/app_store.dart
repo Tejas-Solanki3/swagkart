@@ -176,18 +176,66 @@ class SwagAppStore extends ChangeNotifier {
       products.where((p) => wishlist.contains(p.id)).toList();
 
   // ------------------------------------------------------------ discovery
+  /// Fuzzy search: plural-insensitive (sneakers = sneaker) with a small
+  /// synonym web (shoes / sneakers / runners all match footwear).
+  static const List<Set<String>> _synonymGroups = [
+    {'shoe', 'sneaker', 'runner', 'boot', 'footwear', 'kick', 'loafer', 'court'},
+    {'hoodie', 'sweatshirt', 'sweater'},
+    {'cap', 'beanie', 'hat'},
+    {'jean', 'denim'},
+    {'tote', 'duffel', 'bag', 'sling'},
+  ];
+
+  static Set<String> _tokenVariants(String token) {
+    final base = <String>{token};
+    for (final group in _synonymGroups) {
+      if (group.contains(token)) base.addAll(group);
+    }
+    final out = <String>{};
+    for (final b in base) {
+      out.add(b);
+      out.add('${b}s');
+      if (b.endsWith('s') && b.length > 3) out.add(b.substring(0, b.length - 1));
+      if (b.endsWith('es') && b.length > 4) out.add(b.substring(0, b.length - 2));
+    }
+    return out;
+  }
+
+  static final RegExp _nonAlphaNum = RegExp(r'[^a-z0-9]+');
+
   List<Product> search(String query) {
     final q = query.trim().toLowerCase();
     if (q.isEmpty) return List.of(products);
+    final queryWords =
+        q.split(_nonAlphaNum).where((w) => w.length > 1).toSet();
+    if (queryWords.isEmpty) return List.of(products);
+    final queryVariantSets =
+        queryWords.map(_tokenVariants).toList(growable: false);
+
     return products.where((p) {
-      final haystack = [
+      final full = [
         p.name,
         p.brand,
         p.category,
         p.blurb,
         ...p.tags,
       ].join(' ').toLowerCase();
-      return haystack.contains(q);
+      // Whole-phrase match first (keeps multi-word queries precise).
+      if (full.contains(q)) return true;
+      // Then any query word must find a match among the product's
+      // variant tokens. Token matching uses name/brand/category/tags
+      // only — the blurb would let "shoes" match a jean whose
+      // description happens to mention sneakers.
+      final core = [p.name, p.brand, p.category, ...p.tags]
+          .join(' ')
+          .toLowerCase();
+      final coreWords =
+          core.split(_nonAlphaNum).where((w) => w.length > 2).toSet();
+      final coreVariants = <String>{};
+      for (final w in coreWords) {
+        coreVariants.addAll(_tokenVariants(w));
+      }
+      return queryVariantSets.any((qv) => qv.any(coreVariants.contains));
     }).toList();
   }
 

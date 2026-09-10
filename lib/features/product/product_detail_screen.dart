@@ -15,7 +15,6 @@ import '../../core/widgets/swag_button.dart';
 import '../../core/widgets/swag_icon.dart';
 import '../../data/models/product.dart';
 import '../../state/app_store.dart';
-import '../payment/payment_screen.dart';
 
 class ProductDetailScreen extends StatefulWidget {
   const ProductDetailScreen({super.key, required this.product});
@@ -86,9 +85,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
     setState(() => _added = true);
     if (buyNow) {
       Future<void>.delayed(const Duration(milliseconds: 700), () {
-        if (mounted) {
-          SwagNav.push(context, (_) => const PaymentScreen());
-        }
+        if (!mounted) return;
+        store.requestTab(3);
+        SwagNav.popToRoot(context);
       });
       return;
     }
@@ -103,11 +102,13 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
           action: SnackBarAction(
             label: 'View bag',
             textColor: SwagColors.accent,
-            onPressed: () => store.requestTab(3),
+            onPressed: () {
+              store.requestTab(3);
+              SwagNav.popToRoot(context);
+            },
           ),
         ),
       );
-      if (buyNow) store.requestTab(3);
     });
   }
 
@@ -365,7 +366,11 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                 child: Row(
                   children: [
                     Pressable(
-                      onTap: () => _addToBag(),
+                      onTap: () {
+                        final store = context.read<SwagAppStore>();
+                        store.requestTab(0);
+                        SwagNav.popToRoot(context);
+                      },
                       child: Container(
                         width: 54,
                         height: 54,
@@ -373,9 +378,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                           color: SwagColors.surfaceMist,
                           shape: BoxShape.circle,
                         ),
-                        child: Center(
+                        child: const Center(
                           child: SwagIcon(
-                            'bag',
+                            'home',
                             size: 22,
                             color: SwagColors.ink,
                           ),
