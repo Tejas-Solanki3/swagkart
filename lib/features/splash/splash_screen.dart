@@ -78,10 +78,27 @@ class _SplashScreenState extends State<SplashScreen>
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    SvgPicture.asset(
-                      'assets/icons/logo.svg',
-                      width: 116,
-                      height: 116,
+                    Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        SvgPicture.asset(
+                          'assets/icons/logo.svg',
+                          width: 116,
+                          height: 116,
+                        ),
+                        // A little party popper joins in before we leave.
+                        Positioned(
+                          top: -12,
+                          right: -20,
+                          child: SvgPicture.asset(
+                            'assets/icons/celebrate-pop.svg',
+                            width: 52,
+                            height: 52,
+                          ).animate(
+                            delay: 1500.ms,
+                          ).scale(begin: Offset.zero, end: const Offset(1, 1), duration: 430.ms, curve: Curves.easeOutBack).rotate(begin: -0.7, end: 0.2, duration: 430.ms).fadeIn(duration: 240.ms),
+                        ),
+                      ],
                     )
                         .animate()
                         .scale(

@@ -38,7 +38,7 @@ warmer and more alive:
 | **Checkout** | Payment screen: UPI / Card / COD picker, **live gradient card preview** as you type, auto-formatting card/expiry/CVV inputs with validation, UPI id flow, COD note, processing overlay → order confirmation with confetti + order summary. Recent order surfaces in the Account tab |
 | **Account** | Profile card, saved-items sheet (wishlist grid), recent order card, phase-gated menu, About dialog, admin gate |
 | **State** | Single shared `SwagAppStore` (provider + ChangeNotifier): products, cart, wishlist, promos, orders, tab requests. In-memory demo data; swap for network later without touching widgets |
-| **Icons & type** | custom geometric **S + spark logo** (launcher, web, favicon, in-app mark) · 38 premium stroke SVG icons, all recolorable via currentColor, bundled fonts |
+| **Icons & type** | custom geometric **S + spark logo** (launcher, web, favicon, in-app mark) · 43 hand-drawn SVG icons & celebration art, all recolorable via currentColor, bundled fonts |
 | **Platforms** | Ships for **Android** (`minSdk = 24`); `macos/` + `web/` targets included for local preview |
 
 ## Run it

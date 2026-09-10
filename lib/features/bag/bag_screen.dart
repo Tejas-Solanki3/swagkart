@@ -187,9 +187,16 @@ class _BagScreenState extends State<BagScreen> {
             ),
             const SizedBox(height: 10),
             Center(
-              child: Text(
-                '🔒 256-bit encrypted · GST invoice included',
-                style: SwagTheme.body(size: 11.5, color: SwagColors.inkFaint),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const SwagIcon('lock', size: 12, color: SwagColors.inkFaint),
+                  const SizedBox(width: 5),
+                  Text(
+                    '256-bit encrypted · GST invoice included',
+                    style: SwagTheme.body(size: 11.5, color: SwagColors.inkFaint),
+                  ),
+                ],
               ),
             ),
           ],

@@ -125,7 +125,7 @@ class _OrderPlacedScreenState extends State<OrderPlacedScreen> {
                   ..hideCurrentSnackBar()
                   ..showSnackBar(
                     const SnackBar(
-                      content: Text('Live tracking lands in the next phase 👀'),
+                      content: Text('Live tracking lands in the next phase'),
                     ),
                   );
               },

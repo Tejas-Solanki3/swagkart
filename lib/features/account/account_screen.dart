@@ -47,12 +47,12 @@ class _AccountScreenState extends State<AccountScreen> {
                 (_) => OrderPlacedScreen(order: store.lastOrder!),
               );
             } else {
-              _toast(context, 'No orders yet — your first drop is one tap away 📦');
+              _toast(context, 'No orders yet — your first drop is one tap away');
             }
           },
           onWishlist: () => store.requestTab(2),
           onAddresses: () => _toast(context, 'Saved addresses land with Phase 2.'),
-          onSupport: () => _toast(context, 'Support desk opens with Phase 2. Be gentle 😌'),
+          onSupport: () => _toast(context, 'Support desk opens with Phase 2.'),
         )
             .animate(delay: 90.ms).fadeIn(duration: 420.ms).moveY(begin: 16, end: 0, duration: 420.ms, curve: Curves.easeOut),
         if (lastOrder != null) ...[
@@ -134,7 +134,7 @@ class _AccountScreenState extends State<AccountScreen> {
                 icon: 'shield',
                 tint: SwagColors.butter,
                 label: 'Help & support',
-                onTap: () => _toast(context, 'Support desk opens with Phase 2. Be gentle 😌'),
+                onTap: () => _toast(context, 'Support desk opens with Phase 2.'),
               ),
               const _Divider(),
               _MenuRow(
