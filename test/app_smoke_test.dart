@@ -25,7 +25,7 @@ void main() {
     // Every tab is laid out by the IndexedStack (inactive tabs are
     // offstage to finders in modern Flutter).
     expect(find.text('The Catalog', skipOffstage: false), findsOneWidget);
-    expect(find.text('Find your swag', skipOffstage: false), findsOneWidget);
+    expect(find.text('Nothing saved yet', skipOffstage: false), findsOneWidget);
     expect(find.text('Your Account', skipOffstage: false), findsOneWidget);
     expect(find.text('Your bag is feeling light', skipOffstage: false),
         findsOneWidget);

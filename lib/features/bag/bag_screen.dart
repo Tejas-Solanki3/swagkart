@@ -34,13 +34,28 @@ class _BagScreenState extends State<BagScreen> {
     super.dispose();
   }
 
-  void _applyPromo(SwagAppStore store) {
+  void _applyPromo(SwagAppStore store, {String? code}) {
+    if (code != null) {
+      _promoController.text = code;
+    }
     final ok = store.applyPromo(_promoController.text);
     setState(() {
       _promoStamp = ok;
       _promoError = ok ? null : 'Hmm, that code isn’t valid. Try SWAG15.';
     });
-    if (!ok) {
+    if (ok) {
+      final pct = store.appliedPromo!.pct.round();
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(
+            content: Text(
+              '🎉 ${store.appliedPromo!.code} applied — flat $pct% off!',
+              style: SwagTheme.body(size: 13, weight: FontWeight.w700),
+            ),
+          ),
+        );
+    } else {
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
     }
   }
@@ -134,6 +149,7 @@ class _BagScreenState extends State<BagScreen> {
               applied: store.appliedPromo,
               stamped: _promoStamp,
               onApply: () => _applyPromo(store),
+              onQuickApply: (code) => _applyPromo(store, code: code),
               onClear: () {
                 store.clearPromo();
                 setState(() {
@@ -459,6 +475,7 @@ class _PromoCard extends StatelessWidget {
     required this.applied,
     required this.stamped,
     required this.onApply,
+    required this.onQuickApply,
     required this.onClear,
   });
 
@@ -467,6 +484,7 @@ class _PromoCard extends StatelessWidget {
   final SwagAppStorePromoRef? applied;
   final bool stamped;
   final VoidCallback onApply;
+  final void Function(String code) onQuickApply;
   final VoidCallback onClear;
 
   @override
@@ -615,6 +633,21 @@ class _PromoCard extends StatelessWidget {
                 ),
               ],
             ),
+          if (!hasCode) ...[
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                const Text(
+                  'One tap:',
+                  style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: SwagColors.inkFaint),
+                ),
+                const SizedBox(width: 8),
+                _CodeChip(code: 'SWAG15', note: '15% off', onTap: onQuickApply),
+                const SizedBox(width: 8),
+                _CodeChip(code: 'SWAG10', note: '10% off', onTap: onQuickApply),
+              ],
+            ),
+          ],
           if (error != null) ...[
             const SizedBox(height: 8),
             Row(
@@ -629,6 +662,47 @@ class _PromoCard extends StatelessWidget {
             ).animate().moveX(begin: -8, end: 0, duration: 300.ms),
           ],
         ],
+      ),
+    );
+  }
+}
+
+class _CodeChip extends StatelessWidget {
+  const _CodeChip({required this.code, required this.note, required this.onTap});
+
+  final String code;
+  final String note;
+  final void Function(String code) onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Pressable(
+      onTap: () => onTap(code),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 7),
+        decoration: BoxDecoration(
+          color: SwagColors.canvas,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: SwagColors.line, width: 1.3),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              code,
+              style: SwagTheme.body(
+                size: 11.5,
+                weight: FontWeight.w800,
+                letterSpacing: 0.8,
+              ),
+            ),
+            const SizedBox(width: 5),
+            Text(
+              note,
+              style: SwagTheme.body(size: 10, color: SwagColors.inkFaint),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -6,6 +6,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/nav.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/utils/format.dart';
@@ -18,6 +19,7 @@ import '../../core/widgets/swag_icon.dart';
 import '../../data/demo_data.dart';
 import '../../data/models/product.dart';
 import '../../state/app_store.dart';
+import '../search/search_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -27,8 +29,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _heroImage = 0;
-  Timer? _heroTimer;
   int _suggestion = 0;
   Timer? _suggestionTimer;
   bool _copied = false;
@@ -43,9 +43,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    _heroTimer = Timer.periodic(const Duration(milliseconds: 4200), (_) {
-      if (mounted) setState(() => _heroImage = (_heroImage + 1) % 3);
-    });
     _suggestionTimer = Timer.periodic(const Duration(milliseconds: 2600), (_) {
       if (mounted) setState(() => _suggestion = (_suggestion + 1) % _suggestions.length);
     });
@@ -53,7 +50,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void dispose() {
-    _heroTimer?.cancel();
     _suggestionTimer?.cancel();
     super.dispose();
   }
@@ -85,11 +81,11 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 18),
             _SearchBar(
               suggestion: _suggestions[_suggestion],
-              onTap: () => store.requestTab(2),
+              onTap: () => SwagNav.push(context, (_) => const SearchScreen()),
             ),
             const SizedBox(height: 18),
-            _OfferCard(
-              image: store.heroes[_heroImage].image,
+            _HeroSlideshow(
+              heroes: store.heroes,
               onExplore: () => store.requestTab(1),
             ),
             const SizedBox(height: 20),
@@ -317,116 +313,82 @@ class _SearchBar extends StatelessWidget {
 
 // ---------------------------------------------------------------------------
 
-/// Reference-style pastel offer card with a rotating product image.
-class _OfferCard extends StatelessWidget {
-  const _OfferCard({required this.image, required this.onExplore});
+/// Auto-advancing hero slideshow — big product photo, slide copy, dots.
+class _HeroSlideshow extends StatefulWidget {
+  const _HeroSlideshow({required this.heroes, required this.onExplore});
 
-  final String image;
+  final List<HeroSlide> heroes;
   final VoidCallback onExplore;
 
   @override
+  State<_HeroSlideshow> createState() => _HeroSlideshowState();
+}
+
+class _HeroSlideshowState extends State<_HeroSlideshow> {
+  late final PageController _pages = PageController();
+  Timer? _timer;
+  int _page = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _timer = Timer.periodic(const Duration(milliseconds: 4200), (_) {
+      if (!mounted || widget.heroes.length < 2) return;
+      final next = (_page + 1) % widget.heroes.length;
+      _pages.animateToPage(
+        next,
+        duration: const Duration(milliseconds: 560),
+        curve: Curves.easeOutCubic,
+      );
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    _pages.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(20, 18, 16, 18),
-      decoration: BoxDecoration(
-        color: SwagColors.mistSoft,
-        borderRadius: BorderRadius.circular(26),
-      ),
-      child: Row(
+    final wide = MediaQuery.sizeOf(context).width >= 640;
+    final count = widget.heroes.length;
+    return SizedBox(
+      height: wide ? 252 : 224,
+      child: Stack(
+        clipBehavior: Clip.antiAlias,
         children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: SwagColors.surface,
-                    borderRadius: BorderRadius.circular(999),
-                  ),
-                  child: Text(
-                    'NEW SEASON · SS26',
-                    style: SwagTheme.body(
-                      size: 9.5,
-                      weight: FontWeight.w800,
-                      color: SwagColors.mistDeep,
-                      letterSpacing: 1,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  'Get Special Offer',
-                  style: SwagTheme.display(size: 16, weight: FontWeight.w700),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  '40% OFF',
-                  style: SwagTheme.display(
-                    size: 27,
-                    weight: FontWeight.w800,
-                    color: SwagColors.ink,
-                    height: 1.05,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Pressable(
-                  onTap: onExplore,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                    decoration: BoxDecoration(
-                      color: SwagColors.surface,
-                      borderRadius: BorderRadius.circular(999),
-                      boxShadow: [
-                        BoxShadow(
-                          color: SwagColors.ink.withValues(alpha: 0.07),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          'Explore more',
-                          style: SwagTheme.body(
-                            size: 12.5,
-                            weight: FontWeight.w700,
-                            color: SwagColors.ink,
-                          ),
-                        ),
-                        const SizedBox(width: 5),
-                        const SwagIcon('arrow-right', size: 14, color: SwagColors.ink),
-                      ],
-                    ),
-                  ),
-                ).animate(
-                  onPlay: (c) => c.repeat(reverse: true),
-                  delay: 600.ms,
-                ).rotate(begin: -0.03, end: 0.03, duration: 900.ms),
-              ],
+          PageView.builder(
+            controller: _pages,
+            itemCount: count,
+            onPageChanged: (p) => setState(() => _page = p),
+            itemBuilder: (context, i) => _HeroSlide(
+              key: ValueKey('hero-$i'),
+              slide: widget.heroes[i],
+              wide: wide,
+              onExplore: widget.onExplore,
             ),
           ),
-          const SizedBox(width: 14),
-          SizedBox(
-            width: 96,
-            height: 96,
-            child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 500),
-              transitionBuilder: (child, animation) => ScaleTransition(
-                scale: Tween<double>(begin: 0.92, end: 1).animate(animation),
-                child: FadeTransition(opacity: animation, child: child),
-              ),
-              child: Container(
-                key: ValueKey(image),
-                decoration: BoxDecoration(
-                  color: SwagColors.photoMat,
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: SwagColors.surface),
-                ),
-                child: Image.asset(image, fit: BoxFit.cover),
-              ),
+          Positioned(
+            left: 22,
+            bottom: 12,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: List.generate(count, (i) {
+                final active = i == _page;
+                return AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeOut,
+                  margin: const EdgeInsets.symmetric(horizontal: 2.5),
+                  width: active ? 18 : 6,
+                  height: 6,
+                  decoration: BoxDecoration(
+                    color: active ? SwagColors.ink : SwagColors.ink.withValues(alpha: 0.22),
+                    borderRadius: BorderRadius.circular(999),
+                  ),
+                );
+              }),
             ),
           ),
         ],
@@ -434,6 +396,141 @@ class _OfferCard extends StatelessWidget {
     );
   }
 }
+
+class _HeroSlide extends StatelessWidget {
+  const _HeroSlide({super.key, required this.slide, required this.wide, required this.onExplore});
+
+  final HeroSlide slide;
+  final bool wide;
+  final VoidCallback onExplore;
+
+  (Color bg, Color deep) get _tone {
+    if (slide.accent == SwagColors.mint) return (SwagColors.mintSoft, SwagColors.mintDeep);
+    if (slide.accent == SwagColors.mist) return (SwagColors.mistSoft, SwagColors.mistDeep);
+    return (SwagColors.accentSoft, SwagColors.accentDeep);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final (bg, deep) = _tone;
+    final imgSize = wide ? 200.0 : 172.0;
+    return Container(
+      margin: const EdgeInsets.all(6),
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: BorderRadius.circular(28),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(20, 18, 12, 18),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: SwagColors.surface,
+                      borderRadius: BorderRadius.circular(999),
+                    ),
+                    child: Text(
+                      slide.kicker.toUpperCase(),
+                      style: SwagTheme.body(
+                        size: 9.5,
+                        weight: FontWeight.w800,
+                        color: deep,
+                        letterSpacing: 1,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 9),
+                  Text(
+                    slide.title,
+                    style: SwagTheme.display(size: 17, weight: FontWeight.w800),
+                    maxLines: 2,
+                  ),
+                  const SizedBox(height: 3),
+                  Text(
+                    slide.subtitle,
+                    style: SwagTheme.body(size: 11.5, color: SwagColors.inkSoft),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const Spacer(),
+                  Pressable(
+                    onTap: onExplore,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 9),
+                      decoration: BoxDecoration(
+                        color: SwagColors.surface,
+                        borderRadius: BorderRadius.circular(999),
+                        boxShadow: [
+                          BoxShadow(
+                            color: SwagColors.ink.withValues(alpha: 0.10),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            slide.cta,
+                            style: SwagTheme.body(
+                              size: 12.5,
+                              weight: FontWeight.w800,
+                              color: SwagColors.ink,
+                            ),
+                          ),
+                          const SizedBox(width: 5),
+                          const SwagIcon('arrow-right', size: 14, color: SwagColors.ink),
+                        ],
+                      ),
+                    ),
+                  ).animate(
+                    onPlay: (c) => c.repeat(reverse: true),
+                    delay: 700.ms,
+                  ).rotate(begin: -0.025, end: 0.025, duration: 950.ms),
+                ],
+              ),
+            ),
+          ),
+          SizedBox(
+            width: imgSize + (wide ? 24 : 18),
+            child: Padding(
+              padding: EdgeInsets.only(right: wide ? 24 : 18),
+              child: Container(
+                width: imgSize,
+                height: imgSize,
+                decoration: BoxDecoration(
+                color: SwagColors.surface,
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(color: SwagColors.surface),
+                boxShadow: [
+                  BoxShadow(
+                    color: SwagColors.ink.withValues(alpha: 0.12),
+                    blurRadius: 18,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(24),
+                child: Image.asset(slide.image, fit: BoxFit.cover),
+              ),
+            ).animate(
+              delay: 150.ms,
+            ).scale(begin: const Offset(0.9, 0.9), end: const Offset(1, 1), duration: 520.ms, curve: Curves.easeOutBack).fadeIn(duration: 400.ms),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 
 // ---------------------------------------------------------------------------
 

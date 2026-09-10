@@ -11,7 +11,7 @@ import '../account/account_screen.dart';
 import '../bag/bag_screen.dart';
 import '../catalog/catalog_screen.dart';
 import '../home/home_screen.dart';
-import '../search/search_screen.dart';
+import '../wishlist/wishlist_screen.dart';
 
 /// Root 5-tab shell with a floating pill bottom nav.
 class AppShell extends StatefulWidget {
@@ -31,7 +31,7 @@ class _AppShellState extends State<AppShell> {
     final pages = <Widget>[
       const HomeScreen(),
       const CatalogScreen(),
-      const SearchScreen(),
+      const WishlistScreen(),
       const BagScreen(),
       const AccountScreen(),
     ];
@@ -76,7 +76,7 @@ class _SwagBottomNav extends StatelessWidget {
   static const _tabs = <_TabSpec>[
     _TabSpec('home', 'home-filled', 'Home'),
     _TabSpec('grid', 'grid-filled', 'Catalog'),
-    _TabSpec('search', 'search', 'Search', special: true),
+    _TabSpec('heart', 'heart-filled', 'Wishlist'),
     _TabSpec('bag', 'bag-filled', 'Bag'),
     _TabSpec('user', 'user-filled', 'Account'),
   ];
@@ -131,11 +131,11 @@ class _SwagBottomNav extends StatelessWidget {
                       ),
                   ],
                 ),
-                // Cart badge
+                // Bag badge — sits on the Bag tab (index 3)
                 if (cartCount > 0)
                   Positioned(
-                    right: slot * 3 + slot / 2 + 4,
-                    top: 10,
+                    right: slot * 1.5 - 10,
+                    top: 8,
                     child: CountBadge(count: cartCount),
                   ),
               ],
@@ -148,11 +148,10 @@ class _SwagBottomNav extends StatelessWidget {
 }
 
 class _TabSpec {
-  const _TabSpec(this.icon, this.iconFilled, this.label, {this.special = false});
+  const _TabSpec(this.icon, this.iconFilled, this.label);
   final String icon;
   final String iconFilled;
   final String label;
-  final bool special;
 }
 
 class _NavItem extends StatelessWidget {

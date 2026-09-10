@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <defs>
+    <linearGradient id="heart" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FBE9E1"/>
+      <stop offset="1" stop-color="#F9E4E8"/>
+    </linearGradient>
+  </defs>
+  <!-- ground shadow -->
+  <ellipse cx="100" cy="168" rx="52" ry="9" fill="#EDE3D2"/>
+  <!-- heart body -->
+  <path d="M100 148 C74 128 46 106 46 80 C46 62 60 50 76 50 C88 50 97 57 100 66 C103 57 112 50 124 50 C140 50 154 62 154 80 C154 106 126 128 100 148 Z"
+        fill="url(#heart)" stroke="#221A13" stroke-width="4" stroke-linejoin="round"/>
+  <!-- little motion dashes -->
+  <path d="M34 62 L42 58" stroke="#221A13" stroke-width="3.5" stroke-linecap="round" opacity="0.55"/>
+  <path d="M166 62 L158 58" stroke="#221A13" stroke-width="3.5" stroke-linecap="round" opacity="0.55"/>
+  <path d="M100 30 L100 38" stroke="#221A13" stroke-width="3.5" stroke-linecap="round" opacity="0.55"/>
+  <!-- sparkle dots -->
+  <circle cx="58" cy="112" r="4" fill="#E5876C"/>
+  <circle cx="142" cy="100" r="3" fill="#4A78AC"/>
+  <circle cx="104" cy="40" r="3" fill="#417A58"/>
+</svg>
