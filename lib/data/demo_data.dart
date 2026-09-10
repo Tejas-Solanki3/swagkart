@@ -93,7 +93,7 @@ const List<Product> demoProducts = [
     blurb:
         'Heavyweight 420 GSM loopback fleece with a relaxed drop-shoulder fit. '
         'Sweat-proof prints, pre-shrunk, zero pilling promises.',
-    image: 'assets/images/products/hoodie.png',
+    image: 'assets/images/products/hoodie_ember.png',
     price: 2499,
     mrp: 3999,
     rating: 4.8,
@@ -102,7 +102,10 @@ const List<Product> demoProducts = [
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
     tags: ['trending', 'bestseller'],
     stock: 24,
-  ),
+    gallery: [
+      'assets/images/products/hoodie_cream.png',
+      'assets/images/products/hoodie_black.png',
+    ]  ),
   Product(
     id: 'p-runner',
     name: 'Rangoli Runner',
@@ -111,7 +114,7 @@ const List<Product> demoProducts = [
     blurb:
         'A retro court runner on a cushioned gum sole. Breathable knit upper, '
         'hand-washable, and built for 10K steps a day.',
-    image: 'assets/images/products/runner.png',
+    image: 'assets/images/products/runner_cream.png',
     price: 4299,
     mrp: 5499,
     rating: 4.7,
@@ -120,7 +123,9 @@ const List<Product> demoProducts = [
     sizes: ['UK 6', 'UK 7', 'UK 8', 'UK 9', 'UK 10'],
     tags: ['trending'],
     stock: 18,
-  ),
+    gallery: [
+      'assets/images/products/runner_mustard.png',
+    ]  ),
   Product(
     id: 'p-bomber',
     name: 'Bazaar Bomber',
@@ -489,7 +494,7 @@ const List<Product> demoProducts = [
     blurb:
         'Hand-woven jute tote in sunset tones. Structured base, inner '
         'zip pocket, carries a laptop and your whole personality.',
-    image: 'assets/images/products/tote.png',
+    image: 'assets/images/products/sunset_tote.png',
     price: 1499,
     mrp: 2199,
     rating: 4.5,
@@ -507,7 +512,7 @@ const List<Product> demoProducts = [
     blurb:
         'Six-panel canvas cap in stone grey with an embroidered mark. '
         'Adjustable strap, pre-curved brim, washes clean.',
-    image: 'assets/images/products/cap.png',
+    image: 'assets/images/products/stone_cap.png',
     price: 899,
     mrp: 1299,
     rating: 4.3,
@@ -525,7 +530,7 @@ const List<Product> demoProducts = [
     blurb:
         'Wraparound shades in onyx acetate with grey gradient lenses. '
         'UV400, feather-light hinges, case included.',
-    image: 'assets/images/products/shades.png',
+    image: 'assets/images/products/onyx_shades.png',
     price: 1999,
     mrp: 2999,
     rating: 4.6,

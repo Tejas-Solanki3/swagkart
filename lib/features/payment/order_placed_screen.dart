@@ -6,7 +6,7 @@ import '../../core/nav.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/utils/format.dart';
-import '../../core/widgets/confetti_burst.dart';
+import '../../core/widgets/emoji_celebration.dart';
 import '../../core/widgets/swag_button.dart';
 import '../../core/widgets/swag_icon.dart';
 import '../../data/models/order.dart';
@@ -27,7 +27,7 @@ class _OrderPlacedScreenState extends State<OrderPlacedScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) fireConfetti(context, origin: const Offset(0.5, 0.32));
+      if (mounted) fireCelebration(context, emoji: '✅');
     });
   }
 

@@ -9,7 +9,7 @@ import '../nav.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_theme.dart';
 import '../utils/format.dart';
-import 'confetti_burst.dart';
+import 'emoji_celebration.dart';
 import 'pressable.dart';
 import 'swag_icon.dart';
 
@@ -82,7 +82,7 @@ class ProductCard extends StatelessWidget {
                         product.sizes.first,
                         product.colors.isNotEmpty ? product.colors.first : 'Default',
                       );
-                      fireConfetti(context, origin: const Offset(0.28, 0.62));
+                      fireCelebration(context);
                     },
                   ),
                 ),

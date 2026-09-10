@@ -167,7 +167,9 @@ class _NavItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Same icon in both states — only the tone changes.
-    final iconColor = Colors.white.withValues(alpha: active ? 1 : 0.45);
+    // Active: ink on the sliding white pill. Inactive: white on the ink bar.
+    final iconColor = active ? SwagColors.ink : Colors.white.withValues(alpha: 0.5);
+    final labelColor = active ? SwagColors.ink : Colors.white.withValues(alpha: 0.55);
     return Pressable(
       onTap: onTap,
       scale: 0.94,
@@ -185,7 +187,7 @@ class _NavItem extends StatelessWidget {
             style: SwagTheme.body(
               size: 10,
               weight: active ? FontWeight.w700 : FontWeight.w500,
-              color: Colors.white.withValues(alpha: active ? 1 : 0.55),
+              color: labelColor,
             ),
           ),
         ],

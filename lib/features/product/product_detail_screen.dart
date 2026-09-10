@@ -7,7 +7,7 @@ import '../../core/nav.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/utils/format.dart';
-import '../../core/widgets/confetti_burst.dart';
+import '../../core/widgets/emoji_celebration.dart';
 import '../../core/widgets/pressable.dart';
 import '../../core/widgets/product_card.dart';
 import '../../core/widgets/section_header.dart';
@@ -81,7 +81,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
         ? widget.product.colors[_colorIndex]
         : 'Default';
     store.addToCart(widget.product, _size!, color, qty: _qty);
-    fireConfetti(context, origin: const Offset(0.5, 0.85));
+    fireCelebration(context);
     setState(() => _added = true);
     if (buyNow) {
       Future<void>.delayed(const Duration(milliseconds: 700), () {
@@ -214,7 +214,21 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                                   child: _ColorDot(
                                     hex: product.colors[i],
                                     selected: i == _colorIndex,
-                                    onTap: () => setState(() => _colorIndex = i),
+                                    onTap: () => setState(() {
+                                      _colorIndex = i;
+                                      // For products whose gallery IS the
+                                      // color lineup (hoodie, runner),
+                                      // jump the photo to the picked color.
+                                      final imgs = product.allImages;
+                                      if (imgs.length > 1 &&
+                                          imgs.length == product.colors.length) {
+                                        _gallery.animateToPage(
+                                          i,
+                                          duration: const Duration(milliseconds: 420),
+                                          curve: Curves.easeOut,
+                                        );
+                                      }
+                                    }),
                                   ),
                                 ),
                             ],
