@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import '../core/theme/app_colors.dart';
 import '../data/demo_data.dart';
 import '../data/models/cart_item.dart';
+import '../data/models/order.dart';
 import '../data/models/product.dart';
 
 enum SortMode { popular, priceLowHigh, priceHighLow, rating }
@@ -36,6 +37,7 @@ class SwagAppStore extends ChangeNotifier {
   // ------------------------------------------------------------- cart
   final List<CartItem> cart = [];
   Promo? appliedPromo;
+  SwagOrder? lastOrder;
 
   // ---------------------------------------------------------- wishlist
   final Set<String> wishlist = {};
@@ -114,6 +116,29 @@ class SwagAppStore extends ChangeNotifier {
       ..addAll(items);
     if (cart.isEmpty) appliedPromo = null;
     notifyListeners();
+  }
+
+  /// Places a demo order from the current cart and empties the bag.
+  SwagOrder placeOrder({
+    required PayMethod method,
+    String paymentDetail = '',
+  }) {
+    final order = SwagOrder(
+      id: 'SK-${DateTime.now().millisecondsSinceEpoch % 100000}',
+      items: List<CartItem>.of(cart),
+      subtotal: subtotal,
+      discount: discountAmount,
+      shipping: shippingFee,
+      total: total,
+      method: method,
+      detail: paymentDetail,
+      placedAt: DateTime.now(),
+    );
+    lastOrder = order;
+    cart.clear();
+    appliedPromo = null;
+    notifyListeners();
+    return order;
   }
 
   bool applyPromo(String code) {

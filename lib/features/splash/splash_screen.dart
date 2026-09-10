@@ -60,7 +60,7 @@ class _SplashScreenState extends State<SplashScreen>
       body: Stack(
         fit: StackFit.expand,
         children: [
-          Container(color: SwagColors.cream),
+          Container(color: SwagColors.canvas),
           // Bottom candy waves
           AnimatedBuilder(
             animation: _waves,
@@ -93,7 +93,7 @@ class _SplashScreenState extends State<SplashScreen>
                         ],
                       ),
                       child: const Center(
-                        child: SwagIcon('bag', size: 44, color: SwagColors.cream),
+                        child: SwagIcon('bag', size: 44, color: Colors.white),
                       ),
                     )
                         .animate()
@@ -116,7 +116,7 @@ class _SplashScreenState extends State<SplashScreen>
                           style: SwagTheme.display(
                             size: 42,
                             weight: FontWeight.w800,
-                            color: i == 0 ? SwagColors.tangerine : SwagColors.ink,
+                            color: i == 0 ? SwagColors.accent : SwagColors.ink,
                           ),
                         ).animate(
                           delay: (420 + i * 55).ms,
@@ -150,7 +150,7 @@ class _SplashScreenState extends State<SplashScreen>
                   width: 8,
                   height: 8,
                   decoration: const BoxDecoration(
-                    color: SwagColors.tangerine,
+                    color: SwagColors.accent,
                     shape: BoxShape.circle,
                   ),
                 ).animate(
@@ -187,7 +187,7 @@ class _WavePainter extends CustomPainter {
       0.93,
       18,
       phase * math.pi * 2 + 1.4,
-      SwagColors.tangerine.withValues(alpha: 0.28),
+      SwagColors.accent.withValues(alpha: 0.28),
     );
   }
 

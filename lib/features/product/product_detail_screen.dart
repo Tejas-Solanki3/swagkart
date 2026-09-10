@@ -15,6 +15,7 @@ import '../../core/widgets/swag_button.dart';
 import '../../core/widgets/swag_icon.dart';
 import '../../data/models/product.dart';
 import '../../state/app_store.dart';
+import '../payment/payment_screen.dart';
 
 class ProductDetailScreen extends StatefulWidget {
   const ProductDetailScreen({super.key, required this.product});
@@ -66,7 +67,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
         const SnackBar(
           content: Row(
             children: [
-              SwagIcon('bolt', size: 16, color: SwagColors.tangerine),
+              SwagIcon('bolt', size: 16, color: SwagColors.accent),
               SizedBox(width: 8),
               Expanded(
                 child: Text('Pick a size first, swag head!'),
@@ -83,6 +84,14 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
     store.addToCart(widget.product, _size!, color, qty: _qty);
     fireConfetti(context, origin: const Offset(0.5, 0.85));
     setState(() => _added = true);
+    if (buyNow) {
+      Future<void>.delayed(const Duration(milliseconds: 700), () {
+        if (mounted) {
+          SwagNav.push(context, (_) => const PaymentScreen());
+        }
+      });
+      return;
+    }
     Future<void>.delayed(const Duration(milliseconds: 900), () {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -93,7 +102,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
           ),
           action: SnackBarAction(
             label: 'View bag',
-            textColor: SwagColors.tangerine,
+            textColor: SwagColors.accent,
             onPressed: () => store.requestTab(3),
           ),
         ),
@@ -110,7 +119,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
     final isPhone = width < 640;
 
     return Scaffold(
-      backgroundColor: SwagColors.cream,
+      backgroundColor: SwagColors.canvas,
       body: SafeArea(
         child: Stack(
           children: [
@@ -118,29 +127,13 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
               children: [
                 // Top bar
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   child: Row(
                     children: [
                       _RoundButton(icon: 'arrow-left', onTap: () => SwagNav.pop(context)),
                       const Spacer(),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                        decoration: BoxDecoration(
-                          color: SwagColors.paper,
-                          borderRadius: BorderRadius.circular(999),
-                          border: Border.all(color: SwagColors.sand),
-                        ),
-                        child: Text(
-                          'Product',
-                          style: SwagTheme.body(
-                            size: 12,
-                            weight: FontWeight.w800,
-                            letterSpacing: 1.2,
-                          ),
-                        ),
-                      ),
+                      Text('Details', style: SwagTheme.display(size: 18)),
                       const Spacer(),
-                      _RoundButton(icon: 'share', onTap: () {}),
                       _RoundButton(
                         icon: wished ? 'heart-filled' : 'heart',
                         colored: wished,
@@ -170,7 +163,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                             decoration: BoxDecoration(
-                              color: SwagColors.lilacSoft,
+                              color: SwagColors.lavenderSoft,
                               borderRadius: BorderRadius.circular(999),
                             ),
                             child: Text(
@@ -295,8 +288,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                       Row(
                         children: [
                           for (final (icon, tint, label) in [
-                            ('truck', SwagColors.sky, 'Free ship over ₹999'),
-                            ('shield', SwagColors.pistachio, '7-day returns'),
+                            ('truck', SwagColors.mist, 'Free ship over ₹999'),
+                            ('shield', SwagColors.mint, '7-day returns'),
                             ('bolt', SwagColors.butter, 'UPI · COD · EMI'),
                           ])
                             Expanded(
@@ -358,31 +351,33 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                   isPhone ? 16 : 24,
                   16,
                 ),
-                decoration: BoxDecoration(
-                  color: SwagColors.cream,
-                  border: Border(top: BorderSide(color: SwagColors.sand)),
+                decoration: const BoxDecoration(
+                  color: SwagColors.surface,
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(26)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Color(0x10585470),
+                      blurRadius: 18,
+                      offset: Offset(0, -6),
+                    ),
+                  ],
                 ),
                 child: Row(
                   children: [
                     Pressable(
-                      onTap: () =>
-                          context.read<SwagAppStore>().toggleWishlist(product.id),
+                      onTap: () => _addToBag(),
                       child: Container(
                         width: 54,
                         height: 54,
                         decoration: BoxDecoration(
-                          color: SwagColors.paper,
+                          color: SwagColors.surfaceMist,
                           shape: BoxShape.circle,
-                          border: Border.all(
-                            color: wished ? SwagColors.tangerine : SwagColors.sand,
-                            width: 1.6,
-                          ),
                         ),
                         child: Center(
                           child: SwagIcon(
-                            wished ? 'heart-filled' : 'heart',
+                            'bag',
                             size: 22,
-                            color: wished ? SwagColors.tangerine : SwagColors.inkSoft,
+                            color: SwagColors.ink,
                           ),
                         ),
                       ),
@@ -397,12 +392,12 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                         ),
                         child: SwagButton(
                           key: ValueKey(_added ? 'added' : 'add'),
-                          label: _added ? 'Added to bag ✓' : 'Add to Bag',
+                          label: _added ? 'Added to bag ✓' : 'Buy Now',
                           trailingIcon: _added ? null : 'arrow-right',
                           background: _added ? SwagColors.success : SwagColors.ink,
                           shine: !_added,
                           icon: _added ? 'check' : 'bag',
-                          onTap: _addToBag,
+                          onTap: () => _addToBag(buyNow: !_added),
                         ),
                       ),
                     ),
@@ -448,20 +443,14 @@ class _RoundButton extends StatelessWidget {
     return Pressable(
       onTap: onTap,
       child: Container(
-        width: 42,
-        height: 42,
-        decoration: BoxDecoration(
-          color: SwagColors.paper,
-          shape: BoxShape.circle,
-          border: Border.all(
-            color: colored ? SwagColors.tangerine : SwagColors.sand,
-          ),
-        ),
+        width: 44,
+        height: 44,
+        decoration: SwagTheme.iconButtonDecoration(),
         child: Center(
           child: SwagIcon(
             icon,
             size: 19,
-            color: colored ? SwagColors.tangerine : SwagColors.ink,
+            color: colored ? SwagColors.accent : SwagColors.ink,
           ),
         ),
       ),
@@ -489,9 +478,9 @@ class _Gallery extends StatelessWidget {
       height: width < 640 ? 360 : 460,
       margin: const EdgeInsets.symmetric(horizontal: 4),
       decoration: BoxDecoration(
-        color: SwagColors.sandSoft,
+        color: SwagColors.photoMat,
         borderRadius: BorderRadius.circular(30),
-        border: Border.all(color: SwagColors.sand),
+        border: Border.all(color: SwagColors.line),
       ),
       child: Stack(
         children: [
@@ -542,9 +531,9 @@ class _PriceCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: SwagColors.paper,
+        color: SwagColors.surface,
         borderRadius: BorderRadius.circular(22),
-        border: Border.all(color: SwagColors.sand),
+        border: Border.all(color: SwagColors.line),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -575,12 +564,16 @@ class _PriceCard extends StatelessWidget {
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
                     decoration: BoxDecoration(
-                      color: SwagColors.butter,
+                      color: SwagColors.butterSoft,
                       borderRadius: BorderRadius.circular(999),
                     ),
                     child: Text(
                       'Save ${product.discountPct}%',
-                      style: SwagTheme.body(size: 11, weight: FontWeight.w800),
+                      style: SwagTheme.body(
+                        size: 11,
+                        weight: FontWeight.w800,
+                        color: SwagColors.butterDeep,
+                      ),
                     ),
                   ),
                 ),
@@ -620,9 +613,9 @@ class _OptionRow extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: SwagColors.paper,
+        color: SwagColors.surface,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: SwagColors.sand),
+        border: Border.all(color: SwagColors.line),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -672,7 +665,7 @@ class _ColorDot extends StatelessWidget {
           shape: BoxShape.circle,
           color: _color,
           border: Border.all(
-            color: selected ? SwagColors.ink : SwagColors.sand,
+            color: selected ? SwagColors.ink : SwagColors.line,
             width: selected ? 2.4 : 1.4,
           ),
           boxShadow: selected
@@ -711,10 +704,10 @@ class _SizeChip extends StatelessWidget {
         width: isWide ? 58 : 48,
         height: 48,
         decoration: BoxDecoration(
-          color: selected ? SwagColors.ink : SwagColors.paper,
+          color: selected ? SwagColors.ink : SwagColors.surface,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: selected ? SwagColors.ink : SwagColors.sand,
+            color: selected ? SwagColors.ink : SwagColors.line,
             width: 1.5,
           ),
         ),
@@ -724,7 +717,7 @@ class _SizeChip extends StatelessWidget {
             style: SwagTheme.body(
               size: 13,
               weight: FontWeight.w800,
-              color: selected ? SwagColors.cream : SwagColors.ink,
+              color: selected ? SwagColors.canvas : SwagColors.ink,
             ),
           ),
         ),
@@ -751,9 +744,9 @@ class _QtyRow extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(4),
           decoration: BoxDecoration(
-            color: SwagColors.paper,
+            color: SwagColors.surface,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: SwagColors.sand),
+            border: Border.all(color: SwagColors.line),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -795,7 +788,7 @@ class _StepButton extends StatelessWidget {
         width: 36,
         height: 36,
         decoration: BoxDecoration(
-          color: disabled ? SwagColors.sandSoft : SwagColors.cream,
+          color: disabled ? SwagColors.surfaceMist : SwagColors.canvas,
           shape: BoxShape.circle,
         ),
         child: Center(
@@ -829,9 +822,9 @@ class _AccordionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: SwagColors.paper,
+        color: SwagColors.surface,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: SwagColors.sand),
+        border: Border.all(color: SwagColors.line),
       ),
       child: Column(
         children: [
@@ -845,7 +838,7 @@ class _AccordionCard extends StatelessWidget {
                     width: 34,
                     height: 34,
                     decoration: BoxDecoration(
-                      color: SwagColors.sandSoft,
+                      color: SwagColors.surfaceMist,
                       shape: BoxShape.circle,
                     ),
                     child: Center(

@@ -32,9 +32,9 @@ class CountBadge extends StatelessWidget {
         height: 20,
         padding: const EdgeInsets.symmetric(horizontal: 5),
         decoration: BoxDecoration(
-          color: SwagColors.tangerine,
+          color: SwagColors.accent,
           borderRadius: BorderRadius.circular(999),
-          border: Border.all(color: SwagColors.paper, width: 2),
+          border: Border.all(color: SwagColors.surface, width: 2),
         ),
         alignment: Alignment.center,
         child: Text(

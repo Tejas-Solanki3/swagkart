@@ -1,47 +1,63 @@
 import 'package:flutter/material.dart';
 
-/// SwagKart palette — warm cream base with a candy-accent set.
+/// SwagKart palette — a premium soft-pastel system:
+/// misty lavender canvas, white surfaces, near-black ink,
+/// a muted coral signature accent and a calm pastel set.
 class SwagColors {
   SwagColors._();
 
-  // Base
-  static const Color cream = Color(0xFFF8F3EA);
-  static const Color paper = Color(0xFFFFFFFF);
-  static const Color sand = Color(0xFFEDE3D2);
-  static const Color sandSoft = Color(0xFFF3ECDF);
+  // Canvas & surfaces
+  static const Color canvas = Color(0xFFF1F0F6);
+  static const Color surface = Color(0xFFFFFFFF);
+  static const Color surfaceMist = Color(0xFFE9E7F2);
+  static const Color line = Color(0xFFE3E1ED);
+  static const Color photoMat = Color(0xFFF8F3EA);
 
   // Text
-  static const Color ink = Color(0xFF221A13);
-  static const Color inkSoft = Color(0xFF6E6254);
-  static const Color inkFaint = Color(0xFFAB9E8D);
+  static const Color ink = Color(0xFF1C1B24);
+  static const Color inkSoft = Color(0xFF6F6D80);
+  static const Color inkFaint = Color(0xFFA9A7BA);
 
-  // Accents
-  static const Color tangerine = Color(0xFFFF6B35);
-  static const Color tangerineDeep = Color(0xFFE8531F);
-  static const Color tangerineSoft = Color(0xFFFFE8DE);
-  static const Color pistachio = Color(0xFF8FCF9B);
-  static const Color pistachioSoft = Color(0xFFE3F2E4);
-  static const Color butter = Color(0xFFFFD166);
-  static const Color butterSoft = Color(0xFFFFF3D6);
-  static const Color sky = Color(0xFF79C4E0);
-  static const Color skySoft = Color(0xFFE1F2FA);
-  static const Color lilac = Color(0xFFC4B0F0);
-  static const Color lilacSoft = Color(0xFFF1ECFB);
-  static const Color blush = Color(0xFFFF9E9E);
-  static const Color blushSoft = Color(0xFFFFE7E3);
+  // Signature accent — muted coral
+  static const Color accent = Color(0xFFE5876C);
+  static const Color accentDeep = Color(0xFFCE6547);
+  static const Color accentSoft = Color(0xFFFBE9E1);
+
+  // Soft pastel set
+  static const Color lavender = Color(0xFFA79BD8);
+  static const Color lavenderSoft = Color(0xFFE8E4F5);
+  static const Color mist = Color(0xFF85AEDD);
+  static const Color mistSoft = Color(0xFFE0EAF6);
+  static const Color blush = Color(0xFFD2848E);
+  static const Color blushSoft = Color(0xFFF9E4E8);
+  static const Color butter = Color(0xFFD2A94F);
+  static const Color butterSoft = Color(0xFFF8F0D9);
+  static const Color mint = Color(0xFF79B28E);
+  static const Color mintSoft = Color(0xFFE1F0E6);
+  static const Color peach = Color(0xFFDE9A6C);
+  static const Color peachSoft = Color(0xFFFBEADD);
+
+  // Deep text tones for readable labels on pastel chips
+  static const Color lavenderDeep = Color(0xFF6F5FB5);
+  static const Color mistDeep = Color(0xFF4A78AC);
+  static const Color blushDeep = Color(0xFFB05A68);
+  static const Color butterDeep = Color(0xFFA8842F);
+  static const Color mintDeep = Color(0xFF417A58);
+  static const Color peachDeep = Color(0xFFB0703F);
 
   // Feedback
-  static const Color success = Color(0xFF2E9E5B);
-  static const Color successSoft = Color(0xFFDFF4E7);
-  static const Color danger = Color(0xFFE05542);
+  static const Color success = Color(0xFF4E9C72);
+  static const Color successSoft = Color(0xFFE1F0E6);
+  static const Color danger = Color(0xFFC9553F);
+  static const Color dangerSoft = Color(0xFFFBE9E1);
 
-  static const List<Color> candy = <Color>[
-    tangerine,
-    butter,
-    pistachio,
-    sky,
-    lilac,
+  static const List<Color> pastel = <Color>[
+    lavender,
+    mist,
     blush,
+    butter,
+    mint,
+    peach,
   ];
 }
 

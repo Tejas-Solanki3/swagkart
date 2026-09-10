@@ -5,12 +5,14 @@ import 'package:provider/provider.dart';
 import '../../core/nav.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
+import '../../core/utils/format.dart';
 import '../../core/widgets/product_card.dart';
 import '../../core/widgets/pressable.dart';
 import '../../core/widgets/swag_button.dart';
 import '../../core/widgets/swag_icon.dart';
 import '../../state/app_store.dart';
 import '../admin/admin_gate.dart';
+import '../payment/order_placed_screen.dart';
 
 class AccountScreen extends StatefulWidget {
   const AccountScreen({super.key});
@@ -35,32 +37,18 @@ class _AccountScreenState extends State<AccountScreen> {
         // Profile card
         Container(
           padding: const EdgeInsets.all(18),
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              colors: [SwagColors.tangerine, SwagColors.tangerineDeep],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            borderRadius: BorderRadius.circular(28),
-            boxShadow: [
-              BoxShadow(
-                color: SwagColors.tangerine.withValues(alpha: 0.35),
-                blurRadius: 24,
-                offset: const Offset(0, 12),
-              ),
-            ],
-          ),
+          decoration: SwagTheme.cardDecoration(radius: 28),
           child: Row(
             children: [
               Container(
                 width: 58,
                 height: 58,
                 decoration: const BoxDecoration(
-                  color: SwagColors.cream,
+                  color: SwagColors.surfaceMist,
                   shape: BoxShape.circle,
                 ),
                 child: const Center(
-                  child: SwagIcon('user', size: 28, color: SwagColors.tangerineDeep),
+                  child: SwagIcon('user', size: 28, color: SwagColors.ink),
                 ),
               ),
               const SizedBox(width: 14),
@@ -70,34 +58,31 @@ class _AccountScreenState extends State<AccountScreen> {
                   children: [
                     Text(
                       'Aarav Sharma',
-                      style: SwagTheme.display(size: 20, color: Colors.white),
+                      style: SwagTheme.display(size: 20),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       'aarav.swag@example.in',
-                      style: SwagTheme.body(
-                        size: 12,
-                        color: Colors.white.withValues(alpha: 0.85),
-                      ),
+                      style: SwagTheme.body(size: 12, color: SwagColors.inkSoft),
                     ),
                     const SizedBox(height: 8),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.18),
+                        color: SwagColors.butterSoft,
                         borderRadius: BorderRadius.circular(999),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const SwagIcon('fire', size: 12, color: SwagColors.butter),
+                          const SwagIcon('fire', size: 12, color: SwagColors.butterDeep),
                           const SizedBox(width: 5),
                           Text(
                             'VIP Swag Club',
                             style: SwagTheme.body(
                               size: 10.5,
                               weight: FontWeight.w800,
-                              color: Colors.white,
+                              color: SwagColors.butterDeep,
                             ),
                           ),
                         ],
@@ -125,23 +110,69 @@ class _AccountScreenState extends State<AccountScreen> {
                 : '$saved.itemCount saved',
             trailingStyle: saved.isEmpty
                 ? SwagTheme.body(size: 12, color: SwagColors.inkFaint)
-                : SwagTheme.body(size: 12, weight: FontWeight.w800, color: SwagColors.tangerine),
+                : SwagTheme.body(size: 12, weight: FontWeight.w800, color: SwagColors.accent),
           ),
         ),
         const SizedBox(height: 14),
         _SectionLabel('Orders & more'),
         const SizedBox(height: 10),
+        if (store.lastOrder != null) ...[
+          Pressable(
+            onTap: () => SwagNav.push(
+              context,
+              (_) => OrderPlacedScreen(order: store.lastOrder!),
+            ),
+            child: Container(
+              margin: const EdgeInsets.only(bottom: 12),
+              padding: const EdgeInsets.all(14),
+              decoration: SwagTheme.cardDecoration(radius: 20),
+              child: Row(
+                children: [
+                  Container(
+                    width: 42,
+                    height: 42,
+                    decoration: const BoxDecoration(
+                      color: SwagColors.mintSoft,
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Center(
+                      child: SwagIcon('package', size: 20, color: SwagColors.mintDeep),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Order #${store.lastOrder!.id}',
+                          style: SwagTheme.body(size: 13.5, weight: FontWeight.w800),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          '${store.lastOrder!.itemCount} · ${store.lastOrder!.methodLabel} · Paid ${inr(store.lastOrder!.total)}',
+                          style: SwagTheme.body(size: 11.5, color: SwagColors.inkSoft),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SwagIcon('arrow-right', size: 15, color: SwagColors.inkFaint),
+                ],
+              ),
+            ),
+          ),
+        ],
         Container(
           decoration: BoxDecoration(
-            color: SwagColors.paper,
+            color: SwagColors.surface,
             borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: SwagColors.sand),
+            border: Border.all(color: SwagColors.line),
           ),
           child: Column(
             children: [
               _MenuRow(
                 icon: 'package',
-                tint: SwagColors.sky,
+                tint: SwagColors.mist,
                 label: 'My orders & tracking',
                 trailing: 'Phase 2',
                 chip: true,
@@ -149,7 +180,7 @@ class _AccountScreenState extends State<AccountScreen> {
               const _Divider(),
               _MenuRow(
                 icon: 'location',
-                tint: SwagColors.pistachio,
+                tint: SwagColors.mint,
                 label: 'Saved addresses',
                 trailing: 'Phase 2',
                 chip: true,
@@ -157,7 +188,7 @@ class _AccountScreenState extends State<AccountScreen> {
               const _Divider(),
               _MenuRow(
                 icon: 'card',
-                tint: SwagColors.lilac,
+                tint: SwagColors.lavender,
                 label: 'Payment methods',
                 trailing: 'Phase 2',
                 chip: true,
@@ -172,7 +203,7 @@ class _AccountScreenState extends State<AccountScreen> {
               const _Divider(),
               _MenuRow(
                 icon: 'sparkles',
-                tint: SwagColors.tangerine,
+                tint: SwagColors.accent,
                 label: 'About SwagKart',
                 onTap: () => _showAbout(context),
               ),
@@ -195,7 +226,7 @@ class _AccountScreenState extends State<AccountScreen> {
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(
-                      color: SwagColors.cream.withValues(alpha: 0.12),
+                      color: SwagColors.canvas.withValues(alpha: 0.12),
                       shape: BoxShape.circle,
                     ),
                     child: const Center(
@@ -213,7 +244,7 @@ class _AccountScreenState extends State<AccountScreen> {
                             fontFamily: 'Baloo2',
                             fontSize: 16,
                             fontWeight: FontWeight.w800,
-                            color: SwagColors.cream,
+                            color: SwagColors.canvas,
                           ),
                         ),
                         Text(
@@ -223,7 +254,7 @@ class _AccountScreenState extends State<AccountScreen> {
                       ],
                     ),
                   ),
-                  const SwagIcon('arrow-right', size: 17, color: SwagColors.cream),
+                  const SwagIcon('arrow-right', size: 17, color: SwagColors.canvas),
                 ],
               ),
             ),
@@ -240,10 +271,10 @@ class _AccountScreenState extends State<AccountScreen> {
                     'Made with ',
                     style: SwagTheme.body(size: 11.5, color: SwagColors.inkFaint),
                   ),
-                  const SwagIcon('heart-filled', size: 12, color: SwagColors.tangerine),
+                  const SwagIcon('heart-filled', size: 12, color: SwagColors.accent),
                   const SizedBox(width: 4),
                   Text(
-                    ' in India · v0.1.0',
+                    ' in India · v0.2.0',
                     style: SwagTheme.body(size: 11.5, color: SwagColors.inkFaint),
                   ),
                 ],
@@ -281,7 +312,7 @@ class _AccountScreenState extends State<AccountScreen> {
         maxChildSize: 0.9,
         builder: (context, scrollController) => Container(
           decoration: const BoxDecoration(
-            color: SwagColors.cream,
+            color: SwagColors.canvas,
             borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
           ),
           child: Column(
@@ -291,7 +322,7 @@ class _AccountScreenState extends State<AccountScreen> {
                 width: 44,
                 height: 5,
                 decoration: BoxDecoration(
-                  color: SwagColors.sand,
+                  color: SwagColors.line,
                   borderRadius: BorderRadius.circular(999),
                 ),
               ),
@@ -299,7 +330,7 @@ class _AccountScreenState extends State<AccountScreen> {
                 padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
                 child: Row(
                   children: [
-                    const SwagIcon('heart-filled', size: 18, color: SwagColors.tangerine),
+                    const SwagIcon('heart-filled', size: 18, color: SwagColors.accent),
                     const SizedBox(width: 8),
                     Text(
                       'Saved items',
@@ -351,7 +382,7 @@ class _AccountScreenState extends State<AccountScreen> {
                   shape: BoxShape.circle,
                 ),
                 child: const Center(
-                  child: SwagIcon('bag', size: 30, color: SwagColors.cream),
+                  child: SwagIcon('bag', size: 30, color: Colors.white),
                 ),
               ),
               const SizedBox(height: 14),
@@ -410,7 +441,7 @@ class _Divider extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Padding(
       padding: EdgeInsets.symmetric(horizontal: 62),
-      child: Divider(height: 1, color: SwagColors.sandSoft),
+      child: Divider(height: 1, color: SwagColors.surfaceMist),
     );
   }
 }
@@ -465,7 +496,7 @@ class _MenuRow extends StatelessWidget {
                   ? Container(
                       padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
                       decoration: BoxDecoration(
-                        color: SwagColors.sandSoft,
+                        color: SwagColors.surfaceMist,
                         borderRadius: BorderRadius.circular(999),
                       ),
                       child: Text(

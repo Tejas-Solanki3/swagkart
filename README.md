@@ -4,45 +4,52 @@
 [![Dart](https://img.shields.io/badge/Dart-3-0175C2?logo=dart&logoColor=white)](https://dart.dev)
 [![License](https://img.shields.io/badge/license-MIT-green)](#license)
 
-A **playful, premium Indian e-commerce storefront** built in Flutter — inspired by
-high-end monochrome commerce UIs, but warmer, candy-colored and full of motion.
-India-first: ₹ pricing with lakh/crore grouping, GST notes, UPI/COD messaging,
-free-shipping thresholds and Indian streetwear flavor throughout.
+A **playful, premium Indian e-commerce storefront** built in Flutter —
+soft-pastel, motion-rich and India-first: ₹ pricing with Indian digit grouping,
+GST notes, UPI / card / COD checkout, free-shipping thresholds and streetwear
+flavor throughout.
 
-> **Phase 1 (this repo):** app setup, visual assets, shared demo state,
-> responsive storefront & product discovery, and a working shopping bag.
-> Checkout, orders/tracking and the admin console are Phase 2–3 (see roadmap).
+> **In this repo:** full storefront + product discovery, a working shopping bag,
+> and a **demo checkout** (UPI · card · COD) with order confirmation.
+> Order tracking, persistence, accounts and the admin console are next (see roadmap).
 
 ---
 
-## What's in Phase 1
+## Design language
+
+A premium soft-pastel system, inspired by high-end monochrome commerce UIs but
+warmer and more alive:
+
+- **Misty lavender canvas** (`#F1F0F6`) with **white cards**, hairline borders and whisper-soft shadows
+- **Near-black ink** (`#1C1B24`) for type, the floating **black pill bottom nav** and all primary CTAs
+- **Muted coral** signature accent + a calm pastel set (lavender / mist / blush / butter / mint / peach) for chips, tags and tints
+- **Baloo 2** (rounded display) + **Inter** (body), bundled — no runtime font fetches
+- Motion everywhere, kept tasteful: elastic pops, slide-up page transitions,
+  confetti on add-to-bag, sliding nav pill, shimmer skeletons, ringing bell,
+  live card preview as you type
+
+## What's inside
 
 | Area | Details |
 |---|---|
-| **Storefront** | Animated splash (wave + letter bounce), auto-advancing hero carousel with wiggling CTA, category orbit, trending rail, deals strip, responsive "fresh for you" grid (2/3/4 columns), trust strip, promo-code banner with copy-to-clipboard |
-| **Discovery** | Catalog tab with search field, category chips, "On Sale" filter and 4 sort modes · dedicated Search tab with trending + recent chips and live results · product detail with gallery, color/size pickers (shake when invalid), qty stepper, accordions, related items |
+| **Storefront** | Greeting header, animated search bar with rotating suggestions, pastel offer card with rotating image, category chips, trending rail, deals strip, responsive "fresh for you" grid (2/3/4 cols), trust strip, promo-code card with copy-to-clipboard |
+| **Discovery** | Catalog tab (search, category chips, On Sale filter, 4 sort modes, skeleton loading) · dedicated Search tab (trending + recent chips, live results) · product detail with gallery, colour/size pickers (shake when invalid), qty stepper, accordions, related items |
 | **Bag** | Line items with qty steppers + swipe-to-dismiss, free-shipping progress bar, promo codes (`SWAG15`, `SWAG10`) with stamp animation, animated totals, "you're saving" counter, clear-with-undo |
-| **Account** | Profile card, saved-items sheet (wishlist grid), phase-gated menu, About dialog, admin gate |
-| **State** | Single shared `SwagAppStore` (provider + ChangeNotifier): products, cart, wishlist, promos, tab requests. In-memory demo data; swap for network later without touching widgets |
-| **Animation** | flutter_animate chains, confetti burst on add-to-bag, sliding pill bottom-nav with elastic indicator, badge pops, shimmer skeletons, custom page transitions (spring scale + fade), rotating sparkles, ringing bell |
-| **Responsive** | Phone / tablet / wide breakpoints, adaptive grid columns, max content width on very wide screens |
-| **Icons & type** | 37 hand-crafted stroke SVG icons (currentColor recoloring), bundled **Baloo 2** (display) + **Inter** (body) fonts — no runtime font fetches |
+| **Checkout** | Payment screen: UPI / Card / COD picker, **live gradient card preview** as you type, auto-formatting card/expiry/CVV inputs with validation, UPI id flow, COD note, processing overlay → order confirmation with confetti + order summary. Recent order surfaces in the Account tab |
+| **Account** | Profile card, saved-items sheet (wishlist grid), recent order card, phase-gated menu, About dialog, admin gate |
+| **State** | Single shared `SwagAppStore` (provider + ChangeNotifier): products, cart, wishlist, promos, orders, tab requests. In-memory demo data; swap for network later without touching widgets |
+| **Icons & type** | 37 hand-crafted stroke SVG icons (currentColor recoloring), bundled fonts |
+| **Platforms** | Ships for **Android** (`minSdk = 24`); `macos/` + `web/` targets included for local preview |
 
 ## Run it
 
 ```bash
 flutter pub get
-flutter run          # on a connected Android device / emulator (API 24+)
-flutter test         # 11 tests: cart math, promos, shipping rules, discovery + full boot smoke
-flutter analyze      # 0 issues
-```
-
-Shipping target is **Android** (`minSdk = 24`). `macos/` and `web/` targets are
-included for **local preview only** — the app is pure cross-platform Flutter, so:
-
-```bash
-flutter run -d macos    # desktop window (needs Xcode command-line tools)
-flutter run -d chrome   # browser preview
+flutter run -d <android>   # Android device / emulator (API 24+)
+flutter run -d macos       # desktop preview
+flutter run -d chrome      # browser preview
+flutter test               # 11 tests: cart math, promos, shipping rules, discovery + full boot smoke
+flutter analyze            # 0 issues
 ```
 
 ## Project structure
@@ -52,25 +59,26 @@ lib/
 ├── main.dart                  # app entry, SystemChrome, store provider
 ├── app.dart                   # MaterialApp + theme
 ├── core/
-│   ├── nav.dart               # SwagNav push/pop helpers
-│   ├── theme/                 # colors (candy palette), theme, page transitions
+│   ├── nav.dart               # SwagNav push/pop/popToRoot helpers
+│   ├── theme/                 # pastel palette, theme, shape helpers, page transitions
 │   ├── utils/                 # inr() ₹ formatting, responsive breakpoints
 │   └── widgets/               # SwagIcon, Pressable, SwagButton (shine sweep),
 │                              # chips, product card, confetti burst, shimmer,
 │                              # empty state, animated count badge
 ├── data/
-│   ├── models/                # Product, CartItem
+│   ├── models/                # Product, CartItem, SwagOrder
 │   └── demo_data.dart         # 12 products, categories, heroes, promos
-├── state/app_store.dart       # shared demo state (cart, wishlist, discovery)
+├── state/app_store.dart       # shared demo state (cart, wishlist, orders, discovery)
 └── features/
     ├── splash/                # wave + letter-bounce splash
-    ├── shell/app_shell.dart   # 5-tab floating pill nav + IndexedStack
+    ├── shell/app_shell.dart   # 5-tab black pill nav + IndexedStack
     ├── home/                  # discover feed
     ├── catalog/               # filters + sort + responsive grid
     ├── search/                # live search + tag chips
-    ├── product/               # detail screen (gallery, pickers, confetti)
+    ├── product/               # detail screen (gallery, pickers, Buy Now)
     ├── bag/                   # cart screen (promo, totals, undo)
-    ├── account/               # profile, saved sheet, menu
+    ├── payment/               # payment methods, card preview, order confirmation
+    ├── account/               # profile, saved sheet, recent order, menu
     └── admin/admin_gate.dart  # Phase-3 placeholder (dark, roadmap chips)
 assets/
 ├── fonts/                     # Baloo2 (400–800), Inter (400–700)
@@ -82,10 +90,9 @@ test/app_smoke_test.dart       # full boot: splash → shell → tabs → scroll
 
 ## Roadmap
 
-- **Phase 2 — Commerce:** checkout & payment (UPI / card / COD, address form),
-  order confirmation + live tracking timeline, account (auth, addresses, orders),
+- **Next — Commerce:** order tracking timeline, account auth + addresses,
   persistence (Hive/Isar), push-style notifications.
-- **Phase 3 — Admin:** merchant login, KPI dashboard, revenue analytics with
+- **After — Admin:** merchant login, KPI dashboard, revenue analytics with
   count-ups, order management, category control (UI direction: dark console —
   see `AdminGate`).
 
@@ -94,8 +101,9 @@ test/app_smoke_test.dart       # full boot: splash → shell → tabs → scroll
 - Product photography is AI-generated studio shots on a warm cream background;
   `hero-*.png` lifestyle banners and `beanie.png` / `pack.png` are marked with
   `TODO(phase-1-assets)` in `demo_data.dart` and will be swapped in when they land.
-- All demo state lives in memory — refreshing the app resets cart/wishlist
-  (persistence is Phase 2).
+- All demo state lives in memory — refreshing the app resets cart/wishlist/orders
+  (persistence is next).
+- Checkout is a **demo**: no real payments, cards or UPI requests are made.
 - Promo codes: `SWAG15` (15% off), `SWAG10` (10% off).
 
 ## License

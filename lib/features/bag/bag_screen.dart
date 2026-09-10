@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
 
+import '../../core/nav.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/utils/format.dart';
@@ -13,6 +14,7 @@ import '../../core/widgets/swag_icon.dart';
 import '../../data/demo_data.dart';
 import '../../data/models/cart_item.dart';
 import '../../state/app_store.dart';
+import '../payment/payment_screen.dart';
 
 class BagScreen extends StatefulWidget {
   const BagScreen({super.key});
@@ -71,7 +73,7 @@ class _BagScreenState extends State<BagScreen> {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                   decoration: BoxDecoration(
-                    color: SwagColors.tangerineSoft,
+                    color: SwagColors.surfaceMist,
                     borderRadius: BorderRadius.circular(999),
                   ),
                   child: Text(
@@ -79,7 +81,7 @@ class _BagScreenState extends State<BagScreen> {
                     style: SwagTheme.body(
                       size: 12,
                       weight: FontWeight.w800,
-                      color: SwagColors.tangerineDeep,
+                      color: SwagColors.inkSoft,
                     ),
                   ),
                 ),
@@ -94,7 +96,7 @@ class _BagScreenState extends State<BagScreen> {
                         content: const Text('Bag cleared'),
                         action: SnackBarAction(
                           label: 'Undo',
-                          textColor: SwagColors.tangerine,
+                          textColor: SwagColors.accent,
                           onPressed: () => store.restoreCart(backup),
                         ),
                       ),
@@ -145,22 +147,12 @@ class _BagScreenState extends State<BagScreen> {
             _SummaryCard(store: store),
             const SizedBox(height: 16),
             SwagButton(
-              label: 'Checkout securely',
-              icon: 'shield',
+              label: 'Proceed to Payment',
+              icon: 'lock',
               trailingIcon: 'arrow-right',
               shine: true,
               height: 58,
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    backgroundColor: SwagColors.ink,
-                    content: Text(
-                      'Checkout arrives in Phase 2 — your bag is safe for now!',
-                      style: SwagTheme.body(size: 13, weight: FontWeight.w700, color: SwagColors.cream),
-                    ),
-                  ),
-                );
-              },
+              onTap: () => SwagNav.push(context, (_) => const PaymentScreen()),
             ),
             const SizedBox(height: 10),
             Center(
@@ -219,16 +211,16 @@ class _FreeShipProgress extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: SwagColors.paper,
+        color: SwagColors.surface,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: SwagColors.sand),
+        border: Border.all(color: SwagColors.line),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              const SwagIcon('truck', size: 18, color: SwagColors.tangerine),
+              const SwagIcon('truck', size: 18, color: SwagColors.accent),
               const SizedBox(width: 8),
               Expanded(
                 child: Text.rich(
@@ -263,7 +255,7 @@ class _FreeShipProgress extends StatelessWidget {
               height: 8,
               child: Stack(
                 children: [
-                  Container(color: SwagColors.sandSoft),
+                  Container(color: SwagColors.surfaceMist),
                   FractionallySizedBox(
                     alignment: Alignment.centerLeft,
                     widthFactor: t,
@@ -277,7 +269,7 @@ class _FreeShipProgress extends StatelessWidget {
                           child: Container(
                             decoration: BoxDecoration(
                               gradient: const LinearGradient(
-                                colors: [SwagColors.butter, SwagColors.tangerine],
+                                colors: [SwagColors.mint, SwagColors.mist],
                               ),
                             ),
                           ),
@@ -319,9 +311,9 @@ class _CartItemCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color: SwagColors.paper,
+          color: SwagColors.surface,
           borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: SwagColors.sand),
+          border: Border.all(color: SwagColors.line),
         ),
         child: Row(
           children: [
@@ -329,7 +321,7 @@ class _CartItemCard extends StatelessWidget {
               width: 74,
               height: 74,
               decoration: BoxDecoration(
-                color: SwagColors.sandSoft,
+                color: SwagColors.photoMat,
                 borderRadius: BorderRadius.circular(18),
               ),
               child: ClipRRect(
@@ -401,9 +393,9 @@ class _MiniStepper extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(3),
       decoration: BoxDecoration(
-        color: SwagColors.cream,
+        color: SwagColors.canvas,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: SwagColors.sand),
+        border: Border.all(color: SwagColors.line),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -448,7 +440,7 @@ class _Step extends StatelessWidget {
         width: 30,
         height: 30,
         decoration: BoxDecoration(
-          color: disabled ? SwagColors.sandSoft : SwagColors.paper,
+          color: disabled ? SwagColors.surfaceMist : SwagColors.surface,
           shape: BoxShape.circle,
         ),
         child: Center(
@@ -486,10 +478,10 @@ class _PromoCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: SwagColors.paper,
+        color: SwagColors.surface,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: hasCode ? SwagColors.success.withValues(alpha: 0.5) : SwagColors.sand,
+          color: hasCode ? SwagColors.success.withValues(alpha: 0.5) : SwagColors.line,
           width: 1.4,
         ),
       ),
@@ -498,7 +490,7 @@ class _PromoCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              const SwagIcon('tag', size: 18, color: SwagColors.tangerine),
+              const SwagIcon('tag', size: 18, color: SwagColors.accent),
               const SizedBox(width: 8),
               Text(
                 'Promo code',
@@ -583,10 +575,10 @@ class _PromoCard extends StatelessWidget {
                   child: Container(
                     height: 46,
                     decoration: BoxDecoration(
-                      color: SwagColors.cream,
+                      color: SwagColors.canvas,
                       borderRadius: BorderRadius.circular(14),
                       border: Border.all(
-                        color: error != null ? SwagColors.danger : SwagColors.sand,
+                        color: error != null ? SwagColors.danger : SwagColors.line,
                         width: 1.4,
                       ),
                     ),
@@ -621,7 +613,6 @@ class _PromoCard extends StatelessWidget {
                     expanded: true,
                     height: 46,
                     fontSize: 14,
-                    background: SwagColors.tangerine,
                     onTap: onApply,
                   ),
                 ),
@@ -659,9 +650,9 @@ class _SummaryCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: SwagColors.paper,
+        color: SwagColors.surface,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: SwagColors.sand),
+        border: Border.all(color: SwagColors.line),
         boxShadow: [
           BoxShadow(
             color: SwagColors.ink.withValues(alpha: 0.05),
@@ -688,7 +679,7 @@ class _SummaryCard extends StatelessWidget {
             valueColor: store.shippingFee == 0 ? SwagColors.success : null,
           ),
           const SizedBox(height: 12),
-          const Divider(height: 1, color: SwagColors.sand),
+          const Divider(height: 1, color: SwagColors.line),
           const SizedBox(height: 12),
           Row(
             children: [
@@ -724,7 +715,7 @@ class _SummaryCard extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const SwagIcon('gift', size: 16, color: SwagColors.tangerineDeep),
+                  const SwagIcon('gift', size: 16, color: SwagColors.accentDeep),
                   const SizedBox(width: 7),
                   TweenAnimationBuilder<double>(
                     tween: Tween(begin: 0, end: store.savings),
@@ -734,7 +725,7 @@ class _SummaryCard extends StatelessWidget {
                       style: SwagTheme.body(
                         size: 12,
                         weight: FontWeight.w800,
-                        color: SwagColors.tangerineDeep,
+                        color: SwagColors.accentDeep,
                       ),
                     ),
                   ),

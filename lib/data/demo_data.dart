@@ -41,11 +41,11 @@ class Promo {
 }
 
 const List<SwagCategory> demoCategories = [
-  SwagCategory(SwagCategory.allId, 'For You', 'sparkles', SwagColors.tangerine),
-  SwagCategory('streetwear', 'Streetwear', 'bolt', SwagColors.tangerine),
-  SwagCategory('footwear', 'Footwear', 'fire', SwagColors.sky),
-  SwagCategory('denim', 'Denim', 'tag', SwagColors.lilac),
-  SwagCategory('accessories', 'Accessories', 'gift', SwagColors.pistachio),
+  SwagCategory(SwagCategory.allId, 'All', 'sparkles', SwagColors.accent),
+  SwagCategory('streetwear', 'Streetwear', 'bolt', SwagColors.accent),
+  SwagCategory('footwear', 'Footwear', 'fire', SwagColors.mist),
+  SwagCategory('denim', 'Denim', 'tag', SwagColors.lavender),
+  SwagCategory('accessories', 'Accessories', 'gift', SwagColors.mint),
   SwagCategory('winter', 'Winter', 'shield', SwagColors.blush),
 ];
 
@@ -59,7 +59,7 @@ const List<HeroSlide> demoHeroes = [
     title: 'Street fit, sorted in one tap',
     subtitle: 'Oversized fits, retro kicks & everyday staples.',
     cta: 'Shop the drop',
-    accent: SwagColors.tangerine,
+    accent: SwagColors.accent,
   ),
   HeroSlide(
     image: 'assets/images/products/court.png',
@@ -67,7 +67,7 @@ const List<HeroSlide> demoHeroes = [
     title: 'Group swag, one bill',
     subtitle: 'Gift cards, free shipping over ₹999 and easy returns.',
     cta: 'Browse deals',
-    accent: SwagColors.pistachio,
+    accent: SwagColors.mint,
   ),
   HeroSlide(
     image: 'assets/images/products/runner.png',
@@ -75,7 +75,7 @@ const List<HeroSlide> demoHeroes = [
     title: 'Fresh soles, fresh mood',
     subtitle: 'From court classics to chunky runners — all under ₹5K.',
     cta: 'Explore footwear',
-    accent: SwagColors.sky,
+    accent: SwagColors.mist,
   ),
 ];
 

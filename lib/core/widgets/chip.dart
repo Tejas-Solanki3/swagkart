@@ -33,10 +33,10 @@ class SwagChip extends StatelessWidget {
         curve: Curves.easeOut,
         padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
         decoration: BoxDecoration(
-          color: selected ? activeColor : SwagColors.paper,
+          color: selected ? activeColor : SwagColors.surfaceMist,
           borderRadius: BorderRadius.circular(999),
           border: Border.all(
-            color: selected ? activeColor : SwagColors.sand,
+            color: selected ? activeColor : Colors.transparent,
             width: 1.4,
           ),
         ),
@@ -47,7 +47,7 @@ class SwagChip extends StatelessWidget {
               SwagIcon(
                 icon!,
                 size: 15,
-                color: selected ? SwagColors.cream : SwagColors.inkSoft,
+                color: selected ? SwagColors.surface : SwagColors.inkSoft,
               ),
               const SizedBox(width: 6),
             ],
@@ -56,7 +56,7 @@ class SwagChip extends StatelessWidget {
               style: SwagTheme.body(
                 size: fontSize,
                 weight: selected ? FontWeight.w700 : FontWeight.w600,
-                color: selected ? SwagColors.cream : SwagColors.ink,
+                color: selected ? SwagColors.surface : SwagColors.ink,
               ),
             ),
           ],

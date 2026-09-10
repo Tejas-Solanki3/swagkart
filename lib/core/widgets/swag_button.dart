@@ -14,7 +14,7 @@ class SwagButton extends StatefulWidget {
     this.icon,
     this.trailingIcon,
     this.background = SwagColors.ink,
-    this.foreground = SwagColors.cream,
+    this.foreground = SwagColors.surface,
     this.height = 54,
     this.shine = false,
     this.expanded = true,
@@ -73,8 +73,8 @@ class _SwagButtonState extends State<SwagButton>
           boxShadow: enabled
               ? [
                   BoxShadow(
-                    color: bg.withValues(alpha: 0.28),
-                    blurRadius: 14,
+                    color: bg.withValues(alpha: 0.2),
+                    blurRadius: 16,
                     offset: const Offset(0, 8),
                   ),
                 ]

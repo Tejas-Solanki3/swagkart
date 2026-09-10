@@ -53,12 +53,13 @@ class _SearchScreenState extends State<SearchScreen> {
             Container(
               height: 56,
               decoration: BoxDecoration(
-                color: SwagColors.paper,
-                borderRadius: BorderRadius.circular(20),
+                color: SwagColors.surface,
+                borderRadius: BorderRadius.circular(999),
                 border: Border.all(
-                  color: searching ? SwagColors.tangerine : SwagColors.sand,
+                  color: searching ? SwagColors.accent : SwagColors.line,
                   width: 1.6,
                 ),
+                boxShadow: SwagTheme.cardDecoration(radius: 999).boxShadow,
               ),
               child: Row(
                 children: [
@@ -213,15 +214,15 @@ class _TagPill extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
         decoration: BoxDecoration(
-          color: muted ? SwagColors.sandSoft : SwagColors.paper,
+          color: muted ? SwagColors.surfaceMist : SwagColors.surface,
           borderRadius: BorderRadius.circular(999),
-          border: Border.all(color: SwagColors.sand),
+          border: Border.all(color: SwagColors.line),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             if (!muted)
-              const SwagIcon('bolt', size: 12, color: SwagColors.tangerine),
+              const SwagIcon('bolt', size: 12, color: SwagColors.accent),
             if (!muted) const SizedBox(width: 5),
             Text(
               label,

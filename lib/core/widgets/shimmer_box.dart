@@ -7,7 +7,7 @@ class ShimmerBox extends StatefulWidget {
   const ShimmerBox({
     super.key,
     required this.radius,
-    this.color = SwagColors.sandSoft,
+    this.color = SwagColors.surfaceMist,
   });
 
   final double radius;

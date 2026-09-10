@@ -105,17 +105,28 @@ class _CatalogScreenState extends State<CatalogScreen> {
           padding: EdgeInsets.fromLTRB(pad, 14, pad, 130),
           children: [
             Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Expanded(
-                  child: Text(
-                    'The Catalog',
-                    style: SwagTheme.display(size: 26),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'The Catalog',
+                        style: SwagTheme.display(size: 26),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        'Every piece, one tap away',
+                        style: SwagTheme.body(size: 12.5, color: SwagColors.inkSoft),
+                      ),
+                    ],
                   ),
                 ),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                   decoration: BoxDecoration(
-                    color: SwagColors.tangerineSoft,
+                    color: SwagColors.surfaceMist,
                     borderRadius: BorderRadius.circular(999),
                   ),
                   child: Text(
@@ -123,7 +134,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
                     style: SwagTheme.body(
                       size: 12,
                       weight: FontWeight.w800,
-                      color: SwagColors.tangerineDeep,
+                      color: SwagColors.inkSoft,
                     ),
                   ),
                 ),
@@ -133,11 +144,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
             // Search field
             Container(
               height: 52,
-              decoration: BoxDecoration(
-                color: SwagColors.paper,
-                borderRadius: BorderRadius.circular(18),
-                border: Border.all(color: SwagColors.sand),
-              ),
+              decoration: SwagTheme.cardDecoration(radius: 999),
               child: Row(
                 children: [
                   const SizedBox(width: 14),
@@ -179,7 +186,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
                       label: 'On Sale',
                       icon: 'tag',
                       selected: _category == 'deals' || _query == 'deals',
-                      activeColor: SwagColors.tangerine,
+                      activeColor: SwagColors.ink,
                       onTap: () {
                         setState(() {
                           _query = _query == 'deals' ? '' : 'deals';
@@ -221,7 +228,7 @@ class _CatalogScreenState extends State<CatalogScreen> {
                       label: e.$2,
                       fontSize: 12,
                       selected: _sort == e.$1,
-                      activeColor: SwagColors.tangerine,
+                      activeColor: SwagColors.ink,
                       onTap: () => _changeSort(e.$1),
                     ),
                   ),

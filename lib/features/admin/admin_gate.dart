@@ -40,7 +40,7 @@ class AdminGate extends StatelessWidget {
                               shape: BoxShape.circle,
                             ),
                             child: const Center(
-                              child: SwagIcon('arrow-left', size: 20, color: SwagColors.cream),
+                              child: SwagIcon('arrow-left', size: 20, color: SwagColors.canvas),
                             ),
                           ),
                         ),
@@ -50,7 +50,7 @@ class AdminGate extends StatelessWidget {
                           style: SwagTheme.body(
                             size: 12,
                             weight: FontWeight.w800,
-                            color: SwagColors.cream.withValues(alpha: 0.6),
+                            color: SwagColors.canvas.withValues(alpha: 0.6),
                             letterSpacing: 2,
                           ),
                         ),
@@ -69,12 +69,12 @@ class AdminGate extends StatelessWidget {
                               height: 92,
                               decoration: BoxDecoration(
                                 gradient: const LinearGradient(
-                                  colors: [SwagColors.tangerine, SwagColors.butter],
+                                  colors: [SwagColors.accent, SwagColors.butter],
                                 ),
                                 shape: BoxShape.circle,
                                 boxShadow: [
                                   BoxShadow(
-                                    color: SwagColors.tangerine.withValues(alpha: 0.4),
+                                    color: SwagColors.accent.withValues(alpha: 0.4),
                                     blurRadius: 40,
                                     offset: const Offset(0, 16),
                                   ),
@@ -87,7 +87,7 @@ class AdminGate extends StatelessWidget {
                             const SizedBox(height: 24),
                             Text(
                               'Admin console',
-                              style: SwagTheme.display(size: 30, color: SwagColors.cream),
+                              style: SwagTheme.display(size: 30, color: SwagColors.canvas),
                             ).animate(delay: 150.ms).fadeIn(duration: 400.ms).moveY(begin: 16, end: 0, duration: 400.ms),
                             const SizedBox(height: 8),
                             Text(
@@ -95,7 +95,7 @@ class AdminGate extends StatelessWidget {
                               textAlign: TextAlign.center,
                               style: SwagTheme.body(
                                 size: 13.5,
-                                color: SwagColors.cream.withValues(alpha: 0.7),
+                                color: SwagColors.canvas.withValues(alpha: 0.7),
                               ),
                             ).animate(delay: 250.ms).fadeIn(duration: 400.ms).moveY(begin: 16, end: 0, duration: 400.ms),
                             const SizedBox(height: 26),
@@ -128,7 +128,7 @@ class AdminGate extends StatelessWidget {
                                       style: SwagTheme.body(
                                         size: 11.5,
                                         weight: FontWeight.w700,
-                                        color: SwagColors.cream.withValues(alpha: 0.85),
+                                        color: SwagColors.canvas.withValues(alpha: 0.85),
                                       ),
                                     ),
                                   ),
@@ -144,7 +144,7 @@ class AdminGate extends StatelessWidget {
                     child: SwagButton(
                       label: 'Back to the store',
                       icon: 'bag',
-                      background: SwagColors.cream,
+                      background: SwagColors.canvas,
                       foreground: SwagColors.ink,
                       height: 54,
                       onTap: () => SwagNav.pop(context),
@@ -164,7 +164,7 @@ class _DotPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = SwagColors.cream.withValues(alpha: 0.05)
+      ..color = SwagColors.canvas.withValues(alpha: 0.05)
       ..strokeWidth = 2;
     const step = 34.0;
     for (double x = step / 2; x < size.width; x += step) {

@@ -29,7 +29,7 @@ class SectionHeader extends StatelessWidget {
             width: 5,
             height: 22,
             decoration: BoxDecoration(
-              color: SwagColors.tangerine,
+              color: SwagColors.accent,
               borderRadius: BorderRadius.circular(4),
             ),
           ),
@@ -80,11 +80,11 @@ class SectionHeader extends StatelessWidget {
                     style: SwagTheme.body(
                       size: 13,
                       weight: FontWeight.w700,
-                      color: SwagColors.tangerine,
+                      color: SwagColors.accent,
                     ),
                   ),
                   const SizedBox(width: 3),
-                  const SwagIcon('arrow-right', size: 14, color: SwagColors.tangerine),
+                  const SwagIcon('arrow-right', size: 14, color: SwagColors.accent),
                 ],
               ),
             ),

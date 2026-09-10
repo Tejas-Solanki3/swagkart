@@ -9,10 +9,11 @@ import '../nav.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_theme.dart';
 import '../utils/format.dart';
+import 'confetti_burst.dart';
 import 'pressable.dart';
 import 'swag_icon.dart';
 
-/// Responsive product card used across home, catalog, search and related rows.
+/// Premium product card: white card, photo mat, heart bubble, quick "Shop" pill.
 class ProductCard extends StatelessWidget {
   const ProductCard({
     super.key,
@@ -37,18 +38,7 @@ class ProductCard extends StatelessWidget {
       ),
       child: Container(
         width: width,
-        decoration: BoxDecoration(
-          color: SwagColors.paper,
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: SwagColors.sand),
-          boxShadow: [
-            BoxShadow(
-              color: SwagColors.ink.withValues(alpha: 0.05),
-              blurRadius: 16,
-              offset: const Offset(0, 8),
-            ),
-          ],
-        ),
+        decoration: SwagTheme.cardDecoration(),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -57,7 +47,7 @@ class ProductCard extends StatelessWidget {
                 Container(
                   margin: const EdgeInsets.fromLTRB(8, 8, 8, 0),
                   decoration: BoxDecoration(
-                    color: SwagColors.sandSoft,
+                    color: SwagColors.photoMat,
                     borderRadius: BorderRadius.circular(18),
                   ),
                   child: ClipRRect(
@@ -77,38 +67,32 @@ class ProductCard extends StatelessWidget {
                     left: 14,
                     child: _TagBadge(tag: product.firstTag),
                   ),
-                if (product.onSale)
-                  Positioned(
-                    top: 14,
-                    right: 14,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-                      decoration: BoxDecoration(
-                        color: SwagColors.butter,
-                        borderRadius: BorderRadius.circular(999),
-                      ),
-                      child: Text(
-                        '-${product.discountPct}%',
-                        style: SwagTheme.body(
-                          size: 11,
-                          weight: FontWeight.w700,
-                          color: SwagColors.ink,
-                        ),
-                      ),
-                    ),
-                  ),
                 Positioned(
-                  bottom: 14,
+                  top: 14,
                   right: 14,
                   child: _HeartButton(
                     wished: wished,
                     onTap: () => store.toggleWishlist(product.id),
                   ),
                 ),
+                Positioned(
+                  bottom: 14,
+                  left: 14,
+                  child: _ShopPill(
+                    onTap: () {
+                      store.addToCart(
+                        product,
+                        product.sizes.first,
+                        product.colors.isNotEmpty ? product.colors.first : 'Default',
+                      );
+                      fireConfetti(context, origin: const Offset(0.28, 0.62));
+                    },
+                  ),
+                ),
               ],
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(13, 10, 13, 13),
+              padding: const EdgeInsets.fromLTRB(13, 11, 13, 13),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -199,17 +183,34 @@ class _TagBadge extends StatelessWidget {
   Color get _bg {
     switch (tag) {
       case 'trending':
-        return SwagColors.tangerine;
+        return SwagColors.accentSoft;
       case 'new':
-        return SwagColors.pistachio;
+        return SwagColors.mintSoft;
       case 'deal':
-        return SwagColors.sky;
+        return SwagColors.mistSoft;
       case 'winter':
-        return SwagColors.lilac;
+        return SwagColors.lavenderSoft;
       case 'bestseller':
-        return SwagColors.butter;
+        return SwagColors.butterSoft;
       default:
-        return SwagColors.sand;
+        return SwagColors.surfaceMist;
+    }
+  }
+
+  Color get _fg {
+    switch (tag) {
+      case 'trending':
+        return SwagColors.accentDeep;
+      case 'new':
+        return SwagColors.mintDeep;
+      case 'deal':
+        return SwagColors.mistDeep;
+      case 'winter':
+        return SwagColors.lavenderDeep;
+      case 'bestseller':
+        return SwagColors.butterDeep;
+      default:
+        return SwagColors.inkSoft;
     }
   }
 
@@ -242,16 +243,52 @@ class _TagBadge extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (tag == 'trending')
-            const SwagIcon('fire', size: 11, color: Colors.white),
+            SwagIcon('fire', size: 11, color: _fg),
           Text(
             _label,
-            style: SwagTheme.body(
-              size: 11,
-              weight: FontWeight.w700,
-              color: tag == 'new' || tag == 'deal' ? SwagColors.ink : Colors.white,
-            ),
+            style: SwagTheme.body(size: 11, weight: FontWeight.w700, color: _fg),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Small black pill quick-add button over the product photo.
+class _ShopPill extends StatelessWidget {
+  const _ShopPill({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: 30,
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        decoration: BoxDecoration(
+          color: SwagColors.ink,
+          borderRadius: BorderRadius.circular(999),
+          boxShadow: [
+            BoxShadow(
+              color: SwagColors.ink.withValues(alpha: 0.25),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SwagIcon('bag', size: 13, color: Colors.white),
+            const SizedBox(width: 5),
+            Text(
+              'Shop',
+              style: SwagTheme.body(size: 12, weight: FontWeight.w700, color: Colors.white),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -288,12 +325,11 @@ class _HeartButtonState extends State<_HeartButton> {
         duration: const Duration(milliseconds: 120),
         curve: Curves.easeOut,
         child: Container(
-          width: 34,
-          height: 34,
+          width: 36,
+          height: 36,
           decoration: BoxDecoration(
-            color: SwagColors.paper,
+            color: SwagColors.surface,
             shape: BoxShape.circle,
-            border: Border.all(color: SwagColors.sand),
             boxShadow: [
               BoxShadow(
                 color: SwagColors.ink.withValues(alpha: 0.08),
@@ -306,7 +342,7 @@ class _HeartButtonState extends State<_HeartButton> {
             child: SwagIcon(
               widget.wished ? 'heart-filled' : 'heart',
               size: 17,
-              color: widget.wished ? SwagColors.tangerine : SwagColors.inkSoft,
+              color: widget.wished ? SwagColors.accent : SwagColors.inkSoft,
             ),
           ),
         ),

@@ -26,4 +26,8 @@ class SwagNav {
   }
 
   static void pop(BuildContext context) => Navigator.of(context).pop();
+
+  /// Pops everything back to the root route (the tab shell).
+  static void popToRoot(BuildContext context) =>
+      Navigator.of(context).popUntil((route) => route.isFirst);
 }

@@ -49,7 +49,7 @@ class _ConfettiBurstState extends State<ConfettiBurst>
   void initState() {
     super.initState();
     final rng = math.Random(42);
-    _particles = List.generate(30, (i) => _ConfettiParticle(rng, SwagColors.candy));
+    _particles = List.generate(30, (i) => _ConfettiParticle(rng, SwagColors.pastel));
   }
 
   @override

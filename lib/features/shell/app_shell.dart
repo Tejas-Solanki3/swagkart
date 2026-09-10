@@ -90,33 +90,32 @@ class _SwagBottomNav extends StatelessWidget {
           final w = constraints.maxWidth;
           final slot = w / _tabs.length;
           return Container(
-            height: 68,
+            height: 64,
             decoration: BoxDecoration(
-              color: SwagColors.paper,
-              borderRadius: BorderRadius.circular(30),
-              border: Border.all(color: SwagColors.sand),
+              color: SwagColors.ink,
+              borderRadius: BorderRadius.circular(999),
               boxShadow: [
                 BoxShadow(
-                  color: SwagColors.ink.withValues(alpha: 0.10),
-                  blurRadius: 24,
-                  offset: const Offset(0, 10),
+                  color: SwagColors.ink.withValues(alpha: 0.38),
+                  blurRadius: 26,
+                  offset: const Offset(0, 12),
                 ),
               ],
             ),
             child: Stack(
               children: [
-                // Sliding indicator
+                // Sliding white pill indicator
                 AnimatedPositioned(
                   duration: const Duration(milliseconds: 380),
                   curve: Curves.easeOutBack,
-                  left: index * slot + (slot - 54) / 2,
-                  top: index == 2 ? -6 : 8,
+                  left: index * slot + 5,
+                  top: 8,
+                  width: slot - 10,
+                  height: 48,
                   child: Container(
-                    width: 54,
-                    height: 54,
                     decoration: BoxDecoration(
-                      color: index == 2 ? SwagColors.tangerine : SwagColors.tangerineSoft,
-                      borderRadius: BorderRadius.circular(20),
+                      color: SwagColors.surface,
+                      borderRadius: BorderRadius.circular(999),
                     ),
                   ),
                 ),
@@ -127,7 +126,6 @@ class _SwagBottomNav extends StatelessWidget {
                         child: _NavItem(
                           spec: _tabs[i],
                           active: i == index,
-                          isCenter: i == 2,
                           onTap: () => onSelected(i),
                         ),
                       ),
@@ -136,8 +134,8 @@ class _SwagBottomNav extends StatelessWidget {
                 // Cart badge
                 if (cartCount > 0)
                   Positioned(
-                    right: slot * 3 + slot / 2 + 6,
-                    top: 14,
+                    right: slot * 3 + slot / 2 + 4,
+                    top: 10,
                     child: CountBadge(count: cartCount),
                   ),
               ],
@@ -161,22 +159,20 @@ class _NavItem extends StatelessWidget {
   const _NavItem({
     required this.spec,
     required this.active,
-    required this.isCenter,
     required this.onTap,
   });
 
   final _TabSpec spec;
   final bool active;
-  final bool isCenter;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    final iconColor =
-        (active && isCenter) ? Colors.white : (active ? SwagColors.tangerine : SwagColors.inkFaint);
+    final dim = Colors.white.withValues(alpha: active ? 1 : 0.5);
+    final iconColor = active ? SwagColors.ink : dim;
     return Pressable(
       onTap: onTap,
-      scale: 0.92,
+      scale: 0.94,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -187,21 +183,19 @@ class _NavItem extends StatelessWidget {
               child: FadeTransition(opacity: animation, child: child),
             ),
             child: SwagIcon(
-              active && !isCenter ? spec.iconFilled : (isCenter ? spec.icon : spec.icon),
-              key: ValueKey('${spec.icon}-$active-$isCenter'),
-              size: isCenter ? 24 : 22,
+              active ? spec.iconFilled : spec.icon,
+              key: ValueKey('${spec.icon}-$active'),
+              size: 21,
               color: iconColor,
             ),
           ),
-          const SizedBox(height: 3),
+          const SizedBox(height: 2),
           Text(
             spec.label,
             style: SwagTheme.body(
               size: 10,
               weight: active ? FontWeight.w700 : FontWeight.w500,
-              color: (active && isCenter)
-                  ? SwagColors.tangerine
-                  : (active ? SwagColors.ink : SwagColors.inkFaint),
+              color: active ? SwagColors.ink : dim,
             ),
           ),
         ],
