@@ -48,10 +48,12 @@ class SwagTheme {
   static BoxDecoration cardDecoration({
     double radius = 24,
     Color color = SwagColors.surface,
+    Gradient? gradient,
     bool shadow = true,
   }) {
     return BoxDecoration(
-      color: color,
+      color: gradient == null ? color : null,
+      gradient: gradient,
       borderRadius: BorderRadius.circular(radius),
       border: Border.all(color: SwagColors.line),
       boxShadow: shadow ? [cardShadow] : null,

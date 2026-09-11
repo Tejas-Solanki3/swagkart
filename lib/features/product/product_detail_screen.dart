@@ -283,11 +283,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                         title: 'Fabric & fit',
                         open: _fabricOpen,
                         onToggle: () => setState(() => _fabricOpen = !_fabricOpen),
-                        child: const Text(
-                          'Cut generously for a relaxed drop-shoulder silhouette. '
-                          'Model is 5’11” and wears a size M. True to size — '
-                          'size down if you like it fitted.',
-                          style: TextStyle(fontSize: 12.5, color: SwagColors.inkSoft, height: 1.5),
+                        child: Text(
+                          _fabricFor(product),
+                          style: const TextStyle(fontSize: 12.5, color: SwagColors.inkSoft, height: 1.5),
                         ),
                       ),
                       const SizedBox(height: 10),
@@ -296,11 +294,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                         title: 'Care & shipping',
                         open: _careOpen,
                         onToggle: () => setState(() => _careOpen = !_careOpen),
-                        child: const Text(
-                          'Machine wash cold, hang dry. Free standard delivery in '
-                          '4–6 days on orders over ₹999, express in 1–2 days. '
-                          '7-day no-questions returns with doorstep pickup.',
-                          style: TextStyle(fontSize: 12.5, color: SwagColors.inkSoft, height: 1.5),
+                        child: Text(
+                          _careFor(product),
+                          style: const TextStyle(fontSize: 12.5, color: SwagColors.inkSoft, height: 1.5),
                         ),
                       ),
                       const SizedBox(height: 20),
@@ -899,5 +895,63 @@ class _AccordionCard extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+/// Product-specific fit advice, keyed by category — shoes get sizing
+/// talk, denim gets raw-denim talk, no one gets a hoodie script.
+String _fabricFor(Product p) {
+  switch (p.category) {
+    case 'footwear':
+      return 'True to size with a slightly roomy toe box. Between UK sizes? '
+          'Size down for a snug, locked-in fit, or up for all-day comfort. '
+          'The cushioned insole takes about a day to settle.';
+    case 'denim':
+      return '13 oz raw denim, high rise, full break over sneakers. Stiff for '
+          'the first week, then it moulds to your legs. True to size — '
+          'size up if you want extra room through the thigh.';
+    case 'accessories':
+      return 'Lightweight build with a structured shape. Fits one size for '
+          'almost everyone — the strap is adjustable where it matters, and it '
+          'sits clean over hoodies, caps and everything between.';
+    case 'winter':
+      return 'Quilted, water-repellent shell with a brushed interior. Roomy '
+          'enough over a hoodie without the bulk. Runs true — size down if '
+          'you tend to layer light.';
+    default:
+      return 'Cut generously for a relaxed drop-shoulder silhouette. Model '
+          'is 5’11” and wears a size M. True to size — size down if you '
+          'like it fitted.';
+  }
+}
+
+/// Product-specific care + the shared shipping promise.
+String _careFor(Product p) {
+  const shipping =
+      ' Free standard delivery in 4–6 days on orders over ₹999, express '
+      'in 1–2 days. 7-day no-questions returns with doorstep pickup.';
+  switch (p.category) {
+    case 'footwear':
+      return 'Wipe with a damp cloth and air-dry away from direct sun. No '
+          'machine wash, no tumble dry — rotate between wears so the sole '
+          'gets to recover.' +
+          shipping;
+    case 'denim':
+      return 'Wash cold, inside out, and only when it actually needs it — '
+          'raw denim loves neglect. Line dry; iron on the reverse if you '
+          'must.' +
+          shipping;
+    case 'accessories':
+      return 'Spot clean with a damp cloth and let it air dry. Keep it out of '
+          'prolonged direct sunlight so the colours stay honest.' +
+          shipping;
+    case 'winter':
+      return 'Gentle cold wash or spot clean; hang dry away from radiators. '
+          'Never tumble dry — the fill clumps and the loft goes.' +
+          shipping;
+    default:
+      return 'Machine wash cold with like colours, hang dry. Skip the '
+          'softener — the fabric has texture to keep.' +
+          shipping;
   }
 }

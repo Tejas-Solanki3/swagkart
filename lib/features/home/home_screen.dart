@@ -413,7 +413,7 @@ class _HeroSlide extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final (bg, deep) = _tone;
-    final imgSize = wide ? 200.0 : 172.0;
+    final imgSize = wide ? 184.0 : 158.0;
     return Container(
       margin: const EdgeInsets.all(6),
       decoration: BoxDecoration(
@@ -476,12 +476,16 @@ class _HeroSlide extends StatelessWidget {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text(
-                            slide.cta,
-                            style: SwagTheme.body(
-                              size: 12.5,
-                              weight: FontWeight.w800,
-                              color: SwagColors.ink,
+                          Flexible(
+                            child: Text(
+                              slide.cta,
+                              style: SwagTheme.body(
+                                size: 12.5,
+                                weight: FontWeight.w800,
+                                color: SwagColors.ink,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                           const SizedBox(width: 5),

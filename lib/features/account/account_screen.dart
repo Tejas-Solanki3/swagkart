@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/nav.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
+import '../../core/utils/format.dart';
 import '../../core/widgets/pressable.dart';
 import '../../core/widgets/swag_button.dart';
 import '../../core/widgets/swag_icon.dart';
 import '../../state/app_store.dart';
 import '../admin/admin_gate.dart';
-import '../payment/order_placed_screen.dart';
 
+/// Account tab — premium light cards, live order + wishlist shortcuts.
 class AccountScreen extends StatefulWidget {
   const AccountScreen({super.key});
 
@@ -24,99 +24,160 @@ class _AccountScreenState extends State<AccountScreen> {
   @override
   Widget build(BuildContext context) {
     final store = context.watch<SwagAppStore>();
-    final lastOrder = store.lastOrder;
+    final saved = store.wishlistProducts;
+    final order = store.lastOrder;
     return ListView(
-      padding: const EdgeInsets.fromLTRB(18, 14, 18, 130),
+      padding: const EdgeInsets.fromLTRB(16, 14, 16, 130),
       children: [
         Text(
           'Your Account',
           style: SwagTheme.display(size: 26),
         ),
         const SizedBox(height: 16),
-        _ProfileCard(
-          savedCount: store.wishlist.length,
-          bagCount: store.cartCount,
-        )
-            .animate().scale(begin: const Offset(0.95, 0.95), end: const Offset(1, 1), duration: 480.ms, curve: Curves.easeOutBack).fadeIn(duration: 380.ms),
-        const SizedBox(height: 18),
-        _QuickActions(
-          onOrders: () {
-            if (store.lastOrder != null) {
-              SwagNav.push(
-                context,
-                (_) => OrderPlacedScreen(order: store.lastOrder!),
-              );
-            } else {
-              _toast(context, 'No orders yet — your first drop is one tap away');
-            }
-          },
-          onWishlist: () => store.requestTab(2),
-          onAddresses: () => _toast(context, 'Saved addresses land with Phase 2.'),
-          onSupport: () => _toast(context, 'Support desk opens with Phase 2.'),
-        )
-            .animate(delay: 90.ms).fadeIn(duration: 420.ms).moveY(begin: 16, end: 0, duration: 420.ms, curve: Curves.easeOut),
-        if (lastOrder != null) ...[
-          const SizedBox(height: 18),
-          _SectionLabel('Recent order'),
-          const SizedBox(height: 10),
-          Pressable(
-            onTap: () => SwagNav.push(
-              context,
-              (_) => OrderPlacedScreen(order: lastOrder),
+        // Profile card
+        Container(
+          padding: const EdgeInsets.all(18),
+          decoration: SwagTheme.cardDecoration(
+            radius: 26,
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [SwagColors.accentSoft, SwagColors.butterSoft],
             ),
-            child: Container(
-              padding: const EdgeInsets.all(14),
-              decoration: SwagTheme.cardDecoration(radius: 20),
-              child: Row(
-                children: [
-                  Container(
-                    width: 42,
-                    height: 42,
-                    decoration: const BoxDecoration(
-                      color: SwagColors.mintSoft,
-                      shape: BoxShape.circle,
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 58,
+                height: 58,
+                decoration: const BoxDecoration(
+                  color: SwagColors.surface,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(color: SwagColors.line, blurRadius: 8, offset: Offset(0, 3)),
+                  ],
+                ),
+                child: const Center(
+                  child: SwagIcon('user', size: 28, color: SwagColors.accentDeep),
+                ),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Tejas Solanki',
+                      style: SwagTheme.display(size: 20),
                     ),
-                    child: const Center(
-                      child: SwagIcon('package', size: 20, color: SwagColors.mintDeep),
+                    const SizedBox(height: 2),
+                    Text(
+                      'tejas@swagkart.in',
+                      style: SwagTheme.body(size: 12, color: SwagColors.inkSoft),
                     ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Order #${lastOrder.id}',
-                          style: SwagTheme.body(size: 13.5, weight: FontWeight.w800),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          '${lastOrder.itemCount} · ${lastOrder.methodLabel} · ₹${lastOrder.total.toStringAsFixed(0)}',
-                          style: SwagTheme.body(size: 11.5, color: SwagColors.inkSoft),
-                        ),
-                      ],
+                    const SizedBox(height: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      decoration: BoxDecoration(
+                        color: SwagColors.surface,
+                        borderRadius: BorderRadius.circular(999),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const SwagIcon('fire', size: 12, color: SwagColors.accentDeep),
+                          const SizedBox(width: 5),
+                          Text(
+                            'VIP Swag Club',
+                            style: SwagTheme.body(
+                              size: 10.5,
+                              weight: FontWeight.w800,
+                              color: SwagColors.ink,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  const SwagIcon('arrow-right', size: 15, color: SwagColors.inkFaint),
-                ],
+                  ],
+                ),
+              ),
+            ],
+          ),
+        )
+            .animate()
+            .scale(begin: const Offset(0.96, 0.96), end: const Offset(1, 1), duration: 450.ms, curve: Curves.easeOutBack)
+            .fadeIn(duration: 350.ms),
+        const SizedBox(height: 16),
+        // Stats trio
+        Row(
+          children: [
+            Expanded(
+              child: _StatCard(
+                icon: 'package',
+                tint: SwagColors.mist,
+                value: order == null ? '—' : '#${order.id.substring(order.id.length - 4)}',
+                label: 'Last order',
               ),
             ),
-          ).animate(delay: 140.ms).fadeIn(duration: 420.ms).moveY(begin: 16, end: 0, duration: 420.ms, curve: Curves.easeOut),
-        ],
+            const SizedBox(width: 12),
+            Expanded(
+              child: _StatCard(
+                icon: 'heart-filled',
+                tint: SwagColors.blush,
+                value: '${saved.length}',
+                label: 'Saved items',
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _StatCard(
+                icon: 'tag',
+                tint: SwagColors.mint,
+                value: order == null ? '—' : inr(order.total),
+                label: 'Spent',
+              ),
+            ),
+          ],
+        ),
         const SizedBox(height: 18),
-        _SectionLabel('More for you'),
+        _SectionLabel('Saved & orders'),
         const SizedBox(height: 10),
         Container(
-          decoration: BoxDecoration(
-            color: SwagColors.surface,
-            borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: SwagColors.line),
-          ),
+          decoration: SwagTheme.cardDecoration(radius: 24),
           child: Column(
             children: [
+              Pressable(
+                onTap: () => store.requestTab(2),
+                child: _MenuRow(
+                  icon: 'heart',
+                  tint: SwagColors.blush,
+                  label: 'Saved for later',
+                  trailing: saved.isEmpty ? 'Start loving things' : '$saved.length saved',
+                  trailingStyle: saved.isEmpty
+                      ? SwagTheme.body(size: 12, color: SwagColors.inkFaint)
+                      : SwagTheme.body(size: 12, weight: FontWeight.w800, color: SwagColors.blushDeep),
+                ),
+              ),
+              const _Divider(),
+              Pressable(
+                onTap: () => _toast(
+                  context,
+                  order == null
+                      ? 'No orders yet — your first drop is one tap away.'
+                      : 'Order #${order.id} is being prepped — we’ll ping you when it ships.',
+                ),
+                child: _MenuRow(
+                  icon: 'package',
+                  tint: SwagColors.mist,
+                  label: 'My orders & tracking',
+                  trailing: order == null ? 'Coming up' : 'On the way',
+                  chip: order == null,
+                ),
+              ),
+              const _Divider(),
               _MenuRow(
                 icon: 'location',
-                tint: SwagColors.mint,
+                tint: SwagColors.peach,
                 label: 'Saved addresses',
                 trailing: 'Phase 2',
                 chip: true,
@@ -126,32 +187,35 @@ class _AccountScreenState extends State<AccountScreen> {
                 icon: 'card',
                 tint: SwagColors.lavender,
                 label: 'Payment methods',
-                trailing: 'Phase 2',
-                chip: true,
+                trailing: 'Saved at checkout',
               ),
               const _Divider(),
               _MenuRow(
                 icon: 'shield',
-                tint: SwagColors.butter,
+                tint: SwagColors.mint,
                 label: 'Help & support',
-                onTap: () => _toast(context, 'Support desk opens with Phase 2.'),
+                onTap: () => _toast(context, 'Support replies within a few hours — you’re in good company.'),
               ),
               const _Divider(),
               _MenuRow(
                 icon: 'sparkles',
-                tint: SwagColors.accent,
+                tint: SwagColors.butter,
                 label: 'About SwagKart',
                 onTap: () => _showAbout(context),
               ),
             ],
           ),
-        ).animate(delay: 180.ms).fadeIn(duration: 420.ms).moveY(begin: 16, end: 0, duration: 420.ms, curve: Curves.easeOut),
+        ),
         const SizedBox(height: 14),
+        // Admin console — light, premium, never dark
         Container(
-          decoration: BoxDecoration(
-            color: SwagColors.surface,
-            borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: SwagColors.line),
+          decoration: SwagTheme.cardDecoration(
+            radius: 24,
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [SwagColors.lavenderSoft, SwagColors.surface],
+            ),
           ),
           child: Pressable(
             onTap: () => SwagNav.push(context, (_) => const AdminGate()),
@@ -162,12 +226,12 @@ class _AccountScreenState extends State<AccountScreen> {
                   Container(
                     width: 40,
                     height: 40,
-                    decoration: const BoxDecoration(
-                      color: SwagColors.butterSoft,
+                    decoration: BoxDecoration(
+                      color: SwagColors.lavenderDeep.withValues(alpha: 0.12),
                       shape: BoxShape.circle,
                     ),
                     child: const Center(
-                      child: SwagIcon('lock', size: 19, color: SwagColors.butterDeep),
+                      child: SwagIcon('lock', size: 19, color: SwagColors.lavenderDeep),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -196,11 +260,11 @@ class _AccountScreenState extends State<AccountScreen> {
               ),
             ),
           ),
-        ).animate(delay: 220.ms).fadeIn(duration: 420.ms).moveY(begin: 16, end: 0, duration: 420.ms, curve: Curves.easeOut),
+        ),
         const SizedBox(height: 22),
         Center(
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
             children: [
               Text(
                 'Made with ',
@@ -224,11 +288,7 @@ class _AccountScreenState extends State<AccountScreen> {
       SnackBar(
         content: Text(
           msg,
-          style: SwagTheme.body(
-            size: 13,
-            weight: FontWeight.w600,
-            color: SwagColors.canvas,
-          ),
+          style: SwagTheme.body(size: 13, weight: FontWeight.w600, color: SwagColors.canvas),
         ),
       ),
     );
@@ -243,10 +303,16 @@ class _AccountScreenState extends State<AccountScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              SvgPicture.asset(
-                'assets/icons/logo.svg',
-                width: 76,
-                height: 76,
+              Container(
+                width: 64,
+                height: 64,
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(colors: [SwagColors.accent, SwagColors.peach]),
+                  shape: BoxShape.circle,
+                ),
+                child: const Center(
+                  child: SwagIcon('bag', size: 30, color: SwagColors.surface),
+                ),
               ),
               const SizedBox(height: 14),
               Text(
@@ -254,12 +320,11 @@ class _AccountScreenState extends State<AccountScreen> {
                 style: SwagTheme.display(size: 24),
               ),
               const SizedBox(height: 6),
-              Text(
-                'A playful Indian storefront demo. Phase 1 ships the '
-                'storefront, discovery and bag — checkout, orders, '
-                'accounts and the admin console follow.',
+              const Text(
+                'A playful Indian storefront. The store, discovery, bag and '
+                'checkout are live — the merchant console is next on the board.',
                 textAlign: TextAlign.center,
-                style: SwagTheme.body(size: 13, color: SwagColors.inkSoft),
+                style: TextStyle(fontSize: 13, color: SwagColors.inkSoft, height: 1.5),
               ),
               const SizedBox(height: 18),
               SizedBox(
@@ -278,321 +343,54 @@ class _AccountScreenState extends State<AccountScreen> {
   }
 }
 
-/// White "member card" — avatar, identity, VIP chip and live stats.
-class _ProfileCard extends StatelessWidget {
-  const _ProfileCard({required this.savedCount, required this.bagCount});
+class _StatCard extends StatelessWidget {
+  const _StatCard({
+    required this.icon,
+    required this.tint,
+    required this.value,
+    required this.label,
+  });
 
-  final int savedCount;
-  final int bagCount;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: SwagColors.surface,
-        borderRadius: BorderRadius.circular(30),
-        border: Border.all(color: SwagColors.line),
-        boxShadow: [
-          BoxShadow(
-            color: SwagColors.ink.withValues(alpha: 0.05),
-            blurRadius: 18,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Container(
-                width: 56,
-                height: 56,
-                decoration: BoxDecoration(
-                  color: SwagColors.accentSoft,
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: SwagColors.accent.withValues(alpha: 0.3),
-                    width: 1.2,
-                  ),
-                ),
-                child: const Center(
-                  child: SwagIcon('user', size: 26, color: SwagColors.accentDeep),
-                ),
-              ),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Aarav Sharma',
-                      style: SwagTheme.display(size: 20),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      'aarav.swag@example.in',
-                      style: SwagTheme.body(size: 12, color: SwagColors.inkSoft),
-                    ),
-                  ],
-                ),
-              ),
-              SvgPicture.asset(
-                'assets/icons/logo.svg',
-                width: 42,
-                height: 42,
-              ),
-            ],
-          ),
-          const SizedBox(height: 14),
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                decoration: BoxDecoration(
-                  color: SwagColors.butterSoft,
-                  borderRadius: BorderRadius.circular(999),
-                ),
-                child: const Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    SwagIcon('fire', size: 12, color: SwagColors.butterDeep),
-                    SizedBox(width: 5),
-                    Text(
-                      'VIP Swag Club',
-                      style: TextStyle(
-                        fontSize: 10.5,
-                        fontWeight: FontWeight.w800,
-                        color: SwagColors.butterDeep,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const Spacer(),
-              Text(
-                'ID · SK-000214',
-                style: SwagTheme.body(
-                  size: 10.5,
-                  weight: FontWeight.w700,
-                  color: SwagColors.inkFaint,
-                  letterSpacing: 0.6,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 18),
-          Container(
-            height: 1,
-            color: SwagColors.line,
-          ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              _StatTile(value: '$savedCount', label: 'Saved'),
-              const _StatDivider(),
-              _StatTile(value: '$bagCount', label: 'In bag'),
-              const _StatDivider(),
-              _StatTile(value: '250', label: 'Rewards'),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _StatTile extends StatelessWidget {
-  const _StatTile({required this.value, required this.label});
-
+  final String icon;
+  final Color tint;
   final String value;
   final String label;
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: SwagTheme.cardDecoration(radius: 20),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Container(
+            width: 28,
+            height: 28,
+            decoration: BoxDecoration(
+              color: tint.withValues(alpha: 0.2),
+              shape: BoxShape.circle,
+            ),
+            child: Center(
+              child: SwagIcon(icon, size: 14, color: SwagColors.ink),
+            ),
+          ),
+          const SizedBox(height: 8),
           Text(
             value,
-            style: SwagTheme.display(size: 19, weight: FontWeight.w800),
+            style: SwagTheme.display(size: 14, weight: FontWeight.w800),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
-          const SizedBox(height: 2),
+          const SizedBox(height: 1),
           Text(
             label,
-            style: SwagTheme.body(
-              size: 10,
-              weight: FontWeight.w600,
-              color: SwagColors.inkFaint,
-              letterSpacing: 0.6,
-            ),
+            style: SwagTheme.body(size: 10, color: SwagColors.inkSoft),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
         ],
       ),
-    );
-  }
-}
-
-class _StatDivider extends StatelessWidget {
-  const _StatDivider();
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Container(
-        width: 1,
-        height: 26,
-        color: SwagColors.line,
-      ),
-    );
-  }
-}
-
-/// 2×2 tappable quick-action grid.
-class _QuickActions extends StatelessWidget {
-  const _QuickActions({
-    required this.onOrders,
-    required this.onWishlist,
-    required this.onAddresses,
-    required this.onSupport,
-  });
-
-  final VoidCallback onOrders;
-  final VoidCallback onWishlist;
-  final VoidCallback onAddresses;
-  final VoidCallback onSupport;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: SwagColors.surface,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: SwagColors.line),
-      ),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: _QuickTile(
-                  icon: 'package',
-                  tint: SwagColors.mist,
-                  label: 'Orders',
-                  onTap: onOrders,
-                ),
-              ),
-              const _TileVGap(),
-              Expanded(
-                child: _QuickTile(
-                  icon: 'heart-filled',
-                  tint: SwagColors.blush,
-                  label: 'Wishlist',
-                  iconColor: SwagColors.blushDeep,
-                  onTap: onWishlist,
-                ),
-              ),
-            ],
-          ),
-          const _TileHGap(),
-          Row(
-            children: [
-              Expanded(
-                child: _QuickTile(
-                  icon: 'location',
-                  tint: SwagColors.mint,
-                  label: 'Addresses',
-                  onTap: onAddresses,
-                ),
-              ),
-              const _TileVGap(),
-              Expanded(
-                child: _QuickTile(
-                  icon: 'shield',
-                  tint: SwagColors.butter,
-                  label: 'Support',
-                  onTap: onSupport,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _QuickTile extends StatelessWidget {
-  const _QuickTile({
-    required this.icon,
-    required this.tint,
-    required this.label,
-    this.iconColor,
-    required this.onTap,
-  });
-
-  final String icon;
-  final Color tint;
-  final String label;
-  final Color? iconColor;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Pressable(
-      onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-        child: Column(
-          children: [
-            Container(
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(
-                color: tint.withValues(alpha: 0.22),
-                shape: BoxShape.circle,
-              ),
-              child: Center(
-                child: SwagIcon(
-                  icon,
-                  size: 20,
-                  color: iconColor ?? SwagColors.ink,
-                ),
-              ),
-            ),
-            const SizedBox(height: 9),
-            Text(
-              label,
-              style: SwagTheme.body(size: 12, weight: FontWeight.w700),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _TileVGap extends StatelessWidget {
-  const _TileVGap();
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16),
-      child: Container(width: 1, color: SwagColors.line),
-    );
-  }
-}
-
-class _TileHGap extends StatelessWidget {
-  const _TileHGap();
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Container(height: 1, color: SwagColors.line),
     );
   }
 }
@@ -623,7 +421,7 @@ class _Divider extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Padding(
       padding: EdgeInsets.symmetric(horizontal: 62),
-      child: Divider(height: 1, color: SwagColors.surfaceMist),
+      child: Divider(height: 1, color: SwagColors.line),
     );
   }
 }
@@ -634,6 +432,7 @@ class _MenuRow extends StatelessWidget {
     required this.tint,
     required this.label,
     this.trailing,
+    this.trailingStyle,
     this.chip = false,
     this.onTap,
   });
@@ -642,6 +441,7 @@ class _MenuRow extends StatelessWidget {
   final Color tint;
   final String label;
   final String? trailing;
+  final TextStyle? trailingStyle;
   final bool chip;
   final VoidCallback? onTap;
 
@@ -672,17 +472,22 @@ class _MenuRow extends StatelessWidget {
               ),
             ),
             if (trailing != null)
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
-                decoration: BoxDecoration(
-                  color: SwagColors.surfaceMist,
-                  borderRadius: BorderRadius.circular(999),
-                ),
-                child: Text(
-                  trailing!,
-                  style: SwagTheme.body(size: 10.5, weight: FontWeight.w800, color: SwagColors.inkSoft),
-                ),
-              ),
+              chip
+                  ? Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: SwagColors.surfaceMist,
+                        borderRadius: BorderRadius.circular(999),
+                      ),
+                      child: Text(
+                        trailing!,
+                        style: SwagTheme.body(size: 10.5, weight: FontWeight.w800, color: SwagColors.inkSoft),
+                      ),
+                    )
+                  : Text(
+                      trailing!,
+                      style: trailingStyle ?? SwagTheme.body(size: 12, color: SwagColors.inkFaint),
+                    ),
             const SizedBox(width: 8),
             if (!chip) const SwagIcon('arrow-right', size: 15, color: SwagColors.inkFaint),
           ],

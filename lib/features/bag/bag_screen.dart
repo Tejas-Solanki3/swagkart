@@ -126,7 +126,7 @@ class _BagScreenState extends State<BagScreen> {
                     _undoTimer?.cancel();
                     setState(() => _lastCleared = List.of(store.cart));
                     store.clearCart();
-                    fireCelebration(context);
+                    // Quiet on purpose — clearing isn't a celebration.
                     // Undo lives on the empty state for 8s, then expires.
                     _undoTimer = Timer(const Duration(seconds: 8), () {
                       if (mounted) setState(() => _lastCleared = const []);
