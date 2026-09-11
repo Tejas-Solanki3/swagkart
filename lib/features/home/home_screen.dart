@@ -480,7 +480,7 @@ class _HeroSlide extends StatelessWidget {
                             child: Text(
                               slide.cta,
                               style: SwagTheme.body(
-                                size: 12.5,
+                                size: 12,
                                 weight: FontWeight.w800,
                                 color: SwagColors.ink,
                               ),

@@ -74,7 +74,7 @@ const List<HeroSlide> demoHeroes = [
     kicker: 'Sneaker vault',
     title: 'Fresh soles, fresh mood',
     subtitle: 'From court classics to chunky runners — all under ₹5K.',
-    cta: 'Explore footwear',
+    cta: 'Shop kicks',
     accent: SwagColors.mist,
   ),
 ];
