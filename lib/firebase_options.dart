@@ -31,39 +31,76 @@ class DefaultFirebaseOptions {
   }
 
 
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyDcbzOcDe8bM8FRbN1bXPQoYmYpxj-QEb8',
-    appId: '1:93442249750:web:0631608014d57f29a25137',
+  static FirebaseOptions get web => FirebaseOptions(
+    apiKey: const String.fromEnvironment(
+      'FIREBASE_WEB_API_KEY',
+      defaultValue: 'YOUR_WEB_API_KEY_HERE',
+    ),
+    appId: const String.fromEnvironment(
+      'FIREBASE_WEB_APP_ID',
+      defaultValue: '1:93442249750:web:0631608014d57f29a25137',
+    ),
     messagingSenderId: '93442249750',
-    projectId: 'swagkart-8f619',
+    projectId: const String.fromEnvironment(
+      'FIREBASE_PROJECT_ID',
+      defaultValue: 'swagkart-8f619',
+    ),
     authDomain: 'swagkart-8f619.firebaseapp.com',
     storageBucket: 'swagkart-8f619.firebasestorage.app',
     measurementId: 'G-8R1D28XRK8',
   );
 
-  static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyAG6OIKp0so9iIt5ZCYVPFNt4ZXYnL5XBw',
-    appId: '1:93442249750:android:dc8e482db0c8b9f8a25137',
+  static FirebaseOptions get android => FirebaseOptions(
+    apiKey: const String.fromEnvironment(
+      'FIREBASE_ANDROID_API_KEY',
+      defaultValue: 'YOUR_ANDROID_API_KEY_HERE',
+    ),
+    appId: const String.fromEnvironment(
+      'FIREBASE_ANDROID_APP_ID',
+      defaultValue: '1:93442249750:android:dc8e482db0c8b9f8a25137',
+    ),
     messagingSenderId: '93442249750',
-    projectId: 'swagkart-8f619',
+    projectId: const String.fromEnvironment(
+      'FIREBASE_PROJECT_ID',
+      defaultValue: 'swagkart-8f619',
+    ),
     storageBucket: 'swagkart-8f619.firebasestorage.app',
   );
 
-  static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyDcbzOcDe8bM8FRbN1bXPQoYmYpxj-QEb8',
-    appId: '1:93442249750:web:0631608014d57f29a25137',
+  static FirebaseOptions get ios => FirebaseOptions(
+    apiKey: const String.fromEnvironment(
+      'FIREBASE_IOS_API_KEY',
+      defaultValue: 'YOUR_IOS_API_KEY_HERE',
+    ),
+    appId: const String.fromEnvironment(
+      'FIREBASE_IOS_APP_ID',
+      defaultValue: '1:93442249750:web:0631608014d57f29a25137',
+    ),
     messagingSenderId: '93442249750',
-    projectId: 'swagkart-8f619',
+    projectId: const String.fromEnvironment(
+      'FIREBASE_PROJECT_ID',
+      defaultValue: 'swagkart-8f619',
+    ),
     storageBucket: 'swagkart-8f619.firebasestorage.app',
     iosBundleId: 'com.swagkart.swagKart',
   );
 
-  static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyDcbzOcDe8bM8FRbN1bXPQoYmYpxj-QEb8',
-    appId: '1:93442249750:web:0631608014d57f29a25137',
+  static FirebaseOptions get macos => FirebaseOptions(
+    apiKey: const String.fromEnvironment(
+      'FIREBASE_MACOS_API_KEY',
+      defaultValue: 'YOUR_MACOS_API_KEY_HERE',
+    ),
+    appId: const String.fromEnvironment(
+      'FIREBASE_MACOS_APP_ID',
+      defaultValue: '1:93442249750:web:0631608014d57f29a25137',
+    ),
     messagingSenderId: '93442249750',
-    projectId: 'swagkart-8f619',
+    projectId: const String.fromEnvironment(
+      'FIREBASE_PROJECT_ID',
+      defaultValue: 'swagkart-8f619',
+    ),
     storageBucket: 'swagkart-8f619.firebasestorage.app',
     iosBundleId: 'com.swagkart.swagKart',
   );
 }
+

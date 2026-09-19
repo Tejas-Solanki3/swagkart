@@ -25,8 +25,11 @@ class FirebaseService {
       }
 
       final options = DefaultFirebaseOptions.currentPlatform;
-      // If valid credentials are provided in firebase_options.dart
-      if (options != null && !options.apiKey.contains('Placeholder')) {
+      // If valid credentials are provided in firebase_options.dart or via environment
+      if (options != null &&
+          options.apiKey.isNotEmpty &&
+          !options.apiKey.contains('Placeholder') &&
+          !options.apiKey.startsWith('YOUR_')) {
         await Firebase.initializeApp(options: options);
         _initialized = true;
         if (kDebugMode) {

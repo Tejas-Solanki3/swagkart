@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "93442249750",
-    "project_id": "swagkart-8f619",
-    "storage_bucket": "swagkart-8f619.firebasestorage.app"
+    "project_number": "000000000000",
+    "project_id": "your-firebase-project-id",
+    "storage_bucket": "your-firebase-project-id.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:93442249750:android:dc8e482db0c8b9f8a25137",
+        "mobilesdk_app_id": "1:000000000000:android:0000000000000000000000",
         "android_client_info": {
           "package_name": "com.swagkart.swag_kart"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAG6OIKp0so9iIt5ZCYVPFNt4ZXYnL5XBw"
+          "current_key": "YOUR_ANDROID_API_KEY_HERE"
         }
       ],
       "services": {
