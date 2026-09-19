@@ -1,9 +1,14 @@
+// =============================================================================
+// File: lib/features/home/home_screen.dart
+// Purpose: Storefront home page featuring dynamic search bar, animated hero
+//          carousel, category pills, promo banner with copyable coupon, and product carousels.
+// =============================================================================
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/nav.dart';
@@ -16,17 +21,21 @@ import '../../core/widgets/pressable.dart';
 import '../../core/widgets/product_card.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/swag_icon.dart';
+import '../../core/widgets/swag_logo.dart';
 import '../../data/demo_data.dart';
 import '../../data/models/product.dart';
 import '../../state/app_store.dart';
 import '../search/search_screen.dart';
 
+/// Storefront landing tab showcasing marketing banners, featured categories,
+/// hot drops, and brand promotions.
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
+
 
 class _HomeScreenState extends State<HomeScreen> {
   int _suggestion = 0;
@@ -44,7 +53,9 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _suggestionTimer = Timer.periodic(const Duration(milliseconds: 2600), (_) {
-      if (mounted) setState(() => _suggestion = (_suggestion + 1) % _suggestions.length);
+      if (mounted) {
+        setState(() => _suggestion = (_suggestion + 1) % _suggestions.length);
+      }
     });
   }
 
@@ -70,7 +81,10 @@ class _HomeScreenState extends State<HomeScreen> {
       builder: (context, store, _) {
         final trending = store.byCategory(SwagCategory.allId).take(6).toList();
         final deals = store.products.where((p) => p.onSale).toList();
-        final fresh = store.byCategory(SwagCategory.allId, sort: SortMode.rating);
+        final fresh = store.byCategory(
+          SwagCategory.allId,
+          sort: SortMode.rating,
+        );
         return ListView(
           padding: EdgeInsets.fromLTRB(pad, 12, pad, 130),
           children: [
@@ -134,7 +148,9 @@ class _HomeScreenState extends State<HomeScreen> {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(
-        const SnackBar(content: Text('You are all caught up — no new drops yet.')),
+        const SnackBar(
+          content: Text('You are all caught up — no new drops yet.'),
+        ),
       );
   }
 }
@@ -151,50 +167,32 @@ class _HomeHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Container(
-          width: 46,
-          height: 46,
-          decoration: BoxDecoration(
-            color: SwagColors.surface,
-            shape: BoxShape.circle,
-            border: Border.all(color: SwagColors.line),
-            boxShadow: [
-              BoxShadow(
-                color: SwagColors.ink.withValues(alpha: 0.05),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: Center(
-            child: SvgPicture.asset(
-              'assets/icons/logo-mark.svg',
-              width: 26,
-              height: 26,
-            ),
-          ),
-        ),
+        const SwagLogo(size: 40, showText: false),
         const SizedBox(width: 12),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'Hello, Swagstar',
-                style: SwagTheme.display(size: 18),
-              ),
+              Text('Hello, Swagstar', style: SwagTheme.display(size: 18)),
               const SizedBox(height: 1),
               Row(
                 children: [
                   Text(
                     'Mumbai, IN',
-                    style: SwagTheme.body(size: 12, weight: FontWeight.w700, color: SwagColors.inkSoft),
+                    style: SwagTheme.body(
+                      size: 12,
+                      weight: FontWeight.w700,
+                      color: SwagColors.inkSoft,
+                    ),
                   ),
                   const SizedBox(width: 6),
                   Expanded(
                     child: Text(
                       'Free shipping over ₹999',
-                      style: SwagTheme.body(size: 12, color: SwagColors.inkFaint),
+                      style: SwagTheme.body(
+                        size: 12,
+                        color: SwagColors.inkFaint,
+                      ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -204,40 +202,70 @@ class _HomeHeader extends StatelessWidget {
             ],
           ),
         ),
-        Pressable(
-          onTap: onBell,
-          child: Container(
-            width: 44,
-            height: 44,
-            decoration: SwagTheme.iconButtonDecoration(),
-            child: Stack(
-              clipBehavior: Clip.none,
+        Consumer<SwagAppStore>(
+          builder: (context, store, _) => Container(
+            margin: const EdgeInsets.only(right: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 6),
+            decoration: BoxDecoration(
+              color: SwagColors.butterSoft,
+              borderRadius: BorderRadius.circular(999),
+              border: Border.all(
+                color: SwagColors.butter.withValues(alpha: 0.4),
+              ),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                const Center(
-                  child: SwagIcon('bell', size: 19, color: SwagColors.ink),
-                ),
-                Positioned(
-                  top: 8,
-                  right: 8,
-                  child: Container(
-                    width: 8,
-                    height: 8,
-                    decoration: const BoxDecoration(
-                      color: SwagColors.accent,
-                      shape: BoxShape.circle,
-                      border: Border.fromBorderSide(
-                        BorderSide(color: SwagColors.surfaceMist, width: 1.5),
-                      ),
-                    ),
+                const Text('🪙', style: TextStyle(fontSize: 12)),
+                const SizedBox(width: 4),
+                Text(
+                  '${store.swagPoints} pts',
+                  style: SwagTheme.body(
+                    size: 11.5,
+                    weight: FontWeight.w800,
+                    color: SwagColors.ink,
                   ),
                 ),
               ],
             ),
           ),
-        ).animate(
-          onPlay: (c) => c.repeat(reverse: true),
-          delay: 2400.ms,
-        ).rotate(begin: -0.04, end: 0.04, duration: 700.ms),
+        ),
+        Pressable(
+              onTap: onBell,
+              child: Container(
+                width: 44,
+                height: 44,
+                decoration: SwagTheme.iconButtonDecoration(),
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    const Center(
+                      child: SwagIcon('bell', size: 19, color: SwagColors.ink),
+                    ),
+                    Positioned(
+                      top: 8,
+                      right: 8,
+                      child: Container(
+                        width: 8,
+                        height: 8,
+                        decoration: const BoxDecoration(
+                          color: SwagColors.accent,
+                          shape: BoxShape.circle,
+                          border: Border.fromBorderSide(
+                            BorderSide(
+                              color: SwagColors.surfaceMist,
+                              width: 1.5,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            )
+            .animate(onPlay: (c) => c.repeat(reverse: true), delay: 2400.ms)
+            .rotate(begin: -0.04, end: 0.04, duration: 700.ms),
         const SizedBox(width: 10),
         Pressable(
           onTap: onBag,
@@ -296,11 +324,7 @@ class _SearchBar extends StatelessWidget {
                 ),
               ),
             ),
-            Container(
-              width: 1,
-              height: 22,
-              color: SwagColors.line,
-            ),
+            Container(width: 1, height: 22, color: SwagColors.line),
             const SizedBox(width: 14),
             const SwagIcon('filter', size: 18, color: SwagColors.inkSoft),
             const SizedBox(width: 18),
@@ -384,7 +408,9 @@ class _HeroSlideshowState extends State<_HeroSlideshow> {
                   width: active ? 18 : 6,
                   height: 6,
                   decoration: BoxDecoration(
-                    color: active ? SwagColors.ink : SwagColors.ink.withValues(alpha: 0.22),
+                    color: active
+                        ? SwagColors.ink
+                        : SwagColors.ink.withValues(alpha: 0.22),
                     borderRadius: BorderRadius.circular(999),
                   ),
                 );
@@ -398,15 +424,24 @@ class _HeroSlideshowState extends State<_HeroSlideshow> {
 }
 
 class _HeroSlide extends StatelessWidget {
-  const _HeroSlide({super.key, required this.slide, required this.wide, required this.onExplore});
+  const _HeroSlide({
+    super.key,
+    required this.slide,
+    required this.wide,
+    required this.onExplore,
+  });
 
   final HeroSlide slide;
   final bool wide;
   final VoidCallback onExplore;
 
   (Color bg, Color deep) get _tone {
-    if (slide.accent == SwagColors.mint) return (SwagColors.mintSoft, SwagColors.mintDeep);
-    if (slide.accent == SwagColors.mist) return (SwagColors.mistSoft, SwagColors.mistDeep);
+    if (slide.accent == SwagColors.mint) {
+      return (SwagColors.mintSoft, SwagColors.mintDeep);
+    }
+    if (slide.accent == SwagColors.mist) {
+      return (SwagColors.mistSoft, SwagColors.mistDeep);
+    }
     return (SwagColors.accentSoft, SwagColors.accentDeep);
   }
 
@@ -429,7 +464,10 @@ class _HeroSlide extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 9,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: SwagColors.surface,
                       borderRadius: BorderRadius.circular(999),
@@ -453,50 +491,62 @@ class _HeroSlide extends StatelessWidget {
                   const SizedBox(height: 3),
                   Text(
                     slide.subtitle,
-                    style: SwagTheme.body(size: 11.5, color: SwagColors.inkSoft),
+                    style: SwagTheme.body(
+                      size: 11.5,
+                      color: SwagColors.inkSoft,
+                    ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
                   const Spacer(),
                   Pressable(
-                    onTap: onExplore,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 9),
-                      decoration: BoxDecoration(
-                        color: SwagColors.surface,
-                        borderRadius: BorderRadius.circular(999),
-                        boxShadow: [
-                          BoxShadow(
-                            color: SwagColors.ink.withValues(alpha: 0.10),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
+                        onTap: onExplore,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 15,
+                            vertical: 9,
                           ),
-                        ],
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Flexible(
-                            child: Text(
-                              slide.cta,
-                              style: SwagTheme.body(
-                                size: 12,
-                                weight: FontWeight.w800,
+                          decoration: BoxDecoration(
+                            color: SwagColors.surface,
+                            borderRadius: BorderRadius.circular(999),
+                            boxShadow: [
+                              BoxShadow(
+                                color: SwagColors.ink.withValues(alpha: 0.10),
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  slide.cta,
+                                  style: SwagTheme.body(
+                                    size: 12,
+                                    weight: FontWeight.w800,
+                                    color: SwagColors.ink,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              const SizedBox(width: 5),
+                              const SwagIcon(
+                                'arrow-right',
+                                size: 14,
                                 color: SwagColors.ink,
                               ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
+                            ],
                           ),
-                          const SizedBox(width: 5),
-                          const SwagIcon('arrow-right', size: 14, color: SwagColors.ink),
-                        ],
-                      ),
-                    ),
-                  ).animate(
-                    onPlay: (c) => c.repeat(reverse: true),
-                    delay: 700.ms,
-                  ).rotate(begin: -0.025, end: 0.025, duration: 950.ms),
+                        ),
+                      )
+                      .animate(
+                        onPlay: (c) => c.repeat(reverse: true),
+                        delay: 700.ms,
+                      )
+                      .rotate(begin: -0.025, end: 0.025, duration: 950.ms),
                 ],
               ),
             ),
@@ -505,28 +555,35 @@ class _HeroSlide extends StatelessWidget {
             width: imgSize + (wide ? 24 : 18),
             child: Padding(
               padding: EdgeInsets.only(right: wide ? 24 : 18),
-              child: Container(
-                width: imgSize,
-                height: imgSize,
-                decoration: BoxDecoration(
-                color: SwagColors.surface,
-                borderRadius: BorderRadius.circular(24),
-                border: Border.all(color: SwagColors.surface),
-                boxShadow: [
-                  BoxShadow(
-                    color: SwagColors.ink.withValues(alpha: 0.12),
-                    blurRadius: 18,
-                    offset: const Offset(0, 8),
-                  ),
-                ],
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(24),
-                child: Image.asset(slide.image, fit: BoxFit.cover),
-              ),
-            ).animate(
-              delay: 150.ms,
-            ).scale(begin: const Offset(0.9, 0.9), end: const Offset(1, 1), duration: 520.ms, curve: Curves.easeOutBack).fadeIn(duration: 400.ms),
+              child:
+                  Container(
+                        width: imgSize,
+                        height: imgSize,
+                        decoration: BoxDecoration(
+                          color: SwagColors.surface,
+                          borderRadius: BorderRadius.circular(24),
+                          border: Border.all(color: SwagColors.surface),
+                          boxShadow: [
+                            BoxShadow(
+                              color: SwagColors.ink.withValues(alpha: 0.12),
+                              blurRadius: 18,
+                              offset: const Offset(0, 8),
+                            ),
+                          ],
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(24),
+                          child: Image.asset(slide.image, fit: BoxFit.cover),
+                        ),
+                      )
+                      .animate(delay: 150.ms)
+                      .scale(
+                        begin: const Offset(0.9, 0.9),
+                        end: const Offset(1, 1),
+                        duration: 520.ms,
+                        curve: Curves.easeOutBack,
+                      )
+                      .fadeIn(duration: 400.ms),
             ),
           ),
         ],
@@ -534,7 +591,6 @@ class _HeroSlide extends StatelessWidget {
     );
   }
 }
-
 
 // ---------------------------------------------------------------------------
 
@@ -608,13 +664,20 @@ class _DealsStrip extends StatelessWidget {
                 ),
                 Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.only(right: 12, top: 12, bottom: 12),
+                    padding: const EdgeInsets.only(
+                      right: 12,
+                      top: 12,
+                      bottom: 12,
+                    ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           p.name,
-                          style: SwagTheme.display(size: 13.5, weight: FontWeight.w700),
+                          style: SwagTheme.display(
+                            size: 13.5,
+                            weight: FontWeight.w700,
+                          ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -624,7 +687,10 @@ class _DealsStrip extends StatelessWidget {
                             Flexible(
                               child: Text(
                                 inr(p.price),
-                                style: SwagTheme.display(size: 15, weight: FontWeight.w800),
+                                style: SwagTheme.display(
+                                  size: 15,
+                                  weight: FontWeight.w800,
+                                ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -646,7 +712,10 @@ class _DealsStrip extends StatelessWidget {
                         ),
                         const Spacer(),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
                           decoration: BoxDecoration(
                             color: SwagColors.accentSoft,
                             borderRadius: BorderRadius.circular(8),
@@ -654,7 +723,11 @@ class _DealsStrip extends StatelessWidget {
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const SwagIcon('bolt', size: 12, color: SwagColors.accentDeep),
+                              const SwagIcon(
+                                'bolt',
+                                size: 12,
+                                color: SwagColors.accentDeep,
+                              ),
                               const SizedBox(width: 4),
                               Flexible(
                                 child: Text(
@@ -710,7 +783,12 @@ class _ResponsiveGrid extends StatelessWidget {
               children: [
                 for (var c = 0; c < rows[r].length; c++) ...[
                   if (c > 0) const SizedBox(width: 14),
-                  Expanded(child: ProductCard(product: rows[r][c], stagger: r * cols + c)),
+                  Expanded(
+                    child: ProductCard(
+                      product: rows[r][c],
+                      stagger: r * cols + c,
+                    ),
+                  ),
                 ],
               ],
             ),
@@ -728,9 +806,27 @@ class _TrustStrip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final items = [
-      ('truck', 'Free shipping', 'On orders over ₹999', SwagColors.mistSoft, SwagColors.mistDeep),
-      ('shield', '7-day returns', 'No questions, no drama', SwagColors.mintSoft, SwagColors.mintDeep),
-      ('bolt', 'UPI & COD', 'Pay your way, safely', SwagColors.butterSoft, SwagColors.butterDeep),
+      (
+        'truck',
+        'Free shipping',
+        'On orders over ₹999',
+        SwagColors.mistSoft,
+        SwagColors.mistDeep,
+      ),
+      (
+        'shield',
+        '7-day returns',
+        'No questions, no drama',
+        SwagColors.mintSoft,
+        SwagColors.mintDeep,
+      ),
+      (
+        'bolt',
+        'UPI & COD',
+        'Pay your way, safely',
+        SwagColors.butterSoft,
+        SwagColors.butterDeep,
+      ),
     ];
     return Row(
       children: [
@@ -828,7 +924,10 @@ class _PromoCard extends StatelessWidget {
             child: copied
                 ? Container(
                     key: const ValueKey('copied'),
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 9,
+                    ),
                     decoration: BoxDecoration(
                       color: SwagColors.mintSoft,
                       borderRadius: BorderRadius.circular(999),
@@ -836,7 +935,11 @@ class _PromoCard extends StatelessWidget {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const SwagIcon('check', size: 14, color: SwagColors.mintDeep),
+                        const SwagIcon(
+                          'check',
+                          size: 14,
+                          color: SwagColors.mintDeep,
+                        ),
                         const SizedBox(width: 5),
                         Text(
                           'Copied!',
@@ -851,7 +954,10 @@ class _PromoCard extends StatelessWidget {
                   )
                 : Container(
                     key: const ValueKey('code'),
-                    padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 9),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 13,
+                      vertical: 9,
+                    ),
                     decoration: BoxDecoration(
                       color: SwagColors.canvas,
                       borderRadius: BorderRadius.circular(999),

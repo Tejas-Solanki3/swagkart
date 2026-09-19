@@ -1,3 +1,9 @@
+// =============================================================================
+// File: lib/features/payment/payment_screen.dart
+// Purpose: Checkout payment screen providing payment method selection (UPI,
+//          Credit/Debit Card, COD), interactive card flip preview, and simulated transaction gateway.
+// =============================================================================
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -10,14 +16,16 @@ import '../../core/utils/format.dart';
 import '../../core/widgets/pressable.dart';
 import '../../core/widgets/swag_button.dart';
 import '../../core/widgets/swag_icon.dart';
+import '../../core/widgets/swag_logo.dart';
 import '../../data/models/order.dart';
 import '../../state/app_store.dart';
 import 'order_placed_screen.dart';
 
 /// Reference-style payment screen: method picker, live card preview,
-/// UPI id field, COD note — then a fake processing step and order placement.
+/// UPI id field, COD note — then a simulated processing step and order placement.
 class PaymentScreen extends StatefulWidget {
   const PaymentScreen({super.key});
+
 
   @override
   State<PaymentScreen> createState() => _PaymentScreenState();
@@ -26,11 +34,11 @@ class PaymentScreen extends StatefulWidget {
 class _PaymentScreenState extends State<PaymentScreen>
     with TickerProviderStateMixin {
   PayMethod _method = PayMethod.upi;
-  final _upiCtrl = TextEditingController();
+  final _upiCtrl = TextEditingController(text: 'tejas@okaxis');
   final _cardCtrl = TextEditingController();
   final _expCtrl = TextEditingController();
   final _cvvCtrl = TextEditingController();
-  final _nameCtrl = TextEditingController();
+  final _nameCtrl = TextEditingController(text: 'Tejas Solanki');
 
   Map<String, String> _errors = {};
   bool _processing = false;
@@ -53,8 +61,7 @@ class _PaymentScreenState extends State<PaymentScreen>
     final digits = v.replaceAll(RegExp(r'\D'), '').substring(0, 16);
     final grouped = digits.isEmpty
         ? ''
-        : digits.replaceAllMapped(
-            RegExp(r'(\d{4})(?=\d)'), (m) => '${m[1]} ');
+        : digits.replaceAllMapped(RegExp(r'(\d{4})(?=\d)'), (m) => '${m[1]} ');
     if (grouped != _cardCtrl.text) {
       final offset = _cardCtrl.selection.baseOffset;
       _cardCtrl.text = grouped;
@@ -68,7 +75,9 @@ class _PaymentScreenState extends State<PaymentScreen>
   void _onExpiryChanged(String v) {
     final digits = v.replaceAll(RegExp(r'\D'), '').substring(0, 4);
     var out = digits;
-    if (digits.length >= 3) out = '${digits.substring(0, 2)}/${digits.substring(2)}';
+    if (digits.length >= 3) {
+      out = '${digits.substring(0, 2)}/${digits.substring(2)}';
+    }
     if (out != _expCtrl.text) {
       _expCtrl.text = out;
       _expCtrl.selection = const TextSelection.collapsed(offset: 999);
@@ -162,12 +171,16 @@ class _PaymentScreenState extends State<PaymentScreen>
       final store = context.read<SwagAppStore>();
       final detail = switch (_method) {
         PayMethod.upi => _upiCtrl.text.trim(),
-        PayMethod.card => '•••• ${_cardCtrl.text.replaceAll(RegExp(r'\D'), '').substring(12)}',
+        PayMethod.card =>
+          '•••• ${_cardCtrl.text.replaceAll(RegExp(r'\D'), '').substring(12)}',
         PayMethod.cod => 'Cash on delivery',
       };
       final order = store.placeOrder(method: _method, paymentDetail: detail);
       if (mounted) {
-        SwagNav.pushReplacement(context, (_) => OrderPlacedScreen(order: order));
+        SwagNav.pushReplacement(
+          context,
+          (_) => OrderPlacedScreen(order: order),
+        );
       }
     });
   }
@@ -188,12 +201,17 @@ class _PaymentScreenState extends State<PaymentScreen>
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text('Nothing to pay for',
-                          style: SwagTheme.display(size: 22)),
+                      Text(
+                        'Nothing to pay for',
+                        style: SwagTheme.display(size: 22),
+                      ),
                       const SizedBox(height: 8),
                       Text(
                         'Your bag is empty, swagstar.',
-                        style: SwagTheme.body(size: 13, color: SwagColors.inkSoft),
+                        style: SwagTheme.body(
+                          size: 13,
+                          color: SwagColors.inkSoft,
+                        ),
                       ),
                       const SizedBox(height: 18),
                       SizedBox(
@@ -215,7 +233,12 @@ class _PaymentScreenState extends State<PaymentScreen>
                   // Top bar
                   Row(
                     children: [
-                      _RoundButton(icon: 'arrow-left', onTap: () => SwagNav.pop(context)),
+                      _RoundButton(
+                        icon: 'arrow-left',
+                        onTap: () => SwagNav.pop(context),
+                      ),
+                      const SizedBox(width: 10),
+                      const SwagLogo(size: 28, showText: true),
                       const Spacer(),
                       Text('Payment', style: SwagTheme.display(size: 18)),
                       const Spacer(),
@@ -253,35 +276,40 @@ class _PaymentScreenState extends State<PaymentScreen>
                     alignment: Alignment.topCenter,
                     child: switch (_method) {
                       PayMethod.card => _CardPanel(
-                            preview: _CardPreview(
-                              number: _cardDisplay(),
-                              name: _nameCtrl.text.trim().isEmpty
-                                  ? 'YOUR NAME'
-                                  : _nameCtrl.text.trim().toUpperCase(),
-                              expiry: _expCtrl.text.isEmpty ? 'MM/YY' : _expCtrl.text,
-                            ),
-                            cardController: _cardCtrl,
-                            expController: _expCtrl,
-                            cvvController: _cvvCtrl,
-                            nameController: _nameCtrl,
-                            errors: _errors,
-                            onCard: _onCardChanged,
-                            onExp: _onExpiryChanged,
-                            onCvv: _onCvvChanged,
-                            onName: (v) => _clearError('name'),
-                          ),
+                        preview: _CardPreview(
+                          number: _cardDisplay(),
+                          name: _nameCtrl.text.trim().isEmpty
+                              ? 'YOUR NAME'
+                              : _nameCtrl.text.trim().toUpperCase(),
+                          expiry: _expCtrl.text.isEmpty
+                              ? 'MM/YY'
+                              : _expCtrl.text,
+                        ),
+                        cardController: _cardCtrl,
+                        expController: _expCtrl,
+                        cvvController: _cvvCtrl,
+                        nameController: _nameCtrl,
+                        errors: _errors,
+                        onCard: _onCardChanged,
+                        onExp: _onExpiryChanged,
+                        onCvv: _onCvvChanged,
+                        onName: (v) => _clearError('name'),
+                      ),
                       PayMethod.upi => _UpiPanel(
-                            controller: _upiCtrl,
-                            error: _errors['upi'],
-                            onChanged: _onUpiChanged,
-                          ),
+                        controller: _upiCtrl,
+                        error: _errors['upi'],
+                        onChanged: _onUpiChanged,
+                      ),
                       PayMethod.cod => const _CodPanel(),
                     },
                   ),
                   const SizedBox(height: 20),
                   // Amount summary
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 14,
+                    ),
                     decoration: SwagTheme.cardDecoration(radius: 20),
                     child: Row(
                       children: [
@@ -299,15 +327,20 @@ class _PaymentScreenState extends State<PaymentScreen>
                             const SizedBox(height: 2),
                             Text(
                               inr(store.total),
-                              style: SwagTheme.display(size: 20, weight: FontWeight.w800),
+                              style: SwagTheme.display(
+                                size: 20,
+                                weight: FontWeight.w800,
+                              ),
                             ),
                           ],
                         ),
                         const Spacer(),
                         if (store.savings > 0)
                           Container(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 6,
+                            ),
                             decoration: BoxDecoration(
                               color: SwagColors.mintSoft,
                               borderRadius: BorderRadius.circular(999),
@@ -318,6 +351,66 @@ class _PaymentScreenState extends State<PaymentScreen>
                                 size: 11.5,
                                 weight: FontWeight.w800,
                                 color: SwagColors.mintDeep,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 10,
+                    ),
+                    decoration: BoxDecoration(
+                      color: SwagColors.butterSoft,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: SwagColors.butter.withValues(alpha: 0.35),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        const Text('🪙', style: TextStyle(fontSize: 16)),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Order Loyalty Reward',
+                                style: SwagTheme.body(
+                                  size: 12.5,
+                                  weight: FontWeight.w800,
+                                ),
+                              ),
+                              Text(
+                                'You will earn +${(store.total * 0.10).round()} SwagPoints (10% back)',
+                                style: SwagTheme.body(
+                                  size: 11.5,
+                                  color: SwagColors.inkSoft,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        if (store.redeemedPoints > 0)
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: SwagColors.ink,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              '-${store.redeemedPoints} pts used',
+                              style: SwagTheme.body(
+                                size: 10,
+                                weight: FontWeight.w800,
+                                color: SwagColors.butter,
                               ),
                             ),
                           ),
@@ -337,11 +430,18 @@ class _PaymentScreenState extends State<PaymentScreen>
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const SwagIcon('shield', size: 14, color: SwagColors.inkFaint),
+                      const SwagIcon(
+                        'shield',
+                        size: 14,
+                        color: SwagColors.inkFaint,
+                      ),
                       const SizedBox(width: 5),
                       Text(
                         'Demo checkout — no real money moves.',
-                        style: SwagTheme.body(size: 11.5, color: SwagColors.inkFaint),
+                        style: SwagTheme.body(
+                          size: 11.5,
+                          color: SwagColors.inkFaint,
+                        ),
                       ),
                     ],
                   ),
@@ -408,9 +508,7 @@ class _RoundButton extends StatelessWidget {
         width: 44,
         height: 44,
         decoration: SwagTheme.iconButtonDecoration(),
-        child: Center(
-          child: SwagIcon(icon, size: 19, color: SwagColors.ink),
-        ),
+        child: Center(child: SwagIcon(icon, size: 19, color: SwagColors.ink)),
       ),
     );
   }
@@ -440,7 +538,9 @@ class _MethodButton extends StatelessWidget {
           color: selected ? SwagColors.mistSoft : SwagColors.surface,
           shape: BoxShape.circle,
           border: Border.all(
-            color: selected ? SwagColors.mist.withValues(alpha: 0.6) : SwagColors.line,
+            color: selected
+                ? SwagColors.mist.withValues(alpha: 0.6)
+                : SwagColors.line,
             width: selected ? 1.8 : 1.2,
           ),
           boxShadow: selected
@@ -456,23 +556,23 @@ class _MethodButton extends StatelessWidget {
         child: Center(
           child: switch (method) {
             PayMethod.upi => Text(
-                'UPI',
-                style: SwagTheme.display(
-                  size: 12,
-                  weight: FontWeight.w800,
-                  color: selected ? SwagColors.mistDeep : SwagColors.inkSoft,
-                ),
+              'UPI',
+              style: SwagTheme.display(
+                size: 12,
+                weight: FontWeight.w800,
+                color: selected ? SwagColors.mistDeep : SwagColors.inkSoft,
               ),
+            ),
             PayMethod.card => SwagIcon(
-                'card',
-                size: 24,
-                color: selected ? SwagColors.mistDeep : SwagColors.inkSoft,
-              ),
+              'card',
+              size: 24,
+              color: selected ? SwagColors.mistDeep : SwagColors.inkSoft,
+            ),
             PayMethod.cod => SwagIcon(
-                'truck',
-                size: 24,
-                color: selected ? SwagColors.mistDeep : SwagColors.inkSoft,
-              ),
+              'truck',
+              size: 24,
+              color: selected ? SwagColors.mistDeep : SwagColors.inkSoft,
+            ),
           },
         ),
       ),
@@ -483,7 +583,11 @@ class _MethodButton extends StatelessWidget {
 // ---------------------------------------------------------------------------
 
 class _CardPreview extends StatelessWidget {
-  const _CardPreview({required this.number, required this.name, required this.expiry});
+  const _CardPreview({
+    required this.number,
+    required this.name,
+    required this.expiry,
+  });
 
   final String number;
   final String name;
@@ -696,12 +800,18 @@ class _UpiPanel extends StatelessWidget {
                   children: [
                     Text(
                       'UPI — the fastest way',
-                      style: SwagTheme.display(size: 15, weight: FontWeight.w700),
+                      style: SwagTheme.display(
+                        size: 15,
+                        weight: FontWeight.w700,
+                      ),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       'GPay, PhonePe, Paytm — your pick.',
-                      style: SwagTheme.body(size: 12, color: SwagColors.inkSoft),
+                      style: SwagTheme.body(
+                        size: 12,
+                        color: SwagColors.inkSoft,
+                      ),
                     ),
                   ],
                 ),
@@ -736,7 +846,11 @@ class _UpiPanel extends StatelessWidget {
                 child: Text(
                   'A collect request will pop up in your UPI app. Approve it there '
                   'to complete payment — we will never ask for your PIN.',
-                  style: SwagTheme.body(size: 12, color: SwagColors.mistDeep, height: 1.45),
+                  style: SwagTheme.body(
+                    size: 12,
+                    color: SwagColors.mistDeep,
+                    height: 1.45,
+                  ),
                 ),
               ),
             ],
@@ -782,7 +896,11 @@ class _CodPanel extends StatelessWidget {
                 Text(
                   'Pay in cash or via UPI when your order arrives at your door. '
                   'Keep exact change handy — our riders carry limited change.',
-                  style: SwagTheme.body(size: 12, color: SwagColors.inkSoft, height: 1.45),
+                  style: SwagTheme.body(
+                    size: 12,
+                    color: SwagColors.inkSoft,
+                    height: 1.45,
+                  ),
                 ),
               ],
             ),
@@ -823,7 +941,11 @@ class _Field extends StatelessWidget {
       children: [
         Text(
           label,
-          style: SwagTheme.body(size: 12, weight: FontWeight.w800, color: SwagColors.inkSoft),
+          style: SwagTheme.body(
+            size: 12,
+            weight: FontWeight.w800,
+            color: SwagColors.inkSoft,
+          ),
         ),
         const SizedBox(height: 7),
         AnimatedContainer(
@@ -851,14 +973,14 @@ class _Field extends StatelessWidget {
                     contentPadding: const EdgeInsets.symmetric(vertical: 15),
                     border: InputBorder.none,
                     hintText: hintText,
-                    hintStyle: SwagTheme.body(size: 13.5, color: SwagColors.inkFaint),
+                    hintStyle: SwagTheme.body(
+                      size: 13.5,
+                      color: SwagColors.inkFaint,
+                    ),
                   ),
                 ),
               ),
-              if (trailing != null) ...[
-                trailing!,
-                const SizedBox(width: 14),
-              ],
+              if (trailing != null) ...[trailing!, const SizedBox(width: 14)],
             ],
           ),
         ),
@@ -871,7 +993,11 @@ class _Field extends StatelessWidget {
                 const SizedBox(width: 4),
                 Text(
                   error!,
-                  style: SwagTheme.body(size: 11.5, weight: FontWeight.w700, color: SwagColors.danger),
+                  style: SwagTheme.body(
+                    size: 11.5,
+                    weight: FontWeight.w700,
+                    color: SwagColors.danger,
+                  ),
                 ),
               ],
             ),

@@ -1,8 +1,16 @@
+// =============================================================================
+// File: lib/data/models/order.dart
+// Purpose: Ecommerce order data model encapsulating purchased items, payment method,
+//          transaction timestamps, pricing breakdown, and order status.
+// =============================================================================
+
 import 'cart_item.dart';
 
+/// Supported checkout payment methods.
 enum PayMethod { upi, card, cod }
 
-/// A placed (demo) order — kept for the success screen + account tab.
+/// A placed order record — kept for the success screen, account history,
+/// and merchant admin order management.
 class SwagOrder {
   SwagOrder({
     required this.id,
@@ -14,7 +22,9 @@ class SwagOrder {
     required this.method,
     required this.detail,
     required this.placedAt,
+    this.status = 'Processing',
   });
+
 
   final String id;
   final List<CartItem> items;
@@ -27,6 +37,7 @@ class SwagOrder {
   /// UPI id used, last-4 of card, or 'Cash on delivery'.
   final String detail;
   final DateTime placedAt;
+  String status;
 
   String get methodLabel {
     switch (method) {

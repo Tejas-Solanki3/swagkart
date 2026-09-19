@@ -1,8 +1,15 @@
+// =============================================================================
+// File: lib/core/theme/app_theme.dart
+// Purpose: Application-wide ThemeData configuration, custom typography presets
+//          (Baloo 2 display and Inter body), card decorations, and route transitions.
+// =============================================================================
+
 import 'package:flutter/material.dart';
 
 import 'app_colors.dart';
 
 /// Soft, premium page transition: gentle fade + lift + settle.
+/// Applied globally to Android and Fuchsia platforms in [SwagTheme.light].
 class SwagPageTransitions extends PageTransitionsBuilder {
   const SwagPageTransitions();
 
@@ -20,22 +27,23 @@ class SwagPageTransitions extends PageTransitionsBuilder {
     Animation<double> secondaryAnimation,
     Widget child,
   ) {
+    // Easing cubic transformation for an organic deceleration feel
     final t = Curves.easeOutCubic.transform(animation.value);
     return FadeTransition(
       opacity: animation,
       child: Transform.translate(
         offset: Offset(0, 18 * (1 - t)),
-        child: Transform.scale(
-          scale: 0.97 + 0.03 * t,
-          child: child,
-        ),
+        child: Transform.scale(scale: 0.97 + 0.03 * t, child: child),
       ),
     );
   }
 }
 
+/// Centralized design system definitions: shadows, decorations, theme setup,
+/// and display/body typography styles.
 class SwagTheme {
   SwagTheme._();
+
 
   /// Shared soft shadow used by premium cards.
   static const BoxShadow cardShadow = BoxShadow(
@@ -115,7 +123,9 @@ class SwagTheme {
           fontWeight: FontWeight.w600,
           color: Colors.white,
         ),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(16))),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(16)),
+        ),
       ),
       dialogTheme: DialogThemeData(
         backgroundColor: SwagColors.surface,

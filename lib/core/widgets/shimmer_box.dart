@@ -1,14 +1,24 @@
+// =============================================================================
+// File: lib/core/widgets/shimmer_box.dart
+// Purpose: Sweeping linear gradient shimmer loading placeholder used for skeleton
+//          states during asynchronous content loading and image rendering.
+// =============================================================================
+
 import 'package:flutter/material.dart';
 
 import '../theme/app_colors.dart';
 
 /// Soft sweeping shimmer used for skeleton loading states.
+///
+/// Drives a looping [AnimationController] that translates a diagonal white highlight
+/// across the container surface, simulating content loading.
 class ShimmerBox extends StatefulWidget {
   const ShimmerBox({
     super.key,
     required this.radius,
     this.color = SwagColors.surfaceMist,
   });
+
 
   final double radius;
   final Color color;

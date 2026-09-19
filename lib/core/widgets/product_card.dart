@@ -1,3 +1,9 @@
+// =============================================================================
+// File: lib/core/widgets/product_card.dart
+// Purpose: Grid and rail product card displaying image, brand, title, pricing,
+//          discount pill, wishlist heart toggle, and instant add-to-bag action.
+// =============================================================================
+
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
@@ -14,6 +20,9 @@ import 'pressable.dart';
 import 'swag_icon.dart';
 
 /// Premium product card: white card, photo mat, heart bubble, quick "Shop" pill.
+///
+/// Tapping opens the [ProductDetailScreen]. Includes an interactive wishlist heart
+/// and an inline cart addition button with spring animations.
 class ProductCard extends StatelessWidget {
   const ProductCard({
     super.key,
@@ -21,6 +30,7 @@ class ProductCard extends StatelessWidget {
     this.width,
     this.stagger = 0,
   });
+
 
   final Product product;
   final double? width;
@@ -32,143 +42,195 @@ class ProductCard extends StatelessWidget {
     final wished = store.isWished(product.id);
 
     return Pressable(
-      onTap: () => SwagNav.push(
-        context,
-        (context) => ProductDetailScreen(product: product),
-      ),
-      child: Container(
-        width: width,
-        decoration: SwagTheme.cardDecoration(),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Stack(
+          onTap: () => SwagNav.push(
+            context,
+            (context) => ProductDetailScreen(product: product),
+          ),
+          child: Container(
+            width: width,
+            decoration: SwagTheme.cardDecoration(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  margin: const EdgeInsets.fromLTRB(8, 8, 8, 0),
-                  decoration: BoxDecoration(
-                    color: SwagColors.photoMat,
-                    borderRadius: BorderRadius.circular(18),
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(18),
-                    child: AspectRatio(
-                      aspectRatio: 1,
-                      child: Image.asset(product.image, fit: BoxFit.cover),
-                    ),
-                  ),
-                ),
-                if (product.firstTag.isNotEmpty)
-                  Positioned(
-                    top: 14,
-                    left: 14,
-                    child: _TagBadge(tag: product.firstTag),
-                  ),
-                Positioned(
-                  top: 14,
-                  right: 14,
-                  child: _HeartButton(
-                    wished: wished,
-                    onTap: () => store.toggleWishlist(product.id),
-                  ),
-                ),
-                Positioned(
-                  bottom: 14,
-                  left: 14,
-                  child: _ShopPill(
-                    onTap: () {
-                      store.addToCart(
-                        product,
-                        product.sizes.first,
-                        product.colors.isNotEmpty ? product.colors.first : 'Default',
-                      );
-                      fireCelebration(context);
-                    },
-                  ),
-                ),
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(13, 11, 13, 13),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    product.brand.toUpperCase(),
-                    style: SwagTheme.body(
-                      size: 10,
-                      weight: FontWeight.w700,
-                      color: SwagColors.inkFaint,
-                      letterSpacing: 0.8,
-                    ),
-                  ),
-                  const SizedBox(height: 3),
-                  Text(
-                    product.name,
-                    style: SwagTheme.display(size: 15, weight: FontWeight.w700),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 6),
-                  Row(
-                    children: [
-                      const SwagIcon('star-filled', size: 13, color: SwagColors.butter),
-                      const SizedBox(width: 3),
-                      Text(
-                        product.rating.toStringAsFixed(1),
-                        style: SwagTheme.body(size: 11, weight: FontWeight.w700),
+                Stack(
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.fromLTRB(8, 8, 8, 0),
+                      decoration: BoxDecoration(
+                        color: SwagColors.photoMat,
+                        borderRadius: BorderRadius.circular(18),
                       ),
-                      const SizedBox(width: 4),
-                      Text(
-                        '(${compactCount(product.reviews)})',
-                        style: SwagTheme.body(size: 11, color: SwagColors.inkFaint),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 6),
-                  Row(
-                    children: [
-                      Flexible(
-                        child: Text(
-                          inr(product.price),
-                          style: SwagTheme.display(
-                            size: 16,
-                            weight: FontWeight.w800,
-                            color: SwagColors.ink,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(18),
+                        child: AspectRatio(
+                          aspectRatio: 1,
+                          child: Image.asset(product.image, fit: BoxFit.cover),
                         ),
                       ),
-                      if (product.onSale) ...[
-                        const SizedBox(width: 6),
-                        Flexible(
-                          child: Padding(
-                            padding: const EdgeInsets.only(bottom: 1.5),
+                    ),
+                    if (product.firstTag.isNotEmpty)
+                      Positioned(
+                        top: 14,
+                        left: 14,
+                        child: _TagBadge(tag: product.firstTag),
+                      ),
+                    Positioned(
+                      top: 14,
+                      right: 14,
+                      child: _HeartButton(
+                        wished: wished,
+                        onTap: () => store.toggleWishlist(product.id),
+                      ),
+                    ),
+                    Positioned(
+                      bottom: 14,
+                      left: 14,
+                      child: _ShopPill(
+                        onTap: () {
+                          store.addToCart(
+                            product,
+                            product.sizes.first,
+                            product.colors.isNotEmpty
+                                ? product.colors.first
+                                : 'Default',
+                          );
+                          fireCelebration(context);
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(12, 9, 12, 11),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        product.brand.toUpperCase(),
+                        style: SwagTheme.body(
+                          size: 10,
+                          weight: FontWeight.w700,
+                          color: SwagColors.inkFaint,
+                          letterSpacing: 0.8,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        product.name,
+                        style: SwagTheme.display(
+                          size: 14.5,
+                          weight: FontWeight.w700,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          const SwagIcon(
+                            'star-filled',
+                            size: 13,
+                            color: SwagColors.butter,
+                          ),
+                          const SizedBox(width: 3),
+                          Text(
+                            product.rating.toStringAsFixed(1),
+                            style: SwagTheme.body(
+                              size: 11,
+                              weight: FontWeight.w700,
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            '(${compactCount(product.reviews)})',
+                            style: SwagTheme.body(
+                              size: 11,
+                              color: SwagColors.inkFaint,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 5),
+                      Row(
+                        children: [
+                          Flexible(
                             child: Text(
-                              inr(product.mrp!),
-                              style: SwagTheme.body(
-                                size: 11,
-                                color: SwagColors.inkFaint,
-                                decoration: TextDecoration.lineThrough,
+                              inr(product.price),
+                              style: SwagTheme.display(
+                                size: 15.5,
+                                weight: FontWeight.w800,
+                                color: SwagColors.ink,
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
-                        ),
-                      ],
+                          if (product.onSale) ...[
+                            const SizedBox(width: 5),
+                            Flexible(
+                              child: Text(
+                                inr(product.mrp!),
+                                style: SwagTheme.body(
+                                  size: 10.5,
+                                  color: SwagColors.inkFaint,
+                                  decoration: TextDecoration.lineThrough,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                          const Spacer(),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 6,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: SwagColors.green,
+                              borderRadius: BorderRadius.circular(6),
+                              border: Border.all(
+                                color: SwagColors.butter.withValues(
+                                  alpha: 0.35,
+                                ),
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Text(
+                                  '🪙',
+                                  style: TextStyle(fontSize: 9.5),
+                                ),
+                                const SizedBox(width: 2.5),
+                                Text(
+                                  '${product.swagPointsCost} pts',
+                                  style: SwagTheme.body(
+                                    size: 9.5,
+                                    weight: FontWeight.w800,
+                                    color: SwagColors.ink,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
-    ).animate(
-      delay: (stagger * 55).ms,
-    ).fadeIn(duration: 420.ms, curve: Curves.easeOut).moveY(begin: 18, end: 0, duration: 420.ms, curve: Curves.easeOut).scale(begin: const Offset(0.97, 0.97), end: const Offset(1, 1), duration: 420.ms);
+          ),
+        )
+        .animate(delay: (stagger * 55).ms)
+        .fadeIn(duration: 420.ms, curve: Curves.easeOut)
+        .moveY(begin: 18, end: 0, duration: 420.ms, curve: Curves.easeOut)
+        .scale(
+          begin: const Offset(0.97, 0.97),
+          end: const Offset(1, 1),
+          duration: 420.ms,
+        );
   }
 }
 
@@ -239,11 +301,14 @@ class _TagBadge extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (tag == 'trending')
-            SwagIcon('fire', size: 11, color: _fg),
+          if (tag == 'trending') SwagIcon('fire', size: 11, color: _fg),
           Text(
             _label,
-            style: SwagTheme.body(size: 11, weight: FontWeight.w700, color: _fg),
+            style: SwagTheme.body(
+              size: 11,
+              weight: FontWeight.w700,
+              color: _fg,
+            ),
           ),
         ],
       ),
@@ -282,7 +347,11 @@ class _ShopPill extends StatelessWidget {
             const SizedBox(width: 5),
             Text(
               'Shop',
-              style: SwagTheme.body(size: 12, weight: FontWeight.w700, color: Colors.white),
+              style: SwagTheme.body(
+                size: 12,
+                weight: FontWeight.w700,
+                color: Colors.white,
+              ),
             ),
           ],
         ),

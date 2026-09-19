@@ -1,3 +1,9 @@
+// =============================================================================
+// File: lib/core/theme/app_colors.dart
+// Purpose: Defines the centralized color palette and ecommerce business thresholds
+//          used across the entire SwagKart mobile and web application.
+// =============================================================================
+
 import 'package:flutter/material.dart';
 
 /// SwagKart palette — a premium soft-pastel system:
@@ -7,11 +13,17 @@ class SwagColors {
   SwagColors._();
 
   // Canvas & surfaces
+  /// Primary app canvas background tone (misty light grey/lavender)
   static const Color canvas = Color(0xFFF1F0F6);
+  /// Pure white background for card containers and elevated dialogs
   static const Color surface = Color(0xFFFFFFFF);
+  /// Subtle secondary surface tone for chip backgrounds and search bars
   static const Color surfaceMist = Color(0xFFE9E7F2);
+  /// Fine border line divider color for crisp, modern boundaries
   static const Color line = Color(0xFFE3E1ED);
+  /// Warm photo mat background tone underneath transparent product PNGs
   static const Color photoMat = Color(0xFFF8F3EA);
+
 
   // Text
   static const Color ink = Color(0xFF1C1B24);
@@ -36,6 +48,7 @@ class SwagColors {
   static const Color mintSoft = Color(0xFFE1F0E6);
   static const Color peach = Color(0xFFDE9A6C);
   static const Color peachSoft = Color(0xFFFBEADD);
+  static const Color green = Color(0xFF34A853);
 
   // Deep text tones for readable labels on pastel chips
   static const Color lavenderDeep = Color(0xFF6F5FB5);

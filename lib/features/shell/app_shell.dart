@@ -1,3 +1,9 @@
+// =============================================================================
+// File: lib/features/shell/app_shell.dart
+// Purpose: Persistent 5-tab application shell hosting Home, Catalog, Wishlist,
+//          Bag, and Account screens using an IndexedStack and custom floating bottom navigation.
+// =============================================================================
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -14,6 +20,9 @@ import '../home/home_screen.dart';
 import '../wishlist/wishlist_screen.dart';
 
 /// Root 5-tab shell with a floating pill bottom nav.
+///
+/// Manages tab switching, listens for programmatic tab requests from [SwagAppStore],
+/// and preserves state across tabs with an [IndexedStack].
 class AppShell extends StatefulWidget {
   const AppShell({super.key, this.initialIndex = 0});
 
@@ -22,6 +31,7 @@ class AppShell extends StatefulWidget {
   @override
   State<AppShell> createState() => _AppShellState();
 }
+
 
 class _AppShellState extends State<AppShell> {
   late int _index = widget.initialIndex;
@@ -168,19 +178,19 @@ class _NavItem extends StatelessWidget {
   Widget build(BuildContext context) {
     // Same icon in both states — only the tone changes.
     // Active: ink on the sliding white pill. Inactive: white on the ink bar.
-    final iconColor = active ? SwagColors.ink : Colors.white.withValues(alpha: 0.5);
-    final labelColor = active ? SwagColors.ink : Colors.white.withValues(alpha: 0.55);
+    final iconColor = active
+        ? SwagColors.ink
+        : Colors.white.withValues(alpha: 0.5);
+    final labelColor = active
+        ? SwagColors.ink
+        : Colors.white.withValues(alpha: 0.55);
     return Pressable(
       onTap: onTap,
       scale: 0.94,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          SwagIcon(
-            spec.icon,
-            size: 21,
-            color: iconColor,
-          ),
+          SwagIcon(spec.icon, size: 21, color: iconColor),
           const SizedBox(height: 2),
           Text(
             spec.label,
@@ -195,5 +205,3 @@ class _NavItem extends StatelessWidget {
     );
   }
 }
-
-

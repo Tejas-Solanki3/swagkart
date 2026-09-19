@@ -15,7 +15,9 @@ Future<void> loadSwagFonts() async {
   };
   for (final entry in files.entries) {
     for (final weight in entry.value) {
-      final data = await rootBundle.load('assets/fonts/${entry.key}-$weight.ttf');
+      final data = await rootBundle.load(
+        'assets/fonts/${entry.key}-$weight.ttf',
+      );
       await loadFontFromList(data.buffer.asUint8List(), fontFamily: entry.key);
     }
   }

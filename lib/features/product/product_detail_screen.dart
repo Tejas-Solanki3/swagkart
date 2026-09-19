@@ -1,3 +1,9 @@
+// =============================================================================
+// File: lib/features/product/product_detail_screen.dart
+// Purpose: Comprehensive product view featuring multi-image gallery slider, size
+//          and color selectors, quantity steppers, SwagPoints calculations, and bag additions.
+// =============================================================================
+
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -13,9 +19,13 @@ import '../../core/widgets/product_card.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/swag_button.dart';
 import '../../core/widgets/swag_icon.dart';
+import '../../core/widgets/swag_logo.dart';
 import '../../data/models/product.dart';
 import '../../state/app_store.dart';
+import '../payment/order_placed_screen.dart';
 
+/// Detailed product page with photo gallery, variant selection, description accordion,
+/// loyalty points calculation, and instant purchase options.
 class ProductDetailScreen extends StatefulWidget {
   const ProductDetailScreen({super.key, required this.product});
 
@@ -24,6 +34,7 @@ class ProductDetailScreen extends StatefulWidget {
   @override
   State<ProductDetailScreen> createState() => _ProductDetailScreenState();
 }
+
 
 class _ProductDetailScreenState extends State<ProductDetailScreen>
     with TickerProviderStateMixin {
@@ -68,9 +79,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
             children: [
               SwagIcon('bolt', size: 16, color: SwagColors.accent),
               SizedBox(width: 8),
-              Expanded(
-                child: Text('Pick a size first, swag head!'),
-              ),
+              Expanded(child: Text('Pick a size first, swag head!')),
             ],
           ),
         ),
@@ -116,6 +125,205 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
     });
   }
 
+  void _handleBuyWithPoints(Product product) {
+    final store = context.read<SwagAppStore>();
+    final cost = product.swagPointsCost;
+    if (store.swagPoints < cost) {
+      showDialog<void>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          backgroundColor: SwagColors.surfaceMist,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(22),
+          ),
+          title: Row(
+            children: [
+              const Text('🪙', style: TextStyle(fontSize: 22)),
+              const SizedBox(width: 8),
+              Text(
+                'More Points Needed',
+                style: SwagTheme.display(size: 18, color: SwagColors.ink),
+              ),
+            ],
+          ),
+          content: Text(
+            'This drop costs $cost SwagPoints. You currently have ${store.swagPoints} pts.\n\nPlace any standard order to earn 10% back in SwagPoints!',
+            style: SwagTheme.body(size: 13, color: SwagColors.inkSoft),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: Text(
+                'Got It',
+                style: SwagTheme.body(
+                  size: 13,
+                  weight: FontWeight.w700,
+                  color: SwagColors.accent,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
+    final chosenSize =
+        _size ?? (product.sizes.isNotEmpty ? product.sizes.first : 'Free Size');
+    final chosenColor = product.colors.isNotEmpty
+        ? product.colors[_colorIndex]
+        : 'Default';
+
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: SwagColors.surfaceMist,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (ctx) => Padding(
+        padding: const EdgeInsets.fromLTRB(20, 20, 20, 32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration: const BoxDecoration(
+                    color: SwagColors.butter,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Center(
+                    child: Text('🪙', style: TextStyle(fontSize: 22)),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Redeem with SwagPoints',
+                        style: SwagTheme.display(
+                          size: 17,
+                          color: SwagColors.ink,
+                        ),
+                      ),
+                      Text(
+                        'Instant drop redemption with zero cash',
+                        style: SwagTheme.body(
+                          size: 12,
+                          color: SwagColors.inkSoft,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: SwagColors.canvas,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: SwagColors.line),
+              ),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        product.name,
+                        style: SwagTheme.body(
+                          size: 13,
+                          weight: FontWeight.w700,
+                          color: SwagColors.ink,
+                        ),
+                      ),
+                      Text(
+                        '$cost pts',
+                        style: SwagTheme.body(
+                          size: 13,
+                          weight: FontWeight.w800,
+                          color: SwagColors.accentDeep,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Size / Color',
+                        style: SwagTheme.body(
+                          size: 12,
+                          color: SwagColors.inkFaint,
+                        ),
+                      ),
+                      Text(
+                        '$chosenSize · ${_colorName(product, _colorIndex)}',
+                        style: SwagTheme.body(
+                          size: 12,
+                          weight: FontWeight.w600,
+                          color: SwagColors.inkSoft,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const Divider(height: 18),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Remaining Balance',
+                        style: SwagTheme.body(
+                          size: 12,
+                          weight: FontWeight.w700,
+                          color: SwagColors.inkSoft,
+                        ),
+                      ),
+                      Text(
+                        '🪙 ${store.swagPoints - cost} pts',
+                        style: SwagTheme.body(
+                          size: 12,
+                          weight: FontWeight.w800,
+                          color: SwagColors.mintDeep,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 18),
+            SwagButton(
+              label: 'Confirm & Redeem Drop 🚀',
+              background: SwagColors.ink,
+              onTap: () {
+                Navigator.of(ctx).pop();
+                final order = store.buyWithSwagPoints(
+                  product,
+                  chosenSize,
+                  chosenColor,
+                );
+                fireCelebration(context);
+                SwagNav.pushReplacement(
+                  context,
+                  (_) => OrderPlacedScreen(order: order),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final product = widget.product;
@@ -132,17 +340,27 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
               children: [
                 // Top bar
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 10,
+                  ),
                   child: Row(
                     children: [
-                      _RoundButton(icon: 'arrow-left', onTap: () => SwagNav.pop(context)),
+                      _RoundButton(
+                        icon: 'arrow-left',
+                        onTap: () => SwagNav.pop(context),
+                      ),
+                      const SizedBox(width: 10),
+                      const SwagLogo(size: 28, showText: false),
                       const Spacer(),
                       Text('Details', style: SwagTheme.display(size: 18)),
                       const Spacer(),
                       _RoundButton(
                         icon: wished ? 'heart-filled' : 'heart',
                         colored: wished,
-                        onTap: () => context.read<SwagAppStore>().toggleWishlist(product.id),
+                        onTap: () => context
+                            .read<SwagAppStore>()
+                            .toggleWishlist(product.id),
                       ),
                     ],
                   ),
@@ -166,7 +384,10 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                       Row(
                         children: [
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 6,
+                            ),
                             decoration: BoxDecoration(
                               color: SwagColors.lavenderSoft,
                               borderRadius: BorderRadius.circular(999),
@@ -183,16 +404,26 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                           const Spacer(),
                           Row(
                             children: [
-                              const SwagIcon('star-filled', size: 16, color: SwagColors.butter),
+                              const SwagIcon(
+                                'star-filled',
+                                size: 16,
+                                color: SwagColors.butter,
+                              ),
                               const SizedBox(width: 4),
                               Text(
                                 product.rating.toStringAsFixed(1),
-                                style: SwagTheme.body(size: 13, weight: FontWeight.w800),
+                                style: SwagTheme.body(
+                                  size: 13,
+                                  weight: FontWeight.w800,
+                                ),
                               ),
                               const SizedBox(width: 5),
                               Text(
                                 '· ${product.reviews} reviews',
-                                style: SwagTheme.body(size: 12, color: SwagColors.inkSoft),
+                                style: SwagTheme.body(
+                                  size: 12,
+                                  color: SwagColors.inkSoft,
+                                ),
                               ),
                             ],
                           ),
@@ -225,10 +456,13 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                                       // jump the photo to the picked color.
                                       final imgs = product.allImages;
                                       if (imgs.length > 1 &&
-                                          imgs.length == product.colors.length) {
+                                          imgs.length ==
+                                              product.colors.length) {
                                         _gallery.animateToPage(
                                           i,
-                                          duration: const Duration(milliseconds: 420),
+                                          duration: const Duration(
+                                            milliseconds: 420,
+                                          ),
                                           curve: Curves.easeOut,
                                         );
                                       }
@@ -240,6 +474,11 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                         ),
                         const SizedBox(height: 14),
                       ],
+                      _SwagPointsBuyCard(
+                        product: product,
+                        onBuyWithPoints: () => _handleBuyWithPoints(product),
+                      ),
+                      const SizedBox(height: 14),
                       AnimatedBuilder(
                         animation: _shake,
                         builder: (context, child) {
@@ -275,17 +514,25 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                       const SizedBox(height: 18),
                       Text(
                         product.blurb,
-                        style: SwagTheme.body(size: 13.5, color: SwagColors.inkSoft),
+                        style: SwagTheme.body(
+                          size: 13.5,
+                          color: SwagColors.inkSoft,
+                        ),
                       ),
                       const SizedBox(height: 16),
                       _AccordionCard(
                         icon: 'tag',
                         title: 'Fabric & fit',
                         open: _fabricOpen,
-                        onToggle: () => setState(() => _fabricOpen = !_fabricOpen),
+                        onToggle: () =>
+                            setState(() => _fabricOpen = !_fabricOpen),
                         child: Text(
                           _fabricFor(product),
-                          style: const TextStyle(fontSize: 12.5, color: SwagColors.inkSoft, height: 1.5),
+                          style: const TextStyle(
+                            fontSize: 12.5,
+                            color: SwagColors.inkSoft,
+                            height: 1.5,
+                          ),
                         ),
                       ),
                       const SizedBox(height: 10),
@@ -296,7 +543,11 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                         onToggle: () => setState(() => _careOpen = !_careOpen),
                         child: Text(
                           _careFor(product),
-                          style: const TextStyle(fontSize: 12.5, color: SwagColors.inkSoft, height: 1.5),
+                          style: const TextStyle(
+                            fontSize: 12.5,
+                            color: SwagColors.inkSoft,
+                            height: 1.5,
+                          ),
                         ),
                       ),
                       const SizedBox(height: 20),
@@ -310,18 +561,28 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                             Expanded(
                               child: Container(
                                 margin: const EdgeInsets.only(right: 8),
-                                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 6),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 10,
+                                  horizontal: 6,
+                                ),
                                 decoration: BoxDecoration(
                                   color: tint.withValues(alpha: 0.2),
                                   borderRadius: BorderRadius.circular(14),
                                 ),
                                 child: Column(
                                   children: [
-                                    SwagIcon(icon, size: 18, color: SwagColors.ink),
+                                    SwagIcon(
+                                      icon,
+                                      size: 18,
+                                      color: SwagColors.ink,
+                                    ),
                                     const SizedBox(height: 5),
                                     Text(
                                       label,
-                                      style: SwagTheme.body(size: 10, weight: FontWeight.w700),
+                                      style: SwagTheme.body(
+                                        size: 10,
+                                        weight: FontWeight.w700,
+                                      ),
                                       textAlign: TextAlign.center,
                                       maxLines: 2,
                                     ),
@@ -342,9 +603,13 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                             return ListView.separated(
                               scrollDirection: Axis.horizontal,
                               itemCount: related.length,
-                              separatorBuilder: (_, _) => const SizedBox(width: 12),
-                              itemBuilder: (context, i) =>
-                                  ProductCard(product: related[i], width: 172, stagger: i),
+                              separatorBuilder: (_, _) =>
+                                  const SizedBox(width: 12),
+                              itemBuilder: (context, i) => ProductCard(
+                                product: related[i],
+                                width: 172,
+                                stagger: i,
+                              ),
                             );
                           },
                         ),
@@ -405,15 +670,24 @@ class _ProductDetailScreenState extends State<ProductDetailScreen>
                     Expanded(
                       child: AnimatedSwitcher(
                         duration: const Duration(milliseconds: 300),
-                        transitionBuilder: (child, animation) => ScaleTransition(
-                          scale: Tween<double>(begin: 0.92, end: 1).animate(animation),
-                          child: FadeTransition(opacity: animation, child: child),
-                        ),
+                        transitionBuilder: (child, animation) =>
+                            ScaleTransition(
+                              scale: Tween<double>(
+                                begin: 0.92,
+                                end: 1,
+                              ).animate(animation),
+                              child: FadeTransition(
+                                opacity: animation,
+                                child: child,
+                              ),
+                            ),
                         child: SwagButton(
                           key: ValueKey(_added ? 'added' : 'add'),
                           label: _added ? 'Added to bag ✓' : 'Buy Now',
                           trailingIcon: _added ? null : 'arrow-right',
-                          background: _added ? SwagColors.success : SwagColors.ink,
+                          background: _added
+                              ? SwagColors.success
+                              : SwagColors.ink,
                           shine: !_added,
                           icon: _added ? 'check' : 'bag',
                           onTap: () => _addToBag(buyNow: !_added),
@@ -524,7 +798,9 @@ class _Gallery extends StatelessWidget {
                     width: active ? 18 : 6,
                     height: 6,
                     decoration: BoxDecoration(
-                      color: active ? SwagColors.ink : SwagColors.ink.withValues(alpha: 0.2),
+                      color: active
+                          ? SwagColors.ink
+                          : SwagColors.ink.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(999),
                     ),
                   );
@@ -581,7 +857,10 @@ class _PriceCard extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(bottom: 5),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 9,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: SwagColors.butterSoft,
                       borderRadius: BorderRadius.circular(999),
@@ -643,12 +922,20 @@ class _OptionRow extends StatelessWidget {
             children: [
               Text(
                 label,
-                style: SwagTheme.body(size: 12, weight: FontWeight.w800, color: SwagColors.inkSoft),
+                style: SwagTheme.body(
+                  size: 12,
+                  weight: FontWeight.w800,
+                  color: SwagColors.inkSoft,
+                ),
               ),
               const Spacer(),
               Text(
                 value,
-                style: SwagTheme.body(size: 12, weight: FontWeight.w700, color: SwagColors.inkFaint),
+                style: SwagTheme.body(
+                  size: 12,
+                  weight: FontWeight.w700,
+                  color: SwagColors.inkFaint,
+                ),
               ),
             ],
           ),
@@ -664,7 +951,11 @@ class _OptionRow extends StatelessWidget {
 }
 
 class _ColorDot extends StatelessWidget {
-  const _ColorDot({required this.hex, required this.selected, required this.onTap});
+  const _ColorDot({
+    required this.hex,
+    required this.selected,
+    required this.onTap,
+  });
 
   final String hex;
   final bool selected;
@@ -698,7 +989,9 @@ class _ColorDot extends StatelessWidget {
               : null,
         ),
         child: selected
-            ? const Center(child: SwagIcon('check', size: 16, color: Colors.white))
+            ? const Center(
+                child: SwagIcon('check', size: 16, color: Colors.white),
+              )
             : null,
       ),
     );
@@ -706,7 +999,11 @@ class _ColorDot extends StatelessWidget {
 }
 
 class _SizeChip extends StatelessWidget {
-  const _SizeChip({required this.label, required this.selected, required this.onTap});
+  const _SizeChip({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
 
   final String label;
   final bool selected;
@@ -757,7 +1054,11 @@ class _QtyRow extends StatelessWidget {
       children: [
         Text(
           'Quantity',
-          style: SwagTheme.body(size: 12, weight: FontWeight.w800, color: SwagColors.inkSoft),
+          style: SwagTheme.body(
+            size: 12,
+            weight: FontWeight.w800,
+            color: SwagColors.inkSoft,
+          ),
         ),
         const Spacer(),
         Container(
@@ -770,7 +1071,11 @@ class _QtyRow extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              _StepButton(icon: 'minus', disabled: qty <= 1, onTap: () => onChanged(qty - 1)),
+              _StepButton(
+                icon: 'minus',
+                disabled: qty <= 1,
+                onTap: () => onChanged(qty - 1),
+              ),
               AnimatedSwitcher(
                 duration: const Duration(milliseconds: 250),
                 transitionBuilder: (child, animation) => ScaleTransition(
@@ -793,7 +1098,11 @@ class _QtyRow extends StatelessWidget {
 }
 
 class _StepButton extends StatelessWidget {
-  const _StepButton({required this.icon, required this.onTap, this.disabled = false});
+  const _StepButton({
+    required this.icon,
+    required this.onTap,
+    this.disabled = false,
+  });
 
   final String icon;
   final VoidCallback onTap;
@@ -875,7 +1184,11 @@ class _AccordionCard extends StatelessWidget {
                     turns: open ? 0.5 : 0,
                     duration: const Duration(milliseconds: 260),
                     curve: Curves.easeOut,
-                    child: const SwagIcon('chevron-down', size: 18, color: SwagColors.inkSoft),
+                    child: const SwagIcon(
+                      'chevron-down',
+                      size: 18,
+                      color: SwagColors.inkSoft,
+                    ),
                   ),
                 ],
               ),
@@ -934,24 +1247,103 @@ String _careFor(Product p) {
     case 'footwear':
       return 'Wipe with a damp cloth and air-dry away from direct sun. No '
           'machine wash, no tumble dry — rotate between wears so the sole '
-          'gets to recover.' +
-          shipping;
+          'gets to recover.$shipping';
     case 'denim':
       return 'Wash cold, inside out, and only when it actually needs it — '
           'raw denim loves neglect. Line dry; iron on the reverse if you '
-          'must.' +
-          shipping;
+          'must.$shipping';
     case 'accessories':
       return 'Spot clean with a damp cloth and let it air dry. Keep it out of '
-          'prolonged direct sunlight so the colours stay honest.' +
-          shipping;
+          'prolonged direct sunlight so the colours stay honest.$shipping';
     case 'winter':
       return 'Gentle cold wash or spot clean; hang dry away from radiators. '
-          'Never tumble dry — the fill clumps and the loft goes.' +
-          shipping;
+          'Never tumble dry — the fill clumps and the loft goes.$shipping';
     default:
       return 'Machine wash cold with like colours, hang dry. Skip the '
-          'softener — the fabric has texture to keep.' +
-          shipping;
+          'softener — the fabric has texture to keep.$shipping';
+  }
+}
+
+class _SwagPointsBuyCard extends StatelessWidget {
+  const _SwagPointsBuyCard({
+    required this.product,
+    required this.onBuyWithPoints,
+  });
+
+  final Product product;
+  final VoidCallback onBuyWithPoints;
+
+  @override
+  Widget build(BuildContext context) {
+    final store = context.watch<SwagAppStore>();
+    final canAfford = store.swagPoints >= product.swagPointsCost;
+
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: SwagColors.butterSoft,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: SwagColors.butter.withValues(alpha: 0.4)),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 38,
+            height: 38,
+            decoration: const BoxDecoration(
+              color: SwagColors.butter,
+              shape: BoxShape.circle,
+            ),
+            child: const Center(
+              child: Text('🪙', style: TextStyle(fontSize: 18)),
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Or redeem for ${product.swagPointsCost} pts',
+                  style: SwagTheme.body(
+                    size: 12.5,
+                    weight: FontWeight.w800,
+                    color: SwagColors.ink,
+                  ),
+                ),
+                Text(
+                  'Your balance: ${store.swagPoints} pts',
+                  style: SwagTheme.body(size: 11, color: SwagColors.inkSoft),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          Pressable(
+            onTap: onBuyWithPoints,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+              decoration: BoxDecoration(
+                color: canAfford ? SwagColors.ink : SwagColors.surface,
+                borderRadius: BorderRadius.circular(999),
+                border: Border.all(
+                  color: canAfford ? SwagColors.ink : SwagColors.line,
+                ),
+              ),
+              child: Text(
+                canAfford
+                    ? 'Buy with Points'
+                    : 'Need ${product.swagPointsCost - store.swagPoints} pts',
+                style: SwagTheme.body(
+                  size: 11,
+                  weight: FontWeight.w800,
+                  color: canAfford ? SwagColors.canvas : SwagColors.inkFaint,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

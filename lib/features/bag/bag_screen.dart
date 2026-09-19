@@ -1,3 +1,9 @@
+// =============================================================================
+// File: lib/features/bag/bag_screen.dart
+// Purpose: Shopping cart and bag screen featuring item quantity adjustments,
+//          swipe-to-delete with undo timer, promo code redemptions, and cost breakdowns.
+// =============================================================================
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -14,17 +20,21 @@ import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/pressable.dart';
 import '../../core/widgets/swag_button.dart';
 import '../../core/widgets/swag_icon.dart';
+import '../../core/widgets/swag_logo.dart';
 import '../../data/demo_data.dart';
 import '../../data/models/cart_item.dart';
 import '../../state/app_store.dart';
 import '../payment/payment_screen.dart';
 
+/// Customer shopping bag view with live price calculation, item editing,
+/// promo code discount triggers, and navigation to checkout.
 class BagScreen extends StatefulWidget {
   const BagScreen({super.key});
 
   @override
   State<BagScreen> createState() => _BagScreenState();
 }
+
 
 class _BagScreenState extends State<BagScreen> {
   final TextEditingController _promoController = TextEditingController();
@@ -77,20 +87,38 @@ class _BagScreenState extends State<BagScreen> {
     return Consumer<SwagAppStore>(
       builder: (context, store, _) {
         if (store.cart.isEmpty) {
-          return EmptyState(
-            image: 'assets/images/empty-bag.svg',
-            title: 'Your bag is feeling light',
-            subtitle: 'Nothing in here yet. Go find something worth bragging about.',
-            actionLabel: _lastCleared.isNotEmpty ? 'Undo clear' : 'Start shopping',
-            onAction: () {
-              if (_lastCleared.isNotEmpty) {
-                store.restoreCart(_lastCleared);
-                _undoTimer?.cancel();
-                setState(() => _lastCleared = const []);
-              } else {
-                store.requestTab(0);
-              }
-            },
+          return Scaffold(
+            backgroundColor: SwagColors.canvas,
+            body: SafeArea(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(pad, 14, pad, 0),
+                    child: const SwagLogo(size: 34, showText: true),
+                  ),
+                  Expanded(
+                    child: EmptyState(
+                      image: 'assets/images/empty-bag.svg',
+                      title: 'Your bag is feeling light',
+                      subtitle: 'Nothing in here yet. Go find something worth bragging about.',
+                      actionLabel: _lastCleared.isNotEmpty
+                          ? 'Undo clear'
+                          : 'Start shopping',
+                      onAction: () {
+                        if (_lastCleared.isNotEmpty) {
+                          store.restoreCart(_lastCleared);
+                          _undoTimer?.cancel();
+                          setState(() => _lastCleared = const []);
+                        } else {
+                          store.requestTab(0);
+                        }
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
           );
         }
         return ListView(
@@ -98,14 +126,18 @@ class _BagScreenState extends State<BagScreen> {
           children: [
             Row(
               children: [
+                const SwagLogo(size: 34, showText: true),
+                const SizedBox(width: 12),
+                Container(width: 1, height: 22, color: SwagColors.line),
+                const SizedBox(width: 12),
                 Expanded(
-                  child: Text(
-                    'Your Bag',
-                    style: SwagTheme.display(size: 26),
-                  ),
+                  child: Text('Your Bag', style: SwagTheme.display(size: 24)),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     color: SwagColors.surfaceMist,
                     borderRadius: BorderRadius.circular(999),
@@ -120,30 +152,38 @@ class _BagScreenState extends State<BagScreen> {
                   ),
                 ),
                 const SizedBox(width: 10),
-              if (store.cart.isNotEmpty)
-                Pressable(
-                  onTap: () {
-                    _undoTimer?.cancel();
-                    setState(() => _lastCleared = List.of(store.cart));
-                    store.clearCart();
-                    // Quiet on purpose — clearing isn't a celebration.
-                    // Undo lives on the empty state for 8s, then expires.
-                    _undoTimer = Timer(const Duration(seconds: 8), () {
-                      if (mounted) setState(() => _lastCleared = const []);
-                    });
-                  },
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const SwagIcon('trash', size: 15, color: SwagColors.inkSoft),
-                      const SizedBox(width: 5),
-                      Text(
-                        'Clear',
-                        style: SwagTheme.body(size: 12, weight: FontWeight.w700, color: SwagColors.inkSoft),
-                      ),
-                    ],
+                if (store.cart.isNotEmpty)
+                  Pressable(
+                    onTap: () {
+                      _undoTimer?.cancel();
+                      setState(() => _lastCleared = List.of(store.cart));
+                      store.clearCart();
+                      // Quiet on purpose — clearing isn't a celebration.
+                      // Undo lives on the empty state for 8s, then expires.
+                      _undoTimer = Timer(const Duration(seconds: 8), () {
+                        if (mounted) setState(() => _lastCleared = const []);
+                      });
+                    },
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const SwagIcon(
+                          'trash',
+                          size: 15,
+                          color: SwagColors.inkSoft,
+                        ),
+                        const SizedBox(width: 5),
+                        Text(
+                          'Clear',
+                          style: SwagTheme.body(
+                            size: 12,
+                            weight: FontWeight.w700,
+                            color: SwagColors.inkSoft,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
               ],
             ),
             const SizedBox(height: 16),
@@ -175,6 +215,8 @@ class _BagScreenState extends State<BagScreen> {
               },
             ),
             const SizedBox(height: 14),
+            _SwagPointsRedeemCard(store: store),
+            const SizedBox(height: 14),
             _SummaryCard(store: store),
             const SizedBox(height: 16),
             SwagButton(
@@ -194,7 +236,10 @@ class _BagScreenState extends State<BagScreen> {
                   const SizedBox(width: 5),
                   Text(
                     '256-bit encrypted · GST invoice included',
-                    style: SwagTheme.body(size: 11.5, color: SwagColors.inkFaint),
+                    style: SwagTheme.body(
+                      size: 11.5,
+                      color: SwagColors.inkFaint,
+                    ),
                   ),
                 ],
               ),
@@ -214,26 +259,35 @@ class _FreeShipBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: SwagColors.successSoft,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: SwagColors.success.withValues(alpha: 0.3)),
-      ),
-      child: Row(
-        children: [
-          const SwagIcon('truck', size: 20, color: SwagColors.success),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              'Free express delivery unlocked on this order!',
-              style: SwagTheme.body(size: 12.5, weight: FontWeight.w800, color: SwagColors.success),
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: SwagColors.successSoft,
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(
+              color: SwagColors.success.withValues(alpha: 0.3),
             ),
           ),
-          const SwagIcon('check', size: 18, color: SwagColors.success),
-        ],
-      ),
-    ).animate().fadeIn(duration: 300.ms).moveY(begin: 12, end: 0, duration: 300.ms);
+          child: Row(
+            children: [
+              const SwagIcon('truck', size: 20, color: SwagColors.success),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  'Free express delivery unlocked on this order!',
+                  style: SwagTheme.body(
+                    size: 12.5,
+                    weight: FontWeight.w800,
+                    color: SwagColors.success,
+                  ),
+                ),
+              ),
+              const SwagIcon('check', size: 18, color: SwagColors.success),
+            ],
+          ),
+        )
+        .animate()
+        .fadeIn(duration: 300.ms)
+        .moveY(begin: 12, end: 0, duration: 300.ms);
   }
 }
 
@@ -266,7 +320,10 @@ class _FreeShipProgress extends StatelessWidget {
                     children: [
                       const TextSpan(
                         text: 'Add ',
-                        style: TextStyle(fontSize: 12.5, color: SwagColors.inkSoft),
+                        style: TextStyle(
+                          fontSize: 12.5,
+                          color: SwagColors.inkSoft,
+                        ),
                       ),
                       TextSpan(
                         text: inr(threshold - current),
@@ -278,7 +335,10 @@ class _FreeShipProgress extends StatelessWidget {
                       ),
                       const TextSpan(
                         text: ' more for FREE express delivery',
-                        style: TextStyle(fontSize: 12.5, color: SwagColors.inkSoft),
+                        style: TextStyle(
+                          fontSize: 12.5,
+                          color: SwagColors.inkSoft,
+                        ),
                       ),
                     ],
                   ),
@@ -384,7 +444,10 @@ class _CartItemCard extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     item.product.name,
-                    style: SwagTheme.display(size: 14.5, weight: FontWeight.w700),
+                    style: SwagTheme.display(
+                      size: 14.5,
+                      weight: FontWeight.w700,
+                    ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -398,7 +461,10 @@ class _CartItemCard extends StatelessWidget {
                     children: [
                       Text(
                         inr(item.lineTotal),
-                        style: SwagTheme.display(size: 15, weight: FontWeight.w800),
+                        style: SwagTheme.display(
+                          size: 15,
+                          weight: FontWeight.w800,
+                        ),
                       ),
                       const Spacer(),
                       _MiniStepper(
@@ -435,7 +501,11 @@ class _MiniStepper extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _Step(icon: 'minus', disabled: qty <= 1, onTap: () => onChanged(qty - 1)),
+          _Step(
+            icon: 'minus',
+            disabled: qty <= 1,
+            onTap: () => onChanged(qty - 1),
+          ),
           AnimatedSwitcher(
             duration: const Duration(milliseconds: 220),
             transitionBuilder: (child, animation) => ScaleTransition(
@@ -518,7 +588,9 @@ class _PromoCard extends StatelessWidget {
         color: SwagColors.surface,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: hasCode ? SwagColors.success.withValues(alpha: 0.5) : SwagColors.line,
+          color: hasCode
+              ? SwagColors.success.withValues(alpha: 0.5)
+              : SwagColors.line,
           width: 1.4,
         ),
       ),
@@ -540,11 +612,19 @@ class _PromoCard extends StatelessWidget {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const SwagIcon('close', size: 14, color: SwagColors.inkSoft),
+                      const SwagIcon(
+                        'close',
+                        size: 14,
+                        color: SwagColors.inkSoft,
+                      ),
                       const SizedBox(width: 4),
                       Text(
                         'Remove',
-                        style: SwagTheme.body(size: 11, weight: FontWeight.w700, color: SwagColors.inkSoft),
+                        style: SwagTheme.body(
+                          size: 11,
+                          weight: FontWeight.w700,
+                          color: SwagColors.inkSoft,
+                        ),
                       ),
                     ],
                   ),
@@ -555,53 +635,67 @@ class _PromoCard extends StatelessWidget {
           const SizedBox(height: 12),
           if (hasCode)
             AnimatedBuilder(
-              animation: const AlwaysStoppedAnimation(0),
-              builder: (context, _) {
-                return Transform.translate(
-                  offset: Offset.zero,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                    decoration: BoxDecoration(
-                      color: SwagColors.successSoft,
-                      borderRadius: BorderRadius.circular(14),
-                      border: Border.all(
-                        color: SwagColors.success,
-                        width: 1.4,
-                        style: BorderStyle.solid,
-                      ),
-                    ),
-                    child: Row(
-                      children: [
-                        const SwagIcon('check', size: 18, color: SwagColors.success),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            '${applied!.code} applied — flat ${applied!.pct.round()}% off',
-                            style: SwagTheme.body(
-                              size: 13,
-                              weight: FontWeight.w800,
+                  animation: const AlwaysStoppedAnimation(0),
+                  builder: (context, _) {
+                    return Transform.translate(
+                      offset: Offset.zero,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 10,
+                        ),
+                        decoration: BoxDecoration(
+                          color: SwagColors.successSoft,
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(
+                            color: SwagColors.success,
+                            width: 1.4,
+                            style: BorderStyle.solid,
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            const SwagIcon(
+                              'check',
+                              size: 18,
                               color: SwagColors.success,
                             ),
-                          ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                '${applied!.code} applied — flat ${applied!.pct.round()}% off',
+                                style: SwagTheme.body(
+                                  size: 13,
+                                  weight: FontWeight.w800,
+                                  color: SwagColors.success,
+                                ),
+                              ),
+                            ),
+                            Text(
+                              'VERIFIED',
+                              style: SwagTheme.body(
+                                size: 9,
+                                weight: FontWeight.w800,
+                                color: SwagColors.success.withValues(
+                                  alpha: 0.6,
+                                ),
+                                letterSpacing: 1.4,
+                              ),
+                            ),
+                          ],
                         ),
-                        Text(
-                          'VERIFIED',
-                          style: SwagTheme.body(
-                            size: 9,
-                            weight: FontWeight.w800,
-                            color: SwagColors.success.withValues(alpha: 0.6),
-                            letterSpacing: 1.4,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            )
-              .animate(
-                delay: stamped ? 0.ms : 200.ms,
-              ).scale(begin: const Offset(1.6, 1.6), end: const Offset(1, 1), duration: 420.ms, curve: Curves.easeOutBack).rotate(begin: 0.06, end: 0, duration: 420.ms)
+                      ),
+                    );
+                  },
+                )
+                .animate(delay: stamped ? 0.ms : 200.ms)
+                .scale(
+                  begin: const Offset(1.6, 1.6),
+                  end: const Offset(1, 1),
+                  duration: 420.ms,
+                  curve: Curves.easeOutBack,
+                )
+                .rotate(begin: 0.06, end: 0, duration: 420.ms)
           else
             Row(
               children: [
@@ -612,7 +706,9 @@ class _PromoCard extends StatelessWidget {
                       color: SwagColors.canvas,
                       borderRadius: BorderRadius.circular(14),
                       border: Border.all(
-                        color: error != null ? SwagColors.danger : SwagColors.line,
+                        color: error != null
+                            ? SwagColors.danger
+                            : SwagColors.line,
                         width: 1.4,
                       ),
                     ),
@@ -658,7 +754,11 @@ class _PromoCard extends StatelessWidget {
               children: [
                 const Text(
                   'One tap:',
-                  style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: SwagColors.inkFaint),
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                    color: SwagColors.inkFaint,
+                  ),
                 ),
                 const SizedBox(width: 8),
                 _CodeChip(code: 'SWAG15', note: '15% off', onTap: onQuickApply),
@@ -675,7 +775,11 @@ class _PromoCard extends StatelessWidget {
                 const SizedBox(width: 5),
                 Text(
                   error!,
-                  style: SwagTheme.body(size: 11.5, weight: FontWeight.w600, color: SwagColors.danger),
+                  style: SwagTheme.body(
+                    size: 11.5,
+                    weight: FontWeight.w600,
+                    color: SwagColors.danger,
+                  ),
                 ),
               ],
             ).animate().moveX(begin: -8, end: 0, duration: 300.ms),
@@ -687,7 +791,11 @@ class _PromoCard extends StatelessWidget {
 }
 
 class _CodeChip extends StatelessWidget {
-  const _CodeChip({required this.code, required this.note, required this.onTap});
+  const _CodeChip({
+    required this.code,
+    required this.note,
+    required this.onTap,
+  });
 
   final String code;
   final String note;
@@ -730,6 +838,123 @@ class _CodeChip extends StatelessWidget {
 /// Type alias so the promo card doesn't import demo_data directly.
 typedef SwagAppStorePromoRef = Promo;
 
+class _SwagPointsRedeemCard extends StatelessWidget {
+  const _SwagPointsRedeemCard({required this.store});
+
+  final SwagAppStore store;
+
+  @override
+  Widget build(BuildContext context) {
+    final hasPoints = store.swagPoints > 0;
+    final isRedeemed = store.redeemedPoints > 0;
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: SwagColors.surface,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: isRedeemed ? SwagColors.butter : SwagColors.line,
+          width: isRedeemed ? 1.6 : 1.2,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 34,
+                height: 34,
+                decoration: const BoxDecoration(
+                  color: SwagColors.butter,
+                  shape: BoxShape.circle,
+                ),
+                child: const Center(
+                  child: Text('🪙', style: TextStyle(fontSize: 16)),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Redeem SwagPoints',
+                      style: SwagTheme.body(size: 14, weight: FontWeight.w800),
+                    ),
+                    Text(
+                      'Available: ${store.swagPoints} pts (worth ₹${store.swagPoints})',
+                      style: SwagTheme.body(
+                        size: 11.5,
+                        color: SwagColors.inkSoft,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Switch.adaptive(
+                value: isRedeemed,
+                activeTrackColor: SwagColors.accent,
+                onChanged: hasPoints
+                    ? (val) => store.toggleRedeemPoints(val)
+                    : null,
+              ),
+            ],
+          ),
+          if (isRedeemed) ...[
+            const SizedBox(height: 10),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: SwagColors.butterSoft,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                children: [
+                  const Icon(
+                    Icons.check_circle_rounded,
+                    size: 16,
+                    color: SwagColors.accentDeep,
+                  ),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      'Redeeming ${store.redeemedPoints} pts for flat ₹${store.redeemedPoints} off!',
+                      style: SwagTheme.body(
+                        size: 12,
+                        weight: FontWeight.w700,
+                        color: SwagColors.accentDeep,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              const Text('✨', style: TextStyle(fontSize: 12)),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  'Earn +${(store.total * 0.10).round()} pts back on this order',
+                  style: SwagTheme.body(
+                    size: 11.5,
+                    weight: FontWeight.w600,
+                    color: SwagColors.mintDeep,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _SummaryCard extends StatelessWidget {
   const _SummaryCard({required this.store});
 
@@ -758,8 +983,16 @@ class _SummaryCard extends StatelessWidget {
             const SizedBox(height: 8),
             _row(
               'Promo ${store.appliedPromo!.code}',
-              '-${inr(store.discountAmount)}',
+              '-${inr(store.promoDiscount)}',
               valueColor: SwagColors.success,
+            ),
+          ],
+          if (store.redeemedPoints > 0) ...[
+            const SizedBox(height: 8),
+            _row(
+              'SwagPoints (${store.redeemedPoints} pts)',
+              '-${inr(store.pointsDiscount)}',
+              valueColor: SwagColors.accentDeep,
             ),
           ],
           const SizedBox(height: 8),
@@ -805,7 +1038,11 @@ class _SummaryCard extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const SwagIcon('gift', size: 16, color: SwagColors.accentDeep),
+                  const SwagIcon(
+                    'gift',
+                    size: 16,
+                    color: SwagColors.accentDeep,
+                  ),
                   const SizedBox(width: 7),
                   TweenAnimationBuilder<double>(
                     tween: Tween(begin: 0, end: store.savings),
@@ -823,6 +1060,33 @@ class _SummaryCard extends StatelessWidget {
               ),
             ),
           ],
+          const SizedBox(height: 12),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: SwagColors.butterSoft,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: SwagColors.butter.withValues(alpha: 0.3),
+              ),
+            ),
+            child: Row(
+              children: [
+                const Text('🪙', style: TextStyle(fontSize: 14)),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'Order reward: +${(store.total * 0.10).round()} SwagPoints on delivery',
+                    style: SwagTheme.body(
+                      size: 11.5,
+                      weight: FontWeight.w700,
+                      color: SwagColors.ink,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -831,10 +1095,7 @@ class _SummaryCard extends StatelessWidget {
   Widget _row(String label, String value, {Color? valueColor}) {
     return Row(
       children: [
-        Text(
-          label,
-          style: SwagTheme.body(size: 13, color: SwagColors.inkSoft),
-        ),
+        Text(label, style: SwagTheme.body(size: 13, color: SwagColors.inkSoft)),
         const Spacer(),
         Text(
           value,

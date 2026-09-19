@@ -1,3 +1,9 @@
+// =============================================================================
+// File: lib/features/catalog/catalog_screen.dart
+// Purpose: Product catalog explorer featuring category filtering pills, sorting
+//          options (popular, price, rating), search query filtering, and responsive grid layout.
+// =============================================================================
+
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
@@ -11,12 +17,21 @@ import '../../core/widgets/pressable.dart';
 import '../../core/widgets/product_card.dart';
 import '../../core/widgets/shimmer_box.dart';
 import '../../core/widgets/swag_icon.dart';
+import '../../core/widgets/swag_logo.dart';
 import '../../data/demo_data.dart';
 import '../../data/models/product.dart';
 import '../../state/app_store.dart';
 
+/// Full product collection browser.
+///
+/// Features:
+/// - Horizontal category filter pills with active state
+/// - Sort modal bottom sheet (popularity, lowest price, highest price, customer rating)
+/// - Inline live search query filtering
+/// - Responsive grid rendering 2 to 4 columns depending on viewport width
 class CatalogScreen extends StatefulWidget {
   const CatalogScreen({super.key});
+
 
   @override
   State<CatalogScreen> createState() => _CatalogScreenState();
@@ -83,10 +98,14 @@ class _CatalogScreenState extends State<CatalogScreen> {
     List<Product> list = store.byCategory(_category, sort: _sort);
     if (_query.trim().isNotEmpty) {
       final q = _query.trim().toLowerCase();
-      list = list.where((p) =>
-          '${p.name} ${p.brand} ${p.category} ${p.blurb} ${p.tags.join(' ')}'
-              .toLowerCase()
-              .contains(q)).toList();
+      list = list
+          .where(
+            (p) =>
+                '${p.name} ${p.brand} ${p.category} ${p.blurb} ${p.tags.join(' ')}'
+                    .toLowerCase()
+                    .contains(q),
+          )
+          .toList();
     }
     if (_category == 'deals' || _query == 'deals') {
       list = list.where((p) => p.onSale).toList();
@@ -105,26 +124,33 @@ class _CatalogScreenState extends State<CatalogScreen> {
           padding: EdgeInsets.fromLTRB(pad, 14, pad, 130),
           children: [
             Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                const SwagLogo(size: 34, showText: true),
+                const SizedBox(width: 12),
+                Container(width: 1, height: 22, color: SwagColors.line),
+                const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'The Catalog',
-                        style: SwagTheme.display(size: 26),
-                      ),
+                      Text('The Catalog', style: SwagTheme.display(size: 22)),
                       const SizedBox(height: 2),
                       Text(
                         'Every piece, one tap away',
-                        style: SwagTheme.body(size: 12.5, color: SwagColors.inkSoft),
+                        style: SwagTheme.body(
+                          size: 11.5,
+                          color: SwagColors.inkSoft,
+                        ),
                       ),
                     ],
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     color: SwagColors.surfaceMist,
                     borderRadius: BorderRadius.circular(999),
@@ -157,7 +183,10 @@ class _CatalogScreenState extends State<CatalogScreen> {
                       decoration: const InputDecoration(
                         border: InputBorder.none,
                         hintText: 'Search this catalog…',
-                        hintStyle: TextStyle(color: SwagColors.inkFaint, fontSize: 14),
+                        hintStyle: TextStyle(
+                          color: SwagColors.inkFaint,
+                          fontSize: 14,
+                        ),
                       ),
                     ),
                   ),
@@ -166,7 +195,11 @@ class _CatalogScreenState extends State<CatalogScreen> {
                       onTap: () => setState(() => _query = ''),
                       child: const Padding(
                         padding: EdgeInsets.all(8),
-                        child: SwagIcon('close', size: 16, color: SwagColors.inkSoft),
+                        child: SwagIcon(
+                          'close',
+                          size: 16,
+                          color: SwagColors.inkSoft,
+                        ),
                       ),
                     ),
                 ],
@@ -209,31 +242,38 @@ class _CatalogScreenState extends State<CatalogScreen> {
             ),
             const SizedBox(height: 14),
             // Sort chips
-            Row(
-              children: [
-                Text(
-                  'Sort',
-                  style: SwagTheme.body(size: 12, weight: FontWeight.w800, color: SwagColors.inkSoft),
-                ),
-                const SizedBox(width: 10),
-                ...[
-                  (SortMode.popular, 'Popular'),
-                  (SortMode.priceLowHigh, 'Price ↑'),
-                  (SortMode.priceHighLow, 'Price ↓'),
-                  (SortMode.rating, 'Top rated'),
-                ].map(
-                  (e) => Padding(
-                    padding: const EdgeInsets.only(right: 8),
-                    child: SwagChip(
-                      label: e.$2,
-                      fontSize: 12,
-                      selected: _sort == e.$1,
-                      activeColor: SwagColors.ink,
-                      onTap: () => _changeSort(e.$1),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  Text(
+                    'Sort',
+                    style: SwagTheme.body(
+                      size: 12,
+                      weight: FontWeight.w800,
+                      color: SwagColors.inkSoft,
                     ),
                   ),
-                ),
-              ],
+                  const SizedBox(width: 10),
+                  ...[
+                    (SortMode.popular, 'Popular'),
+                    (SortMode.priceLowHigh, 'Price ↑'),
+                    (SortMode.priceHighLow, 'Price ↓'),
+                    (SortMode.rating, 'Top rated'),
+                  ].map(
+                    (e) => Padding(
+                      padding: const EdgeInsets.only(right: 8),
+                      child: SwagChip(
+                        label: e.$2,
+                        fontSize: 12,
+                        selected: _sort == e.$1,
+                        activeColor: SwagColors.ink,
+                        onTap: () => _changeSort(e.$1),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: 18),
             if (_loading)
@@ -267,30 +307,44 @@ class _ProductGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final width = MediaQuery.sizeOf(context).width - swagPad(MediaQuery.sizeOf(context).width) * 2;
+    final width =
+        MediaQuery.sizeOf(context).width -
+        swagPad(MediaQuery.sizeOf(context).width) * 2;
     final columnCount = swagColumns(width);
     final rows = <List<Product>>[
       for (var i = 0; i < products.length; i += columnCount)
-        products.sublist(i, i + columnCount > products.length ? products.length : i + columnCount),
+        products.sublist(
+          i,
+          i + columnCount > products.length ? products.length : i + columnCount,
+        ),
     ];
     return KeyedSubtree(
       key: ValueKey(cols),
-      child: Column(
-        children: [
-          for (var r = 0; r < rows.length; r++)
-            Padding(
-              padding: EdgeInsets.only(top: r == 0 ? 0 : 14),
-              child: Row(
+      child:
+          Column(
                 children: [
-                  for (var c = 0; c < rows[r].length; c++) ...[
-                    if (c > 0) const SizedBox(width: 14),
-                    Expanded(child: ProductCard(product: rows[r][c], stagger: r * columnCount + c)),
-                  ],
+                  for (var r = 0; r < rows.length; r++)
+                    Padding(
+                      padding: EdgeInsets.only(top: r == 0 ? 0 : 14),
+                      child: Row(
+                        children: [
+                          for (var c = 0; c < rows[r].length; c++) ...[
+                            if (c > 0) const SizedBox(width: 14),
+                            Expanded(
+                              child: ProductCard(
+                                product: rows[r][c],
+                                stagger: r * columnCount + c,
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
                 ],
-              ),
-            ),
-        ],
-      ).animate().fadeIn(duration: 300.ms).moveY(begin: 10, end: 0, duration: 300.ms),
+              )
+              .animate()
+              .fadeIn(duration: 300.ms)
+              .moveY(begin: 10, end: 0, duration: 300.ms),
     );
   }
 }
@@ -298,7 +352,9 @@ class _ProductGrid extends StatelessWidget {
 class _SkeletonGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final width = MediaQuery.sizeOf(context).width - swagPad(MediaQuery.sizeOf(context).width) * 2;
+    final width =
+        MediaQuery.sizeOf(context).width -
+        swagPad(MediaQuery.sizeOf(context).width) * 2;
     final columnCount = swagColumns(width);
     return Column(
       children: [

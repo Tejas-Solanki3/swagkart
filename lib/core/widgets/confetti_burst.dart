@@ -1,18 +1,25 @@
+// =============================================================================
+// File: lib/core/widgets/confetti_burst.dart
+// Purpose: Physics-based celebratory confetti burst particle system rendered
+//          via an overlay entry on order completion or promotions.
+// =============================================================================
+
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
 import '../theme/app_colors.dart';
 
+/// Single particle model for the confetti explosion animation.
 class _ConfettiParticle {
   _ConfettiParticle(math.Random rng, List<Color> palette)
-      : angle = rng.nextDouble() * math.pi * 2,
-        distance = 70 + rng.nextDouble() * 130,
-        size = 5 + rng.nextDouble() * 5,
-        spin = (rng.nextDouble() - 0.5) * 10,
-        speed = 0.75 + rng.nextDouble() * 0.5,
-        color = palette[rng.nextInt(palette.length)],
-        isCircle = rng.nextBool();
+    : angle = rng.nextDouble() * math.pi * 2,
+      distance = 70 + rng.nextDouble() * 130,
+      size = 5 + rng.nextDouble() * 5,
+      spin = (rng.nextDouble() - 0.5) * 10,
+      speed = 0.75 + rng.nextDouble() * 0.5,
+      color = palette[rng.nextInt(palette.length)],
+      isCircle = rng.nextBool();
   final double angle;
   final double distance;
   final double size;
@@ -22,12 +29,10 @@ class _ConfettiParticle {
   final bool isCircle;
 }
 
-/// Full-screen celebratory burst. Fire it with [fireConfetti].
+/// Full-screen celebratory burst widget. Fire it using [fireConfetti].
 class ConfettiBurst extends StatefulWidget {
-  const ConfettiBurst({
-    super.key,
-    this.origin = const Offset(0.5, 0.78),
-  });
+
+  const ConfettiBurst({super.key, this.origin = const Offset(0.5, 0.78)});
 
   /// Relative (0..1) burst origin on screen.
   final Offset origin;
@@ -49,7 +54,10 @@ class _ConfettiBurstState extends State<ConfettiBurst>
   void initState() {
     super.initState();
     final rng = math.Random(42);
-    _particles = List.generate(30, (i) => _ConfettiParticle(rng, SwagColors.pastel));
+    _particles = List.generate(
+      30,
+      (i) => _ConfettiParticle(rng, SwagColors.pastel),
+    );
   }
 
   @override
@@ -69,10 +77,7 @@ class _ConfettiBurstState extends State<ConfettiBurst>
           final ox = size.width * widget.origin.dx;
           final oy = size.height * widget.origin.dy;
           return Stack(
-            children: [
-              for (final p in _particles)
-                _particleAt(ox, oy, p, t),
-            ],
+            children: [for (final p in _particles) _particleAt(ox, oy, p, t)],
           );
         },
       ),
@@ -118,7 +123,10 @@ class _ConfettiBurstState extends State<ConfettiBurst>
 }
 
 /// Inserts a temporary full-screen confetti overlay above everything.
-void fireConfetti(BuildContext context, {Offset origin = const Offset(0.5, 0.78)}) {
+void fireConfetti(
+  BuildContext context, {
+  Offset origin = const Offset(0.5, 0.78),
+}) {
   final overlay = Overlay.of(context);
   final entry = OverlayEntry(builder: (_) => ConfettiBurst(origin: origin));
   overlay.insert(entry);

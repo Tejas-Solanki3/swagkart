@@ -1,6 +1,15 @@
+// =============================================================================
+// File: lib/core/widgets/pressable.dart
+// Purpose: Tactile touch feedback wrapper widget that subtly scales down (bounces)
+//          when pressed, providing responsive physical feedback for tappable elements.
+// =============================================================================
+
 import 'package:flutter/material.dart';
 
 /// Scales down while pressed — the tactile base for every tappable surface.
+///
+/// Uses [AnimatedScale] driven by [GestureDetector] callbacks to achieve a
+/// bouncy, physical response with no jarring splash ripples.
 class Pressable extends StatefulWidget {
   const Pressable({
     super.key,
@@ -22,6 +31,7 @@ class Pressable extends StatefulWidget {
   @override
   State<Pressable> createState() => _PressableState();
 }
+
 
 class _PressableState extends State<Pressable> {
   bool _pressed = false;

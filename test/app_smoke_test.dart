@@ -16,6 +16,19 @@ void main() {
     await tester.pump(const Duration(milliseconds: 500));
     await tester.pump(const Duration(milliseconds: 400));
 
+    // Ensure we reach AuthGate / LoginScreen
+    await tester.pump(const Duration(milliseconds: 500));
+    final demoShopper = find.text('Demo Shopper');
+    if (demoShopper.evaluate().isEmpty) {
+      await tester.drag(find.byType(ListView).first, const Offset(0, -400));
+      await tester.pump();
+    }
+    if (demoShopper.evaluate().isNotEmpty) {
+      await tester.tap(demoShopper);
+      await tester.pump(const Duration(milliseconds: 600));
+      await tester.pump(const Duration(milliseconds: 400));
+    }
+
     // Home tab (onstage): header + bottom nav.
     expect(find.text('Mumbai, IN'), findsOneWidget);
     expect(find.text('Home'), findsOneWidget);
@@ -27,8 +40,10 @@ void main() {
     expect(find.text('The Catalog', skipOffstage: false), findsOneWidget);
     expect(find.text('Nothing saved yet', skipOffstage: false), findsOneWidget);
     expect(find.text('Your Account', skipOffstage: false), findsOneWidget);
-    expect(find.text('Your bag is feeling light', skipOffstage: false),
-        findsOneWidget);
+    expect(
+      find.text('Your bag is feeling light', skipOffstage: false),
+      findsOneWidget,
+    );
 
     // Scroll the home feed down to reveal the trending rail and
     // verify product discovery renders demo products.

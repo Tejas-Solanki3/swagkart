@@ -1,3 +1,9 @@
+// =============================================================================
+// File: lib/features/splash/splash_screen.dart
+// Purpose: Animated splash screen with animated brand wave canvas, bouncing SVG
+//          logo, staggered typography reveal, and smooth route transition to AuthGate.
+// =============================================================================
+
 import 'dart:async';
 import 'dart:math' as math;
 
@@ -8,14 +14,23 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../../core/nav.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
-import '../shell/app_shell.dart';
+import '../../core/widgets/swag_logo.dart';
+import '../auth/auth_gate.dart';
 
+/// Boot splash screen executing entry animations before navigating to [AuthGate].
+///
+/// Features:
+/// - Looping sine wave canvas animation at screen bottom
+/// - Elastic pop-in for the primary brand mark
+/// - Staggered letter-by-letter translation for 'SwagKart'
+/// - Smooth scale/fade exit transition
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
 }
+
 
 class _SplashScreenState extends State<SplashScreen>
     with TickerProviderStateMixin {
@@ -42,7 +57,7 @@ class _SplashScreenState extends State<SplashScreen>
     if (_leaving || !mounted) return;
     _leaving = true;
     _exit.forward().whenComplete(() {
-      if (mounted) SwagNav.pushReplacement(context, (_) => const AppShell());
+      if (mounted) SwagNav.pushReplacement(context, (_) => const AuthGate());
     });
   }
 
@@ -61,6 +76,12 @@ class _SplashScreenState extends State<SplashScreen>
         fit: StackFit.expand,
         children: [
           Container(color: SwagColors.canvas),
+          // Top-left brand logo
+          const Positioned(
+            top: 14,
+            left: 18,
+            child: SafeArea(child: SwagLogo(size: 28, showText: true)),
+          ),
           // Bottom candy waves
           AnimatedBuilder(
             animation: _waves,
@@ -79,27 +100,39 @@ class _SplashScreenState extends State<SplashScreen>
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Stack(
-                      clipBehavior: Clip.none,
-                      children: [
-                        SvgPicture.asset(
-                          'assets/icons/logo.svg',
-                          width: 116,
-                          height: 116,
-                        ),
-                        // A little party popper joins in before we leave.
-                        Positioned(
-                          top: -12,
-                          right: -20,
-                          child: SvgPicture.asset(
-                            'assets/icons/celebrate-pop.svg',
-                            width: 52,
-                            height: 52,
-                          ).animate(
-                            delay: 1500.ms,
-                          ).scale(begin: Offset.zero, end: const Offset(1, 1), duration: 430.ms, curve: Curves.easeOutBack).rotate(begin: -0.7, end: 0.2, duration: 430.ms).fadeIn(duration: 240.ms),
-                        ),
-                      ],
-                    )
+                          clipBehavior: Clip.none,
+                          children: [
+                            SvgPicture.asset(
+                              'assets/icons/logo.svg',
+                              width: 116,
+                              height: 116,
+                            ),
+                            // A little party popper joins in before we leave.
+                            Positioned(
+                              top: -12,
+                              right: -20,
+                              child:
+                                  SvgPicture.asset(
+                                        'assets/icons/celebrate-pop.svg',
+                                        width: 52,
+                                        height: 52,
+                                      )
+                                      .animate(delay: 1500.ms)
+                                      .scale(
+                                        begin: Offset.zero,
+                                        end: const Offset(1, 1),
+                                        duration: 430.ms,
+                                        curve: Curves.easeOutBack,
+                                      )
+                                      .rotate(
+                                        begin: -0.7,
+                                        end: 0.2,
+                                        duration: 430.ms,
+                                      )
+                                      .fadeIn(duration: 240.ms),
+                            ),
+                          ],
+                        )
                         .animate()
                         .scale(
                           begin: const Offset(0.4, 0.4),
@@ -108,7 +141,12 @@ class _SplashScreenState extends State<SplashScreen>
                           curve: Curves.elasticOut,
                           delay: 120.ms,
                         )
-                        .moveY(begin: -40, end: 0, duration: 650.ms, delay: 120.ms),
+                        .moveY(
+                          begin: -40,
+                          end: 0,
+                          duration: 650.ms,
+                          delay: 120.ms,
+                        ),
                     const SizedBox(height: 26),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -116,26 +154,37 @@ class _SplashScreenState extends State<SplashScreen>
                         final i = e.key;
                         final ch = e.value;
                         return Text(
-                          ch,
-                          style: SwagTheme.display(
-                            size: 42,
-                            weight: FontWeight.w800,
-                            color: i == 0 ? SwagColors.accent : SwagColors.ink,
-                          ),
-                        ).animate(
-                          delay: (420 + i * 55).ms,
-                        ).moveY(begin: 26, end: 0, duration: 520.ms, curve: Curves.easeOutBack).fadeIn(duration: 300.ms);
+                              ch,
+                              style: SwagTheme.display(
+                                size: 42,
+                                weight: FontWeight.w800,
+                                color: i == 0
+                                    ? SwagColors.accent
+                                    : SwagColors.ink,
+                              ),
+                            )
+                            .animate(delay: (420 + i * 55).ms)
+                            .moveY(
+                              begin: 26,
+                              end: 0,
+                              duration: 520.ms,
+                              curve: Curves.easeOutBack,
+                            )
+                            .fadeIn(duration: 300.ms);
                       }).toList(),
                     ),
                     const SizedBox(height: 10),
                     Text(
-                      'Swag. Sorted. Delivered.',
-                      style: SwagTheme.body(
-                        size: 14,
-                        weight: FontWeight.w600,
-                        color: SwagColors.inkSoft,
-                      ),
-                    ).animate(delay: 1150.ms).fadeIn(duration: 500.ms).moveY(begin: 12, end: 0, duration: 500.ms),
+                          'Swag. Sorted. Delivered.',
+                          style: SwagTheme.body(
+                            size: 14,
+                            weight: FontWeight.w600,
+                            color: SwagColors.inkSoft,
+                          ),
+                        )
+                        .animate(delay: 1150.ms)
+                        .fadeIn(duration: 500.ms)
+                        .moveY(begin: 12, end: 0, duration: 500.ms),
                   ],
                 ),
               ),
@@ -150,17 +199,24 @@ class _SplashScreenState extends State<SplashScreen>
               mainAxisAlignment: MainAxisAlignment.center,
               children: List.generate(3, (i) {
                 return Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 4),
-                  width: 8,
-                  height: 8,
-                  decoration: const BoxDecoration(
-                    color: SwagColors.accent,
-                    shape: BoxShape.circle,
-                  ),
-                ).animate(
-                  onPlay: (c) => c.repeat(reverse: true),
-                  delay: (i * 160).ms,
-                ).scale(begin: const Offset(0.6, 0.6), end: const Offset(1.25, 1.25), duration: 550.ms).fade(begin: 0.4, end: 1, duration: 550.ms);
+                      margin: const EdgeInsets.symmetric(horizontal: 4),
+                      width: 8,
+                      height: 8,
+                      decoration: const BoxDecoration(
+                        color: SwagColors.accent,
+                        shape: BoxShape.circle,
+                      ),
+                    )
+                    .animate(
+                      onPlay: (c) => c.repeat(reverse: true),
+                      delay: (i * 160).ms,
+                    )
+                    .scale(
+                      begin: const Offset(0.6, 0.6),
+                      end: const Offset(1.25, 1.25),
+                      duration: 550.ms,
+                    )
+                    .fade(begin: 0.4, end: 1, duration: 550.ms);
               }),
             ),
           ),

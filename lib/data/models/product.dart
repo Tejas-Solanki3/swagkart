@@ -1,3 +1,10 @@
+// =============================================================================
+// File: lib/data/models/product.dart
+// Purpose: Product entity model defining IDs, names, prices, MRP, review ratings,
+//          asset galleries, variant options, discount calculations, and SwagPoints.
+// =============================================================================
+
+/// Core product entity representing a streetwear item or accessory in SwagKart.
 class Product {
   const Product({
     required this.id,
@@ -17,6 +24,7 @@ class Product {
     this.stock = 10,
   });
 
+
   final String id;
   final String name;
   final String brand;
@@ -35,8 +43,7 @@ class Product {
 
   bool get onSale => mrp != null && mrp! > price;
 
-  int get discountPct =>
-      onSale ? ((mrp! - price) / mrp! * 100).round() : 0;
+  int get discountPct => onSale ? ((mrp! - price) / mrp! * 100).round() : 0;
 
   double get savings => onSale ? mrp! - price : 0;
 
@@ -49,4 +56,10 @@ class Product {
   }
 
   String get firstTag => tags.isEmpty ? '' : tags.first;
+
+  /// The amount of SwagPoints required to buy/redeem this product.
+  int get swagPointsCost => (price / 10).round();
+
+  /// SwagPoints earned upon buying this product (10% back).
+  int get swagPointsEarned => (price * 0.1).round();
 }

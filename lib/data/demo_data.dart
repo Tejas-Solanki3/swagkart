@@ -1,8 +1,15 @@
+// =============================================================================
+// File: lib/data/demo_data.dart
+// Purpose: In-memory mock dataset providing demo categories, hero carousel slides,
+//          promotional discount codes, and curated streetwear inventory.
+// =============================================================================
+
 import 'package:flutter/material.dart';
 
 import '../core/theme/app_colors.dart';
 import 'models/product.dart';
 
+/// Category model for the horizontal category rail on the home and catalog tabs.
 class SwagCategory {
   const SwagCategory(this.id, this.label, this.icon, this.tint);
 
@@ -14,6 +21,7 @@ class SwagCategory {
   static const String allId = 'all';
 }
 
+/// Slide configuration for the top storefront carousel banner.
 class HeroSlide {
   const HeroSlide({
     required this.image,
@@ -23,6 +31,7 @@ class HeroSlide {
     required this.cta,
     required this.accent,
   });
+
 
   final String image;
   final String kicker;
@@ -105,7 +114,8 @@ const List<Product> demoProducts = [
     gallery: [
       'assets/images/products/hoodie_cream.png',
       'assets/images/products/hoodie_black.png',
-    ]  ),
+    ],
+  ),
   Product(
     id: 'p-runner',
     name: 'Rangoli Runner',
@@ -123,9 +133,8 @@ const List<Product> demoProducts = [
     sizes: ['UK 6', 'UK 7', 'UK 8', 'UK 9', 'UK 10'],
     tags: ['trending'],
     stock: 18,
-    gallery: [
-      'assets/images/products/runner_yellow.png',
-    ]  ),
+    gallery: ['assets/images/products/runner_yellow.png'],
+  ),
   Product(
     id: 'p-bomber',
     name: 'Bazaar Bomber',
@@ -273,8 +282,7 @@ const List<Product> demoProducts = [
     name: 'Cozy Cloud Beanie',
     brand: 'Craft & Co',
     category: 'winter',
-    blurb:
-        'Chunky-knit ribbed beanie in soft acrylic-wool blend. One size, lots of coziness.',
+    blurb: 'Chunky-knit ribbed beanie in soft acrylic-wool blend. One size, lots of coziness.',
     // TODO(phase-1-assets): swap in assets/images/products/beanie.png when generated.
     image: 'assets/images/products/cap.png',
     price: 799,
@@ -314,7 +322,7 @@ const List<Product> demoProducts = [
     blurb:
         'Feather-light mesh track shoe with a gum rubber outsole. '
         'Breaks in like an old pair of shoes you never take off.',
-        image: 'assets/images/products/ember_runner.png',
+    image: 'assets/images/products/ember_runner.png',
     price: 3799,
     mrp: 4999,
     rating: 4.5,
@@ -332,7 +340,7 @@ const List<Product> demoProducts = [
     blurb:
         'Clean ivory court shoe that goes with everything and argues with '
         'nothing. Suede side panels, stitched toe box.',
-        image: 'assets/images/products/ivory_court.png',
+    image: 'assets/images/products/ivory_court.png',
     price: 4199,
     mrp: 5299,
     rating: 4.6,
@@ -350,7 +358,7 @@ const List<Product> demoProducts = [
     blurb:
         'The court classic in dusty rose. Slightly chunkier sole, '
         'heritage mudguard, zero apologies.',
-        image: 'assets/images/products/rose_runner.png',
+    image: 'assets/images/products/rose_runner.png',
     price: 3999,
     mrp: 4999,
     rating: 4.7,
@@ -368,7 +376,7 @@ const List<Product> demoProducts = [
     blurb:
         'Slip-on Chelsea in a warm chestnut leather-look finish. '
         'Elastico side panels, stacked heel, all-season attitude.',
-        image: 'assets/images/products/chestnut_boots.png',
+    image: 'assets/images/products/chestnut_boots.png',
     price: 5499,
     mrp: 7499,
     rating: 4.8,
@@ -386,7 +394,7 @@ const List<Product> demoProducts = [
     blurb:
         'Boxy-cut 240 GSM cotton tee in a deep crimson. Drop shoulder, '
         'double-stitched hems, pre-washed so it never betrays you.',
-        image: 'assets/images/products/crimson_tee.png',
+    image: 'assets/images/products/crimson_tee.png',
     price: 1299,
     mrp: 1999,
     rating: 4.4,
@@ -404,7 +412,7 @@ const List<Product> demoProducts = [
     blurb:
         'Soft-washed fleece in a calm sage green. Relaxed fit, kangaroo '
         'pocket, tonal drawcords. Your new daily uniform.',
-        image: 'assets/images/products/sage_hoodie.png',
+    image: 'assets/images/products/sage_hoodie.png',
     price: 2299,
     mrp: 3499,
     rating: 4.5,
@@ -422,7 +430,7 @@ const List<Product> demoProducts = [
     blurb:
         'Full-zip hoodie in graphite grey with a brushed interior. '
         'Metal zip, ribbed everything, layers cleanly under a bomber.',
-        image: 'assets/images/products/graphite_zip.png',
+    image: 'assets/images/products/graphite_zip.png',
     price: 2599,
     mrp: 3799,
     rating: 4.6,
@@ -440,7 +448,7 @@ const List<Product> demoProducts = [
     blurb:
         'Wide-leg jean in raw indigo 13 oz denim. High rise, full break '
         'over sneakers, zero stretch and total attitude.',
-        image: 'assets/images/products/indigo_jeans.png',
+    image: 'assets/images/products/indigo_jeans.png',
     price: 2799,
     mrp: 3999,
     rating: 4.6,
@@ -458,7 +466,7 @@ const List<Product> demoProducts = [
     blurb:
         'Straight-cut jean in washed black denim. Softer hand-feel, '
         'sits at the natural waist, goes with every shoe you own.',
-        image: 'assets/images/products/black_jeans.png',
+    image: 'assets/images/products/black_jeans.png',
     price: 2599,
     mrp: 3799,
     rating: 4.4,
@@ -476,7 +484,7 @@ const List<Product> demoProducts = [
     blurb:
         'Quilted puffer in deep forest green with a matte shell. '
         'Lightweight fill, packable into its own chest pocket.',
-        image: 'assets/images/products/forest_puffer.png',
+    image: 'assets/images/products/forest_puffer.png',
     price: 6499,
     mrp: 8999,
     rating: 4.7,
@@ -559,5 +567,4 @@ const List<Product> demoProducts = [
     tags: ['new'],
     stock: 14,
   ),
-
 ];

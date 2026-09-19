@@ -1,3 +1,9 @@
+// =============================================================================
+// File: lib/core/widgets/swag_button.dart
+// Purpose: Primary brand pill action button supporting tactile press effects,
+//          optional leading/trailing icons, and a continuous sweeping shine animation.
+// =============================================================================
+
 import 'package:flutter/material.dart';
 
 import 'pressable.dart';
@@ -5,7 +11,9 @@ import 'swag_icon.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_theme.dart';
 
-/// The primary pill button. Optionally sweeps a shine across itself.
+/// The primary pill button. Optionally sweeps an angled shine across itself.
+///
+/// Wrapped in [Pressable] for tactile springiness on user interaction.
 class SwagButton extends StatefulWidget {
   const SwagButton({
     super.key,
@@ -20,6 +28,7 @@ class SwagButton extends StatefulWidget {
     this.expanded = true,
     this.fontSize = 16,
   });
+
 
   final String label;
   final VoidCallback? onTap;
@@ -61,7 +70,9 @@ class _SwagButtonState extends State<SwagButton>
   @override
   Widget build(BuildContext context) {
     final enabled = widget.onTap != null;
-    final bg = enabled ? widget.background : SwagColors.ink.withValues(alpha: 0.35);
+    final bg = enabled
+        ? widget.background
+        : SwagColors.ink.withValues(alpha: 0.35);
     return Pressable(
       onTap: enabled ? widget.onTap : null,
       child: Container(
@@ -118,7 +129,11 @@ class _SwagButtonState extends State<SwagButton>
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     if (widget.icon != null) ...[
-                      SwagIcon(widget.icon!, size: 19, color: widget.foreground),
+                      SwagIcon(
+                        widget.icon!,
+                        size: 19,
+                        color: widget.foreground,
+                      ),
                       const SizedBox(width: 9),
                     ],
                     Flexible(
@@ -135,7 +150,11 @@ class _SwagButtonState extends State<SwagButton>
                     ),
                     if (widget.trailingIcon != null) ...[
                       const SizedBox(width: 8),
-                      SwagIcon(widget.trailingIcon!, size: 18, color: widget.foreground),
+                      SwagIcon(
+                        widget.trailingIcon!,
+                        size: 18,
+                        color: widget.foreground,
+                      ),
                     ],
                   ],
                 ),

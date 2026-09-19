@@ -1,3 +1,9 @@
+// =============================================================================
+// File: lib/features/search/search_screen.dart
+// Purpose: Interactive product search screen featuring search keyword suggestions,
+//          recent search chips, real-time query filtering, and empty search states.
+// =============================================================================
+
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
@@ -8,11 +14,15 @@ import '../../core/utils/responsive.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/product_card.dart';
 import '../../core/widgets/swag_icon.dart';
+import '../../core/widgets/swag_logo.dart';
 import '../../data/models/product.dart';
 import '../../state/app_store.dart';
 
+/// Interactive search experience querying products across name, category,
+/// description, and tag attributes.
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
+
 
   @override
   State<SearchScreen> createState() => _SearchScreenState();
@@ -31,119 +41,175 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     final pad = swagPad(MediaQuery.sizeOf(context).width);
-    return Consumer<SwagAppStore>(
-      builder: (context, store, _) {
-        final results = store.search(_query);
-        final searching = _query.trim().isNotEmpty;
-        return ListView(
-          padding: EdgeInsets.fromLTRB(pad, 14, pad, 130),
-          children: [
-            Text(
-              'Find your swag',
-              style: SwagTheme.display(size: 26),
-            ),
-            const SizedBox(height: 6),
-            Text(
-              searching
-                  ? '${results.length} match${results.length == 1 ? '' : 'es'} for “${_query.trim()}”'
-                  : 'Tell us what you’re feeling today.',
-              style: SwagTheme.body(size: 13, color: SwagColors.inkSoft),
-            ),
-            const SizedBox(height: 16),
-            Container(
-              height: 56,
-              decoration: BoxDecoration(
-                color: SwagColors.surface,
-                borderRadius: BorderRadius.circular(999),
-                border: Border.all(
-                  color: searching ? SwagColors.accent : SwagColors.line,
-                  width: 1.6,
+    final canPop = Navigator.canPop(context);
+    return Scaffold(
+      backgroundColor: SwagColors.canvas,
+      body: SafeArea(
+        child: Consumer<SwagAppStore>(
+          builder: (context, store, _) {
+            final results = store.search(_query);
+            final searching = _query.trim().isNotEmpty;
+            return ListView(
+              padding: EdgeInsets.fromLTRB(pad, 14, pad, 130),
+              children: [
+                Row(
+                  children: [
+                    if (canPop) ...[
+                      GestureDetector(
+                        onTap: () => Navigator.maybePop(context),
+                        child: Container(
+                          width: 40,
+                          height: 40,
+                          margin: const EdgeInsets.only(right: 12),
+                          decoration: BoxDecoration(
+                            color: SwagColors.surface,
+                            shape: BoxShape.circle,
+                            border: Border.all(color: SwagColors.line),
+                          ),
+                          child: const Center(
+                            child: SwagIcon(
+                              'arrow-left',
+                              size: 18,
+                              color: SwagColors.ink,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                    const SwagLogo(size: 30, showText: true),
+                    const SizedBox(width: 10),
+                    Container(width: 1, height: 20, color: SwagColors.line),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        'Find your swag',
+                        style: SwagTheme.display(size: 20),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
                 ),
-                boxShadow: SwagTheme.cardDecoration(radius: 999).boxShadow,
-              ),
-              child: Row(
-                children: [
-                  const SizedBox(width: 14),
-                  const SwagIcon('search', size: 20, color: SwagColors.inkSoft),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: TextField(
-                      controller: _controller,
-                      onChanged: (v) => setState(() => _query = v),
-                      style: SwagTheme.body(size: 15),
-                      decoration: const InputDecoration(
-                        border: InputBorder.none,
-                        hintText: 'Try “hoodie”, “runners”, “tote”…',
-                        hintStyle: TextStyle(color: SwagColors.inkFaint, fontSize: 14),
-                      ),
+                const SizedBox(height: 6),
+                Text(
+                  searching
+                      ? '${results.length} match${results.length == 1 ? '' : 'es'} for “${_query.trim()}”'
+                      : 'Tell us what you’re feeling today.',
+                  style: SwagTheme.body(size: 13, color: SwagColors.inkSoft),
+                ),
+                const SizedBox(height: 16),
+                Container(
+                  height: 56,
+                  decoration: BoxDecoration(
+                    color: SwagColors.surface,
+                    borderRadius: BorderRadius.circular(999),
+                    border: Border.all(
+                      color: searching ? SwagColors.accent : SwagColors.line,
+                      width: 1.6,
                     ),
+                    boxShadow: SwagTheme.cardDecoration(radius: 999).boxShadow,
                   ),
-                  if (searching)
-                    PressableInline(
-                      onTap: () {
-                        _controller.clear();
-                        setState(() => _query = '');
-                      },
-                      child: const Padding(
-                        padding: EdgeInsets.all(8),
-                        child: SwagIcon('close', size: 16, color: SwagColors.inkSoft),
+                  child: Row(
+                    children: [
+                      const SizedBox(width: 14),
+                      const SwagIcon(
+                        'search',
+                        size: 20,
+                        color: SwagColors.inkSoft,
                       ),
-                    ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: TextField(
+                          controller: _controller,
+                          onChanged: (v) => setState(() => _query = v),
+                          style: SwagTheme.body(size: 15),
+                          decoration: const InputDecoration(
+                            border: InputBorder.none,
+                            hintText: 'Try “hoodie”, “runners”, “tote”…',
+                            hintStyle: TextStyle(
+                              color: SwagColors.inkFaint,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                      ),
+                      if (searching)
+                        PressableInline(
+                          onTap: () {
+                            _controller.clear();
+                            setState(() => _query = '');
+                          },
+                          child: const Padding(
+                            padding: EdgeInsets.all(8),
+                            child: SwagIcon(
+                              'close',
+                              size: 16,
+                              color: SwagColors.inkSoft,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 18),
+                if (!searching) ...[
+                  _Label('Popular right now'),
+                  const SizedBox(height: 10),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      for (final tag in store.trendingTags)
+                        _TagPill(
+                          label: tag,
+                          onTap: () {
+                            _controller.text = tag;
+                            setState(() => _query = tag);
+                          },
+                        ),
+                    ],
+                  ),
+                  const SizedBox(height: 18),
+                  _Label('Recently searched'),
+                  const SizedBox(height: 10),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      for (final recent in store.recentSearches)
+                        _TagPill(
+                          label: recent,
+                          muted: true,
+                          onTap: () {
+                            _controller.text = recent;
+                            setState(() => _query = recent);
+                          },
+                        ),
+                    ],
+                  ),
+                  const SizedBox(height: 26),
+                  _Label('Keep exploring'),
+                  const SizedBox(height: 12),
                 ],
-              ),
-            ),
-            const SizedBox(height: 18),
-            if (!searching) ...[
-              _Label('Popular right now'),
-              const SizedBox(height: 10),
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: [
-                  for (final tag in store.trendingTags)
-                    _TagPill(
-                      label: tag,
-                      onTap: () {
-                        _controller.text = tag;
-                        setState(() => _query = tag);
-                      },
-                    ),
-                ],
-              ),
-              const SizedBox(height: 18),
-              _Label('Recently searched'),
-              const SizedBox(height: 10),
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: [
-                  for (final recent in store.recentSearches)
-                    _TagPill(label: recent, muted: true, onTap: () {
-                      _controller.text = recent;
-                      setState(() => _query = recent);
-                    }),
-                ],
-              ),
-              const SizedBox(height: 26),
-              _Label('Keep exploring'),
-              const SizedBox(height: 12),
-            ],
-            if (searching && results.isEmpty)
-              EmptyState(
-                image: 'assets/images/empty-bag.svg',
-                title: 'Nothing swagged here',
-                subtitle: 'We couldn’t find “${_query.trim()}”. Try “hoodie” or “sneakers”.',
-                actionLabel: 'Show everything',
-                onAction: () {
-                  _controller.clear();
-                  setState(() => _query = '');
-                },
-              )
-            else
-              _ResultsGrid(results: results, pad: pad),
-          ],
-        );
-      },
+                if (searching && results.isEmpty)
+                  EmptyState(
+                    image: 'assets/images/empty-bag.svg',
+                    title: 'Nothing swagged here',
+                    subtitle:
+                        'We couldn’t find “${_query.trim()}”. Try “hoodie” or “sneakers”.',
+                    actionLabel: 'Show everything',
+                    onAction: () {
+                      _controller.clear();
+                      setState(() => _query = '');
+                    },
+                  )
+                else
+                  _ResultsGrid(results: results, pad: pad),
+              ],
+            );
+          },
+        ),
+      ),
     );
   }
 }
@@ -160,7 +226,10 @@ class _ResultsGrid extends StatelessWidget {
     final columnCount = swagColumns(width);
     final rows = <List<Product>>[
       for (var i = 0; i < results.length; i += columnCount)
-        results.sublist(i, i + columnCount > results.length ? results.length : i + columnCount),
+        results.sublist(
+          i,
+          i + columnCount > results.length ? results.length : i + columnCount,
+        ),
     ];
     return Column(
       children: [
@@ -171,7 +240,12 @@ class _ResultsGrid extends StatelessWidget {
               children: [
                 for (var c = 0; c < rows[r].length; c++) ...[
                   if (c > 0) const SizedBox(width: 14),
-                  Expanded(child: ProductCard(product: rows[r][c], stagger: r * columnCount + c)),
+                  Expanded(
+                    child: ProductCard(
+                      product: rows[r][c],
+                      stagger: r * columnCount + c,
+                    ),
+                  ),
                 ],
               ],
             ),
@@ -201,7 +275,11 @@ class _Label extends StatelessWidget {
 }
 
 class _TagPill extends StatelessWidget {
-  const _TagPill({required this.label, required this.onTap, this.muted = false});
+  const _TagPill({
+    required this.label,
+    required this.onTap,
+    this.muted = false,
+  });
 
   final String label;
   final VoidCallback onTap;
@@ -210,32 +288,40 @@ class _TagPill extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
-        decoration: BoxDecoration(
-          color: muted ? SwagColors.surfaceMist : SwagColors.surface,
-          borderRadius: BorderRadius.circular(999),
-          border: Border.all(color: SwagColors.line),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (!muted)
-              const SwagIcon('bolt', size: 12, color: SwagColors.accent),
-            if (!muted) const SizedBox(width: 5),
-            Text(
-              label,
-              style: SwagTheme.body(
-                size: 13,
-                weight: FontWeight.w600,
-                color: muted ? SwagColors.inkSoft : SwagColors.ink,
-              ),
+          onTap: onTap,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+            decoration: BoxDecoration(
+              color: muted ? SwagColors.surfaceMist : SwagColors.surface,
+              borderRadius: BorderRadius.circular(999),
+              border: Border.all(color: SwagColors.line),
             ),
-          ],
-        ),
-      ),
-    ).animate().fadeIn(duration: 350.ms).scale(begin: const Offset(0.9, 0.9), end: const Offset(1, 1), duration: 350.ms, curve: Curves.easeOut);
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (!muted)
+                  const SwagIcon('bolt', size: 12, color: SwagColors.accent),
+                if (!muted) const SizedBox(width: 5),
+                Text(
+                  label,
+                  style: SwagTheme.body(
+                    size: 13,
+                    weight: FontWeight.w600,
+                    color: muted ? SwagColors.inkSoft : SwagColors.ink,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        )
+        .animate()
+        .fadeIn(duration: 350.ms)
+        .scale(
+          begin: const Offset(0.9, 0.9),
+          end: const Offset(1, 1),
+          duration: 350.ms,
+          curve: Curves.easeOut,
+        );
   }
 }
 

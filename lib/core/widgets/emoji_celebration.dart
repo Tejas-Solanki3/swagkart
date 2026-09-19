@@ -1,3 +1,9 @@
+// =============================================================================
+// File: lib/core/widgets/emoji_celebration.dart
+// Purpose: Full-screen vector celebration overlay animating SVG celebratory badges
+//          with spring-wobble and fade transitions during promo or checkout success.
+// =============================================================================
+
 import 'dart:async';
 import 'dart:math' as math;
 
@@ -26,6 +32,7 @@ void fireCelebration(BuildContext context, {String? asset}) {
   );
   overlayState.insert(entry);
 }
+
 
 class _CelebrationPop extends StatefulWidget {
   const _CelebrationPop({required this.asset, required this.onDone});
@@ -64,7 +71,7 @@ class _CelebrationPopState extends State<_CelebrationPop>
     // gives it full-screen size, and the ParentData contract stays intact.
     return AnimatedBuilder(
       animation: _c,
-      builder: (context, _) {
+      builder: (context, _ ) {
         final t = _c.value;
         // White backdrop: quick fade-in, held for ~1s, smooth fade-out.
         final double backdrop;
@@ -99,9 +106,7 @@ class _CelebrationPopState extends State<_CelebrationPop>
         return Stack(
           fit: StackFit.expand,
           children: [
-            ColoredBox(
-              color: Colors.white.withValues(alpha: backdrop),
-            ),
+            ColoredBox(color: Colors.white.withValues(alpha: backdrop)),
             Center(
               child: Transform.rotate(
                 angle: rotation,

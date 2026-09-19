@@ -90,7 +90,10 @@ void main() {
       final store = SwagAppStore();
       final shoes = store.byCategory('footwear');
       expect(shoes.every((p) => p.category == 'footwear'), isTrue);
-      final asc = store.byCategory(SwagCategory.allId, sort: SortMode.priceLowHigh);
+      final asc = store.byCategory(
+        SwagCategory.allId,
+        sort: SortMode.priceLowHigh,
+      );
       for (var i = 1; i < asc.length; i++) {
         expect(asc[i].price, greaterThanOrEqualTo(asc[i - 1].price));
       }

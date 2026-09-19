@@ -1,3 +1,9 @@
+// =============================================================================
+// File: lib/features/payment/order_placed_screen.dart
+// Purpose: Post-checkout success screen rendering celebratory animations,
+//          order summary breakdown, delivery timeline, and return navigation.
+// =============================================================================
+
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
@@ -9,12 +15,19 @@ import '../../core/utils/format.dart';
 import '../../core/widgets/emoji_celebration.dart';
 import '../../core/widgets/swag_button.dart';
 import '../../core/widgets/swag_icon.dart';
+import '../../core/widgets/swag_logo.dart';
 import '../../data/models/order.dart';
 import '../../state/app_store.dart';
 
 /// Post-checkout success screen.
+///
+/// Features:
+/// - Fires vector checkmark celebration animation on display
+/// - Displays order ID, date, payment method, delivery address, and total
+/// - Provides action to return to storefront home tab
 class OrderPlacedScreen extends StatefulWidget {
   const OrderPlacedScreen({super.key, required this.order});
+
 
   final SwagOrder order;
 
@@ -27,7 +40,9 @@ class _OrderPlacedScreenState extends State<OrderPlacedScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) fireCelebration(context, asset: 'assets/icons/celebrate-check.svg');
+      if (mounted) {
+        fireCelebration(context, asset: 'assets/icons/celebrate-check.svg');
+      }
     });
   }
 
@@ -41,7 +56,11 @@ class _OrderPlacedScreenState extends State<OrderPlacedScreen> {
         child: ListView(
           padding: const EdgeInsets.fromLTRB(24, 24, 24, 32),
           children: [
-            const SizedBox(height: 12),
+            const Align(
+              alignment: Alignment.topLeft,
+              child: SwagLogo(size: 34, showText: true),
+            ),
+            const SizedBox(height: 14),
             Container(
               width: 104,
               height: 104,
@@ -60,10 +79,13 @@ class _OrderPlacedScreenState extends State<OrderPlacedScreen> {
             ),
             const SizedBox(height: 26),
             Text(
-              'Order placed!',
-              textAlign: TextAlign.center,
-              style: SwagTheme.display(size: 28),
-            ).animate(delay: 200.ms).fadeIn(duration: 400.ms).moveY(begin: 12, end: 0, duration: 400.ms),
+                  'Order placed!',
+                  textAlign: TextAlign.center,
+                  style: SwagTheme.display(size: 28),
+                )
+                .animate(delay: 200.ms)
+                .fadeIn(duration: 400.ms)
+                .moveY(begin: 12, end: 0, duration: 400.ms),
             const SizedBox(height: 6),
             Text(
               'Order #${order.id} · ${order.methodLabel} · ${order.detail}',
@@ -78,43 +100,111 @@ class _OrderPlacedScreenState extends State<OrderPlacedScreen> {
             ).animate(delay: 380.ms).fadeIn(duration: 400.ms),
             const SizedBox(height: 26),
             Container(
-              decoration: SwagTheme.cardDecoration(),
-              padding: const EdgeInsets.all(18),
-              child: Column(
-                children: [
-                  _Row(
-                    label: 'Items',
-                    value: order.items
-                        .map((i) => '${i.product.name} ×${i.qty}')
-                        .take(3)
-                        .join(' · '),
+                  decoration: SwagTheme.cardDecoration(),
+                  padding: const EdgeInsets.all(18),
+                  child: Column(
+                    children: [
+                      _Row(
+                        label: 'Items',
+                        value: order.items
+                            .map((i) => '${i.product.name} ×${i.qty}')
+                            .take(3)
+                            .join(' · '),
+                      ),
+                      const SizedBox(height: 12),
+                      _Row(label: 'Subtotal', value: inr(order.subtotal)),
+                      if (order.discount > 0) ...[
+                        const SizedBox(height: 8),
+                        _Row(
+                          label: 'Discount',
+                          value: '− ${inr(order.discount)}',
+                          valueColor: SwagColors.mintDeep,
+                        ),
+                      ],
+                      const SizedBox(height: 8),
+                      _Row(
+                        label: 'Shipping',
+                        value: order.shipping <= 0
+                            ? 'Free'
+                            : inr(order.shipping),
+                        valueColor: order.shipping <= 0
+                            ? SwagColors.mintDeep
+                            : null,
+                      ),
+                      const Divider(height: 24, color: SwagColors.line),
+                      _Row(label: 'Paid', value: inr(order.total), bold: true),
+                    ],
                   ),
-                  const SizedBox(height: 12),
-                  _Row(label: 'Subtotal', value: inr(order.subtotal)),
-                  if (order.discount > 0) ...[
-                    const SizedBox(height: 8),
-                    _Row(
-                      label: 'Discount',
-                      value: '− ${inr(order.discount)}',
-                      valueColor: SwagColors.mintDeep,
+                )
+                .animate(delay: 450.ms)
+                .fadeIn(duration: 400.ms)
+                .moveY(begin: 16, end: 0, duration: 400.ms),
+            const SizedBox(height: 16),
+            Container(
+                  padding: const EdgeInsets.all(18),
+                  decoration: BoxDecoration(
+                    color: SwagColors.butterSoft,
+                    borderRadius: BorderRadius.circular(22),
+                    border: Border.all(
+                      color: SwagColors.butter.withValues(alpha: 0.5),
                     ),
-                  ],
-                  const SizedBox(height: 8),
-                  _Row(
-                    label: 'Shipping',
-                    value: order.shipping <= 0 ? 'Free' : inr(order.shipping),
-                    valueColor: order.shipping <= 0 ? SwagColors.mintDeep : null,
+                    boxShadow: [
+                      BoxShadow(
+                        color: SwagColors.butter.withValues(alpha: 0.15),
+                        blurRadius: 16,
+                        offset: const Offset(0, 6),
+                      ),
+                    ],
                   ),
-                  const Divider(height: 24, color: SwagColors.line),
-                  _Row(
-                    label: 'Paid',
-                    value: inr(order.total),
-                    bold: true,
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 48,
+                        height: 48,
+                        decoration: const BoxDecoration(
+                          color: SwagColors.butter,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Center(
+                          child: Text('🪙', style: TextStyle(fontSize: 24)),
+                        ),
+                      ),
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              store.lastEarnedPoints > 0
+                                  ? '+${store.lastEarnedPoints} SwagPoints Earned!'
+                                  : '+${(order.total * 0.10).round()} SwagPoints Earned!',
+                              style: SwagTheme.display(
+                                size: 16,
+                                weight: FontWeight.w800,
+                                color: SwagColors.ink,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              'Your updated balance: ${store.swagPoints} pts. Use them on any drop!',
+                              style: SwagTheme.body(
+                                size: 12,
+                                color: SwagColors.inkSoft,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ).animate(delay: 450.ms).fadeIn(duration: 400.ms).moveY(begin: 16, end: 0, duration: 400.ms),
-            const SizedBox(height: 26),
+                )
+                .animate(delay: 500.ms)
+                .fadeIn(duration: 400.ms)
+                .scale(
+                  begin: const Offset(0.95, 0.95),
+                  end: const Offset(1, 1),
+                ),
+            const SizedBox(height: 22),
             SwagButton(
               label: 'Track order',
               icon: 'package',

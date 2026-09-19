@@ -1,17 +1,23 @@
+// =============================================================================
+// File: lib/core/widgets/count_badge.dart
+// Purpose: Small reactive count bubble displaying cart or wishlist item counts
+//          with an elastic scale bounce animation on count change.
+// =============================================================================
+
 import 'package:flutter/material.dart';
 
 import '../theme/app_colors.dart';
 
 /// Small animated count bubble (cart / wishlist).
+///
+/// Uses [AnimatedSwitcher] with an elastic curve to animate whenever the count
+/// updates, displaying '$max+' if the count exceeds the threshold.
 class CountBadge extends StatelessWidget {
-  const CountBadge({
-    super.key,
-    required this.count,
-    this.max = 99,
-  });
+  const CountBadge({super.key, required this.count, this.max = 99});
 
   final int count;
   final int max;
+
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +26,10 @@ class CountBadge extends StatelessWidget {
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 300),
       transitionBuilder: (child, animation) {
-        final curved = CurvedAnimation(parent: animation, curve: Curves.elasticOut);
+        final curved = CurvedAnimation(
+          parent: animation,
+          curve: Curves.elasticOut,
+        );
         return ScaleTransition(
           scale: Tween<double>(begin: 0.4, end: 1).animate(curved),
           child: FadeTransition(opacity: animation, child: child),
